@@ -1,0 +1,1 @@
+namespace BgCommon.Wpf.Prism.DependencyInjection;/// <summary>/// 反射注入接口,View需要实现/// </summary>public interface IRegistration { }

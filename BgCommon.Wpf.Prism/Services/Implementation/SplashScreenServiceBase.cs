@@ -1,0 +1,1 @@
+namespace BgCommon.Wpf.Prism.Services.Implementation;/// <summary>/// 闪窗服务./// </summary>public abstract class SplashScreenServiceBase: ISplashScreenService{}

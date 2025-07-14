@@ -1,0 +1,193 @@
+using BgCommon.Prism.MVVM;
+using BgCommon.Wpf.Prism.Authority.Models;
+using BgCommon.Wpf.Prism.Authority.Services;
+using CommunityToolkit.Mvvm.Input;
+
+namespace BgCommon.Wpf.Prism.Authority.ViewModels;
+
+/// <summary>
+/// UserLoginViewModel.cs .
+/// </summary>
+public partial class UserLoginViewModel : DialogViewModelBase
+{
+    private readonly IUserService userService;
+    private readonly ObservableCollection<string> users = new ObservableCollection<string>();
+    private bool isLoginSuccess = false;
+    private string userName = string.Empty;
+    private string password = string.Empty;
+    private bool isAutoLogin = false;
+    private bool isRemember = false;
+    private bool isAllowAutoLogin = false;
+    private bool isAllowRemember = false;
+    private LoginResult loginResult = new LoginResult();
+    private LoginParam? loginParam = null;
+
+    /// <summary>
+    /// Gets or sets 用户名
+    /// </summary>
+    public string UserName
+    {
+        get => userName;
+        set => SetProperty(ref userName, value);
+    }
+
+    /// <summary>
+    /// Gets or sets 密码
+    /// </summary>
+    public string Password
+    {
+        get => password;
+        set => SetProperty(ref password, value);
+    }
+
+    /// <summary>
+    /// Gets or sets a value indicating whether 是否自动登陆
+    /// </summary>
+    public bool IsAutoLogin
+    {
+        get => isAutoLogin;
+        set => SetProperty(ref isAutoLogin, value);
+    }
+
+    /// <summary>
+    /// Gets or sets a value indicating whether 是否记住密码
+    /// </summary>
+    public bool IsRemember
+    {
+        get
+        {
+            return isRemember;
+        }
+
+        set
+        {
+            _ = SetProperty(ref isRemember, value);
+
+            if (value == false)
+            {
+                isAutoLogin = false;
+                OnPropertyChanged(nameof(IsAutoLogin));
+            }
+        }
+    }
+
+    /// <summary>
+    /// Gets or sets a value indicating whether 是否允许自动登陆
+    /// </summary>
+    public bool IsAllowAutoLogin
+    {
+        get => isAllowAutoLogin;
+        set => SetProperty(ref isAllowAutoLogin, value);
+    }
+
+    /// <summary>
+    /// Gets or sets a value indicating whether 是否允许记住密码
+    /// </summary>
+    public bool IsAllowRemember
+    {
+        get => isAllowRemember;
+        set => SetProperty(ref isAllowRemember, value);
+    }
+
+    /// <summary>
+    /// Gets 可用用户列表
+    /// </summary>
+    public ObservableCollection<string> Users => users;
+
+    public UserLoginViewModel(IContainerExtension container)
+        : base(container)
+    {
+        userService = Container.Resolve<IUserService>();
+    }
+
+    public override void OnDialogClosed()
+    {
+        if (!isLoginSuccess)
+        {
+            loginResult.Code = 0;
+            loginResult.Message = GetString("用户取消登陆");
+            this.OnRequestClose(
+                ButtonResult.Cancel,
+                keys =>
+                {
+                    // 取消时，回传原有的登陆参数.
+                    keys.Add(IUserService.LOGINPARAM, loginParam!);
+                    keys.Add(IUserService.RESULT, loginResult);
+                });
+        }
+    }
+
+    public override async void OnDialogOpened(IDialogParameters parameters)
+    {
+        Title = GetString("用户登录");
+
+        List<UserInfo> users = await userService.GetAllUsersAsync();
+        foreach (UserInfo user in users)
+        {
+            if (user.Enable)
+            {
+                Users.Add(user.DisplayName);
+            }
+        }
+
+        loginParam = parameters.GetValue<LoginParam>(IUserService.LOGINPARAM);
+        if (loginParam != null)
+        {
+            UserName = loginParam.UserName;
+            Password = loginParam.Password;
+            IsRemember = loginParam.IsRemember;
+            IsAutoLogin = loginParam.IsAutoLogin;
+            IsAllowAutoLogin = loginParam.IsAllowAutoLogin;
+            IsAllowRemember = loginParam.IsAllowRemember;
+        }
+
+        if (string.IsNullOrEmpty(UserName) || !Users.Contains(UserName))
+        {
+            UserName = Users.FirstOrDefault() ?? string.Empty;
+            Password = string.Empty;
+        }
+    }
+
+    [RelayCommand]
+    private async Task OnLogin()
+    {
+        isLoginSuccess = false;
+        if (string.IsNullOrEmpty(UserName) || string.IsNullOrEmpty(Password))
+        {
+            // _ = await this.ErrorAsync(GetString("用户名或密码不能为空"));
+            return;
+        }
+
+        loginResult = await userService.LoginAsync(UserName, Password);
+        if (loginResult.Code == -1)
+        {
+            // _ = await this.ErrorAsync(loginResult.Message);
+            return;
+        }
+
+        isLoginSuccess = true;
+        this.OnRequestClose(
+            ButtonResult.OK,
+            keys =>
+            {
+                if (loginParam != null)
+                {
+                    loginParam.IsAutoLogin = IsAutoLogin;
+                    loginParam.IsRemember = IsRemember;
+                    if (IsRemember)
+                    {
+                        loginParam.UserName = UserName;
+                        loginParam.Password = Password;
+                    }
+                    else
+                    {
+                        loginParam.UserName = string.Empty;
+                        loginParam.Password = string.Empty;
+                    }
+                }
+
+                keys.Add(IUserService.LOGINPARAM, loginParam!);
+                keys.Add(IUserService.RESULT, loginResult);
+            });
+    }
+}
