@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "BgCommon": {
+      "commandName": "Executable",
+      "executablePath": "..\\..\\LG\\Debug\\LG.Studio.exe",
+      "executablePath1": "..\\..\\bin\\Debug\\CurveEdge3D.exe",
+      "workingDirectory1": "..\\..\\bin\\Debug"
+    }
+  }
+}

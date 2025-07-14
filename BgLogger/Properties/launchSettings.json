@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "BgLogger": {
+      "commandName": "Executable",
+      "executablePath1": "..\\..\\bin\\LG\\Debug\\LG.Studio.exe",
+      "executablePath": "..\\..\\bin\\Debug\\CurveEdge3D.exe",
+      "workingDirectory": "..\\..\\bin\\Debug"
+    }
+  }
+}
