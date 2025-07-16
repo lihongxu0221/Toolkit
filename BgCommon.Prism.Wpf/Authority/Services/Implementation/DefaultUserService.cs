@@ -3,7 +3,6 @@ using BgCommon.Collections;
 using BgCommon.Configuration;
 using BgCommon.Prism.Wpf.Authority.Models;
 using BgCommon.Prism.Wpf.Authority.Views;
-using BgLogger;
 
 namespace BgCommon.Prism.Wpf.Authority.Services.Implementation;
 
@@ -62,14 +61,19 @@ internal class DefaultUserService : ObservableObject, IUserService
 
     public bool IsLogin => CurrentUser != null;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether 是否处于调试模式.
+    /// </summary>
+    public bool IsDebugMode { get; set; }
+
     public DefaultUserService(IContainerExtension container)
     {
         this.container = container;
-        dialogService = container.Resolve<IDialogService>();
-        Users = new ObservableRangeCollection<UserInfo>();
+        this.dialogService = container.Resolve<IDialogService>();
+        this.Users = new ObservableRangeCollection<UserInfo>();
     }
 
-    public virtual async Task InitializeAsync()
+    public virtual async Task<bool> InitializeAsync()
     {
         // 1. 注入登录视图
         container.RegisterDialog<UserLoginView>();
@@ -124,6 +128,8 @@ internal class DefaultUserService : ObservableObject, IUserService
                 await loginParam.SaveToFileAsync();
             }
         }
+
+        return true;
     }
 
     protected virtual void SaveUsersToFile()
@@ -150,8 +156,6 @@ internal class DefaultUserService : ObservableObject, IUserService
         LoginResult? loginResult = null;
         try
         {
-            string filePath = System.IO.Path.Combine(Environment.CurrentDirectory, "debugtest.txt");
-            bool isAutoLoad = System.IO.File.Exists(filePath);
             LoginParam? loginParam = this.loginParam?.Entity;
             if (loginParam == null)
             {
@@ -169,7 +173,7 @@ internal class DefaultUserService : ObservableObject, IUserService
 
             // 未勾选自动登录时，显示登陆界面
             UserInfo? user = Users.FirstOrDefault(u => u.Authority == UserAuthority.Admin);
-            if (isAutoLoad && user != null)
+            if (IsDebugMode && user != null)
             {
                 loginResult = await LoginAsync(user.UserName, user.Password);
             }

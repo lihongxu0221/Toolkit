@@ -1,19 +1,1 @@
-namespace BgCommon.Prism.Wpf.Services;
-
-/// <summary>
-/// 全局调用的变量.
-/// </summary>
-public interface IGlobalVarService
-{
-    /// <summary>
-    /// 获取闪窗图片路径.
-    /// </summary>
-    /// <returns>返回闪窗图片路径. </returns>
-    string? GetSplashScreenImage();
-
-    /// <summary>
-    /// 全局设置初始化
-    /// </summary>
-    /// <returns>返回 是否成功初始化</returns>
-    Task<bool> InitializeAsync();
-}
+namespace BgCommon.Prism.Wpf.Services;/// <summary>/// 全局调用的变量./// </summary>public interface IGlobalVarService : IDebugMode{    /// <summary>    /// 获取闪窗图片路径.    /// </summary>    /// <returns>返回闪窗图片路径. </returns>    string? GetSplashScreenImage();    /// <summary>    /// 全局设置初始化    /// </summary>    /// <returns>返回 是否成功初始化</returns>    Task<bool> InitializeAsync();}

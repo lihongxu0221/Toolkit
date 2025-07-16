@@ -18,6 +18,7 @@
            ShowNonClientArea="True" 
            ShowTitle="True" 
            ShowInTaskbar="False" 
+           Topmost="True"
            SizeToContent="WidthAndHeight" 
            WindowStartupLocation="CenterOwner"
            BorderBrush="{DynamicResource BorderBrush}"

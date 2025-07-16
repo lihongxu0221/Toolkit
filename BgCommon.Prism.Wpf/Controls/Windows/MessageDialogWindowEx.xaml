@@ -19,6 +19,8 @@
            Style="{DynamicResource WindowWin10}" 
            FontSize="{DynamicResource SubHeadFontSize}"
            ShowNonClientArea="True" ShowTitle="True"
+           Topmost="True"
+           BorderBrush="{DynamicResource BorderBrush}"
            BorderThickness="1"
            WindowState="Maximized"
            WindowStartupLocation="CenterOwner">

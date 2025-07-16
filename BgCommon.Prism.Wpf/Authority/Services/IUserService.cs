@@ -5,7 +5,7 @@ namespace BgCommon.Prism.Wpf.Authority.Services;
 /// <summary>
 ///  用户服务接口.
 /// </summary>
-public interface IUserService
+public interface IUserService : IDebugMode
 {
     /// <summary>
     /// Gets or Sets 当前登陆用户.
@@ -21,7 +21,7 @@ public interface IUserService
     /// 初始化化用户权限.
     /// </summary>
     /// <returns>Task</returns>
-    Task InitializeAsync();
+    Task<bool> InitializeAsync();
 
     /// <summary>
     /// 显示登陆界面.
