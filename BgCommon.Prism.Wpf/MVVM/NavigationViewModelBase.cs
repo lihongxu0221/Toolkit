@@ -8,12 +8,20 @@ namespace BgCommon.Prism.Wpf.MVVM;
 /// <code>关键方法    OnNavigatedTo、OnNavigatedFrom</code>
 /// <code>是否可取消导航 否（只能在 OnNavigatedFrom 中提示</code>
 /// </summary>
-public abstract partial class NavigationViewModelBase : ViewModelBase, INavigationAware, IConfirmNavigationRequest, IDestructible
+public abstract partial class NavigationViewModelBase : ViewModelBase, INavigationAware, IConfirmNavigationRequest, IDestructible, IRegionMemberLifetime
 {
+
     protected NavigationViewModelBase(IContainerExtension container)
         : base(container)
     {
     }
+
+    /// <summary>
+    /// Gets a value indicating whether gets <br/>
+    ///     true（推荐）：当视图变为非激活状态时，区域管理器会保留这个视图实例。下次再次导航到该视图时，不会创建新实例，而是直接重用现有的实例。这完美地解决了重复加载和内存增长的问题. <br/>
+    ///     false：当视图变为非激活状态时，区域管理器会将其从 Views 集合中移除，并且如果没有其他地方引用它，垃圾回收器（GC）最终会回收它。这可以节省内存，但下次导航时需要重新创建实例. <br/>
+    /// </summary>
+    public virtual bool KeepAlive => true;
 
     /// <summary>
     /// 当导航完成并进入到此视图时调用.适合进行数据初始化和刷新.
@@ -21,7 +29,6 @@ public abstract partial class NavigationViewModelBase : ViewModelBase, INavigati
     /// <param name="navigationContext">包含导航参数的上下文.</param>
     public virtual void OnNavigatedTo(NavigationContext navigationContext)
     {
-        navigationContext.Parameters.Add(GetType().Name, this);
     }
 
     /// <summary>
@@ -31,7 +38,6 @@ public abstract partial class NavigationViewModelBase : ViewModelBase, INavigati
     /// <param name="navigationContext">包含导航参数的上下文.</param>
     public virtual void OnNavigatedFrom(NavigationContext navigationContext)
     {
-        navigationContext.Parameters.Add(GetType().Name, this);
     }
 
     /// <summary>

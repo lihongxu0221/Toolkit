@@ -1,0 +1,16 @@
+using BgCommon.Prism.Wpf.DependencyInjection;
+using ToolkitDemo.ViewModels;
+
+namespace ToolkitDemo.Views;
+
+/// <summary>
+/// MainView.xaml 的交互逻辑
+/// </summary>
+[Registration(Registration.Navigation, typeof(MainViewModel))]
+public partial class MainView : UserControl, IRegistration
+{
+    public MainView()
+    {
+        InitializeComponent();
+    }
+}

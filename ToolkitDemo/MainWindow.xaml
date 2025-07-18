@@ -16,7 +16,8 @@
             <bg:InvokeCommandAction Command="{Binding LoadedCommand}" />
         </bg:EventTrigger>
     </bg:Interaction.Triggers>
-    <UniformGrid Columns="1" Rows="1">
+    <ContentControl prism:RegionManager.RegionName="{x:Static local:RegionDefine.MainRegion}" />
+    <!--<UniformGrid Columns="1" Rows="1">
         <StackPanel>
             <bg:NumberInput Margin="5" DecimalPlaces="2" Minimum="0" Maximum="10"/>
             <bg:NumberInput Margin="5"/>
@@ -31,7 +32,7 @@
                     bg:BackgroundSwitchElement.MouseHoverBackground="{DynamicResource ThirdlyRegionBrush}"/>
             <bg:FileExplorer Height="500" FileFilter="*.dxf" />
         </StackPanel>
-        <!--<Grid Width="300" Height="250" HorizontalAlignment="Center" VerticalAlignment="Center">
+        --><!--<Grid Width="300" Height="250" HorizontalAlignment="Center" VerticalAlignment="Center">
             <Grid.RowDefinitions>
                 <RowDefinition />
                 <RowDefinition />
@@ -138,6 +139,6 @@
                     bg:IconElement.Image="{DynamicResource MotionLeftX}"
                     bg:IconElement.ImageSelected="{DynamicResource MotionLeftX_Selected}"
                     bg:IconElement.RotateAngle="270"/>
-        </Grid>-->
-    </UniformGrid>
+        </Grid>--><!--
+    </UniformGrid>-->
 </Window>

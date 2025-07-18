@@ -1,17 +1,12 @@
 <Application x:Class="ToolkitDemo.App"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:hc="https://handyorg.github.io/handycontrol"
+             xmlns:bg="http://www.sz-baigu.com/"
              xmlns:local="clr-namespace:ToolkitDemo">
-             <!--StartupUri="Views/Windows/SplashWindow.xaml"-->
+    <!--StartupUri="Views/Windows/SplashWindow.xaml"-->
     <Application.Resources>
         <ResourceDictionary>
-            <BitmapImage x:Key="MotionLeft" UriSource ="pack://application:,,,/ToolkitDemo;component/Assets/Images/Motion/Left.png" />
-            <BitmapImage x:Key="MotionLeftX" UriSource="pack://application:,,,/ToolkitDemo;component/Assets/Images/Motion/LeftX.png" />
-            <BitmapImage x:Key="MotionLeftTop" UriSource="pack://application:,,,/ToolkitDemo;component/Assets/Images/Motion/LeftTop.png" />
-            <BitmapImage x:Key="MotionLeft_Selected" UriSource="pack://application:,,,/ToolkitDemo;component/Assets/Images/Motion/Left_Selected.png" />
-            <BitmapImage x:Key="MotionLeftX_Selected" UriSource="pack://application:,,,/ToolkitDemo;component/Assets/Images/Motion/LeftX_Selected.png" />
-            <BitmapImage x:Key="MotionLeftTop_Selected" UriSource="pack://application:,,,/ToolkitDemo;component/Assets/Images/Motion/LeftTop_Selected.png" />
-
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="pack://application:,,,/HandyControl;component/Themes/SkinDark.xaml" />
                 <ResourceDictionary Source="pack://application:,,,/HandyControl;component/Themes/Theme.xaml" />
@@ -21,6 +16,168 @@
                 <ResourceDictionary Source="pack://application:,,,/BgControls;component/Assets/Style/Theme.xaml" />
                 <!--<ResourceDictionary Source="pack://application:,,,/BgControls;component/Assets/Style/Controls.xaml" />-->
             </ResourceDictionary.MergedDictionaries>
+
+            <BitmapImage x:Key="MotionLeft" UriSource ="pack://application:,,,/ToolkitDemo;component/Assets/Images/Motion/Left.png" />
+            <BitmapImage x:Key="MotionLeftX" UriSource="pack://application:,,,/ToolkitDemo;component/Assets/Images/Motion/LeftX.png" />
+            <BitmapImage x:Key="MotionLeftTop" UriSource="pack://application:,,,/ToolkitDemo;component/Assets/Images/Motion/LeftTop.png" />
+            <BitmapImage x:Key="MotionLeft_Selected" UriSource="pack://application:,,,/ToolkitDemo;component/Assets/Images/Motion/Left_Selected.png" />
+            <BitmapImage x:Key="MotionLeftX_Selected" UriSource="pack://application:,,,/ToolkitDemo;component/Assets/Images/Motion/LeftX_Selected.png" />
+            <BitmapImage x:Key="MotionLeftTop_Selected" UriSource="pack://application:,,,/ToolkitDemo;component/Assets/Images/Motion/LeftTop_Selected.png" />
+
+            <Style x:Key="ButtonStyle1" TargetType="Button" BasedOn="{StaticResource BaseStyle}">
+                <Setter Property="HorizontalContentAlignment" Value="Center" />
+                <Setter Property="VerticalContentAlignment" Value="Center" />
+                <Setter Property="Background" Value="Transparent" />
+                <Setter Property="BorderBrush" Value="{DynamicResource BorderBrush}" />
+                <Setter Property="BorderThickness" Value="1" />
+                <Setter Property="Foreground" Value="{DynamicResource PrimaryTextBrush}" />
+                <Setter Property="FontSize" Value="{DynamicResource SubHeadFontSize}" />
+                <Setter Property="Height" Value="40" />
+                <Setter Property="Padding" Value="0" />
+                <Setter Property="bg:PressEffectHelper.IsEnabled" Value="True" />
+                <Setter Property="bg:BorderElement.CornerRadius" Value="{DynamicResource DefaultCornerRadius}" />
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="Button">
+                            <bg:SimplePanel>
+                                <Border x:Name="PanelMain" Background="{TemplateBinding Background}" 
+                                CornerRadius="{Binding Path=(bg:BorderElement.CornerRadius), RelativeSource={RelativeSource TemplatedParent}}" />
+                                <Border BorderThickness="{TemplateBinding BorderThickness}" 
+                                BorderBrush="{TemplateBinding BorderBrush}" 
+                                CornerRadius="{Binding Path=(bg:BorderElement.CornerRadius), RelativeSource={RelativeSource TemplatedParent}}">
+                                    <StackPanel Orientation="Horizontal" 
+                                        HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" 
+                                        VerticalAlignment="{TemplateBinding VerticalContentAlignment}" 
+                                        Margin="{TemplateBinding Padding}">
+                                        <ContentPresenter Name="ContentPresenterMain" 
+                                              ContentSource="Content"
+                                              RecognizesAccessKey="True" 
+                                              VerticalAlignment="Center" 
+                                              SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
+                                    </StackPanel>
+                                </Border>
+                            </bg:SimplePanel>
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="IsEnabled" Value="False">
+                                    <Setter Property="Background" Value="{DynamicResource SecondaryRegionBrush}" />
+                                    <Setter Property="Opacity" Value="0.6" />
+                                </Trigger>
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter Property="BorderBrush" Value="{DynamicResource PrimaryBrush}" />
+                                    <Setter Property="Background" Value="{DynamicResource SecondaryRegionBrush}" />
+                                    <Setter TargetName="PanelMain" Property="Opacity" Value="0.8" />
+                                </Trigger>
+                                <Trigger Property="IsPressed" Value="True">
+                                    <Setter Property="Background" Value="{DynamicResource SecondaryRegionBrush}" />
+                                    <Setter Property="BorderBrush" Value="{DynamicResource PrimaryBrush}" />
+                                    <Setter TargetName="PanelMain" Property="Opacity" Value="0.6" />
+                                </Trigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+
+            <Style x:Key="ListBoxItemStyle.RadioButton" TargetType="RadioButton" BasedOn="{StaticResource BaseStyle}">
+                <Setter Property="HorizontalContentAlignment" Value="Center" />
+                <Setter Property="VerticalContentAlignment" Value="Center" />
+                <Setter Property="Background" Value="{DynamicResource WarningBrush}" />
+                <Setter Property="BorderBrush" Value="{DynamicResource BorderBrush}" />
+                <Setter Property="BorderThickness" Value="1" />
+                <Setter Property="Foreground" Value="{DynamicResource PrimaryTextBrush}" />
+                <Setter Property="FontSize" Value="{DynamicResource SubHeadFontSize}" />
+                <Setter Property="bg:PressEffectHelper.IsEnabled" Value="True" />
+                <Setter Property="bg:BorderElement.CornerRadius" Value="{DynamicResource DefaultCornerRadius}" />
+                <Setter Property="Height" Value="{DynamicResource ButtonHeight}" />
+                <Setter Property="Padding" Value="0" />
+                <Setter Property="RenderTransformOrigin" Value="0.5,0.5" />
+                <Setter Property="RenderTransform">
+                    <Setter.Value>
+                        <ScaleTransform x:Name="ImageScale" ScaleX="1" ScaleY="1" />
+                    </Setter.Value>
+                </Setter>
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="RadioButton">
+                            <bg:SimplePanel>
+                                <Border x:Name="PanelMain" Background="{TemplateBinding Background}" Opacity="0.6"
+                                CornerRadius="{Binding Path=(bg:BorderElement.CornerRadius), RelativeSource={RelativeSource TemplatedParent}}" />
+                                <Border BorderThickness="{TemplateBinding BorderThickness}" 
+                                BorderBrush="{TemplateBinding BorderBrush}" 
+                                CornerRadius="{Binding Path=(bg:BorderElement.CornerRadius), RelativeSource={RelativeSource TemplatedParent}}">
+                                    <StackPanel Orientation="Horizontal" 
+                                        HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"  
+                                        VerticalAlignment="{TemplateBinding VerticalContentAlignment}" 
+                                        Margin="{TemplateBinding Padding}">
+                                        <ContentPresenter Name="ContentPresenterMain" RecognizesAccessKey="True" VerticalAlignment="Center" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
+                                    </StackPanel>
+                                </Border>
+                            </bg:SimplePanel>
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="IsEnabled" Value="False">
+                                    <Setter Property="Background" Value="{DynamicResource SecondaryRegionBrush}" />
+                                    <Setter Property="Opacity" Value="0.6" />
+                                </Trigger>
+                                <Trigger Property="IsChecked" Value="True">
+                                    <Setter Property="Foreground" Value="{DynamicResource PrimaryTextBrush}" />
+                                    <Setter Property="BorderBrush" Value="{DynamicResource WarningBrush}" />
+                                    <Setter Property="Background" Value="{DynamicResource WarningBrush}" />
+                                    <Setter TargetName="PanelMain" Property="Opacity" Value="1" />
+                                </Trigger>
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter Property="Foreground" Value="{DynamicResource PrimaryTextBrush}" />
+                                    <Setter Property="BorderBrush" Value="{DynamicResource WarningBrush}" />
+                                    <Setter Property="Background" Value="{DynamicResource WarningBrush}" />
+                                    <Setter TargetName="PanelMain" Property="Opacity" Value="0.8" />
+                                </Trigger>
+                                <Trigger Property="IsPressed" Value="True">
+                                    <Setter Property="Foreground" Value="{DynamicResource PrimaryTextBrush}" />
+                                    <Setter Property="BorderBrush" Value="{DynamicResource WarningBrush}" />
+                                    <Setter Property="Background" Value="{DynamicResource WarningBrush}" />
+                                    <Setter TargetName="PanelMain" Property="Opacity" Value="0.6" />
+                                </Trigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+
+            <!--模块信息列表-->
+            <Style x:Key="ListBoxStyle.ModuleViews" TargetType="ListBox" BasedOn="{StaticResource ListBoxCustom}">
+                <Setter Property="ItemsSource" Value="{Binding Views}" />
+                <Setter Property="SelectedItem" Value="{Binding SelectedView}"/>
+                <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                <Setter Property="Background" Value="Transparent" />
+                <Setter Property="BorderBrush" Value="Transparent"/>
+                <Setter Property="BorderThickness" Value="0"/>
+                <Setter Property="SelectionMode" Value="Single"/>
+                <Setter Property="ItemTemplate">
+                    <Setter.Value>
+                        <DataTemplate DataType="{x:Type bg:ModuleInfo}">
+                            <RadioButton Style="{StaticResource ListBoxItemStyle.RadioButton}" 
+                                         HorizontalContentAlignment="Center"
+                                         Height="48" Margin="5 10 5 0"
+                                         Content="{Binding ModuleName,Converter={StaticResource LocalizationConverter}}"
+                                         IsChecked="{Binding IsSelected, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type ListBoxItem}},Mode=TwoWay,UpdateSourceTrigger=PropertyChanged,NotifyOnSourceUpdated=True,NotifyOnTargetUpdated=True}">
+                            </RadioButton>
+                        </DataTemplate>
+                    </Setter.Value>
+                </Setter>
+                <Setter Property="ItemsPanel">
+                    <Setter.Value>
+                        <ItemsPanelTemplate>
+                            <VirtualizingStackPanel Orientation="Vertical"/>
+                        </ItemsPanelTemplate>
+                    </Setter.Value>
+                </Setter>
+                <Setter Property="ItemContainerStyle">
+                    <Setter.Value>
+                        <Style TargetType="ListBoxItem" BasedOn="{StaticResource ListBoxItemCustom}">
+                            <Setter Property="IsSelected" Value="{Binding IsSelected,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged,NotifyOnSourceUpdated=True,NotifyOnTargetUpdated=True}" />
+                        </Style>
+                    </Setter.Value>
+                </Setter>
+            </Style>
         </ResourceDictionary>
     </Application.Resources>
 </Application>

@@ -18,6 +18,7 @@
         </ResourceDictionary>
     </UserControl.Resources>    
     <Grid Background="{DynamicResource RegionBrush}">
-        <TextBlock Text="{bg:StringResource 功能暂未实现}" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="100"/>
+        <TextBlock Text="{bg:StringResource 功能暂未实现}" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="100"
+                   Foreground="{DynamicResource PrimaryTextBrush}"/>
     </Grid>
 </UserControl>

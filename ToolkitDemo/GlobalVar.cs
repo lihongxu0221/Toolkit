@@ -1,4 +1,5 @@
 using BgCommon.Localization;
+using BgCommon.Prism.Wpf.Authority.Models;
 
 namespace ToolkitDemo;
 
@@ -28,6 +29,11 @@ internal static class GlobalVar
     /// Gets 应用程序名称.
     /// </summary>
     public static string SoftwareName => LocalizationProviderFactory.GetString(nameof(SoftwareName));
+
+    /// <summary>
+    /// Gets or sets 当前登录用户.
+    /// </summary>
+    public static UserInfo? CurrentUser { get; set; }
 
     /// <summary>
     /// 初始化全局通用变量.

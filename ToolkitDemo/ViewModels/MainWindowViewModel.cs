@@ -1,6 +1,7 @@
-using BgCommon.MVVM;
+using BgCommon.Prism.Wpf;
+using BgCommon.Prism.Wpf.MVVM;
 using BgLogger;
-using System.Threading.Tasks;
+using ToolkitDemo.Views;
 
 namespace ToolkitDemo.ViewModels;
 
@@ -14,7 +15,12 @@ public partial class MainWindowViewModel : ViewModelBase
     {
     }
 
-    [RelayCommand]
+    protected override Task OnLoadedAsync(object? parameter)
+    {
+        this.RequestNavigate<MainView>(RegionDefine.MainRegion);
+        return base.OnLoadedAsync(parameter);
+    }
+
     private void OnLoaded()
     {
         var sw = new Stopwatch();
@@ -26,7 +32,6 @@ public partial class MainWindowViewModel : ViewModelBase
         LogMotion.Info("1111");
         Trace.WriteLine($"LogMotion.Info cost {sw.ElapsedMilliseconds}ms");
         sw.Stop();
-        //Application.Current.Shutdown(0);
     }
 
     [RelayCommand]

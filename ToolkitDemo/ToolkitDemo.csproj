@@ -24,7 +24,7 @@
     <EnableUnsafeBinaryFormatterSerialization>true</EnableUnsafeBinaryFormatterSerialization>
     <Platforms>AnyCPU;x64</Platforms>
   </PropertyGroup>
-  
+
   <ItemGroup>
     <PackageReference Include="HandyControl" />
     <PackageReference Include="CommunityToolkit.Mvvm" />
@@ -62,7 +62,6 @@
   <ItemGroup>
     <Folder Include="Assets\Style\" />
     <Folder Include="Models\" />
-    <Folder Include="Views\" />
   </ItemGroup>
 
   <ItemGroup>

@@ -1,0 +1,82 @@
+<UserControl x:Class="ToolkitDemo.Views.MainView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:prism="http://prismlibrary.com/"
+             xmlns:bg="http://www.sz-baigu.com/"
+             xmlns:hc="https://handyorg.github.io/handycontrol"
+             prism:ViewModelLocator.AutoWireViewModel="True"
+             xmlns:local="clr-namespace:ToolkitDemo"
+             xmlns:v="clr-namespace:ToolkitDemo.Views"
+             xmlns:vm="clr-namespace:ToolkitDemo.ViewModels"
+             mc:Ignorable="d" 
+             d:DesignHeight="768" d:DesignWidth="1024"  
+             d:DataContext="{d:DesignInstance vm:MainViewModel}">
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="140" />
+        </Grid.ColumnDefinitions>
+        <Border BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1">
+            <ContentControl prism:RegionManager.RegionName="{x:Static local:RegionDefine.MainContentRegion}" />
+        </Border>
+        <Grid Grid.Column="1">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+                <RowDefinition Height="Auto" MinHeight="64"/>
+            </Grid.RowDefinitions>
+            <StackPanel Grid.Row="0" HorizontalAlignment="Stretch" Margin="5">
+                <Border BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1" Margin="0 0 0 5">
+                    <TextBlock Text="{Binding UserName}" 
+                               FontSize="{DynamicResource HeadFontSize}" 
+                               FontWeight="Bold"
+                               Foreground="{DynamicResource PrimaryTextBrush}"
+                               HorizontalAlignment="Center" 
+                               VerticalAlignment="Center" 
+                               Padding="15 10"/>
+                </Border>
+                <UniformGrid Rows="1" Columns="2">
+                    <Button Style="{StaticResource ButtonStyle1}" 
+                            Content="{bg:StringResource 登陆}" 
+                            Tag="{Binding Authority}"
+                            Height="56"
+                            Background="{DynamicResource PrimaryBrush}"
+                            Command="{Binding LoginCommand}"/>
+                    <Button Style="{StaticResource ButtonStyle1}" 
+                            Content="{bg:StringResource 注销}" 
+                            Tag="{Binding Authority}"
+                            Height="56"
+                            Background="{DynamicResource DangerBrush}"
+                            Command="{Binding QuitCommand}"/>
+                </UniformGrid>
+            </StackPanel>
+            <Border Grid.Row="1" Margin="5 0" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1">
+                <ListBox Style="{DynamicResource ListBoxStyle.ModuleViews}" 
+                         ItemsSource="{Binding Views}" 
+                         SelectedItem="{Binding SelectedView}"/>
+            </Border>
+            <StackPanel Grid.Row="2" HorizontalAlignment="Stretch" Margin="5 0">
+                <ToggleButton Content="{bg:StringResource 左区域}" Margin="0 5 0 0" Visibility="{Binding IsDoubleReginn}" IsChecked="{Binding IsLeftRegionEnable}" Style="{StaticResource ToggleButtonSwitchBaseStyle}" HorizontalAlignment="Center"/>
+                <ToggleButton Content="{bg:StringResource 右区域}" Margin="0 5 0 0" Visibility="{Binding IsDoubleReginn}" IsChecked="{Binding IsRightRegionEnable}" Style="{StaticResource ToggleButtonSwitchBaseStyle}" HorizontalAlignment="Center"/>
+                <Button Style="{StaticResource ButtonStyle1}" 
+                        Content="{bg:StringResource 启动/暂停}" 
+                        Height="56" Margin="0 5 0 0"
+                        Background="{Binding StateColorBrush}"
+                        Foreground="{Binding StateForeground}"
+                        Command="{Binding ExecuteCommand}"/>
+                <Button Style="{StaticResource ButtonStyle1}" 
+                        Content="{bg:StringResource 停止}" 
+                        Background="{DynamicResource WarningBrush}"
+                        Height="56" Margin="0 5 0 0"
+                        Command="{Binding StopCommand}"/>
+                <Border VerticalAlignment="Stretch" Margin="0 10 0 5" Background="{DynamicResource SecondaryRegionBrush}">
+                    <TextBlock Text="{Binding AppVersion}" 
+                               Foreground="{DynamicResource PrimaryTextBrush}" 
+                               VerticalAlignment="Center" Margin="10" />
+                </Border>
+            </StackPanel>
+        </Grid>
+    </Grid>
+</UserControl>
