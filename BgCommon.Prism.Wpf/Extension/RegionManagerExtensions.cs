@@ -1,5 +1,3 @@
-using BgCommon.Prism.Wpf;
-
 namespace BgCommon.Prism.Wpf;
 
 /// <summary>

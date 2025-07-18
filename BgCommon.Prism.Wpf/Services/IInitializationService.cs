@@ -1,19 +1,1 @@
-namespace BgCommon.Prism.Wpf.Services;
-
-/// <summary>
-/// 初始化服务.
-/// </summary>
-public interface IInitializationService : IDisposable, IDebugMode
-{
-    /// <summary>
-    /// 配置初始化 (异步).
-    /// </summary>
-    /// <returns>Task</returns>
-    Task<bool> InitializeAsync();
-
-    /// <summary>
-    /// 运行 (异步).
-    /// </summary>
-    /// <returns>Task</returns>
-    Task<bool> RunAsync();
-}
+namespace BgCommon.Prism.Wpf.Services;/// <summary>/// 初始化服务./// </summary>public interface IInitializationService : IDisposable, IDebugMode{    /// <summary>    /// 运行 (异步).    /// </summary>    /// <returns>Task</returns>    Task<bool> RunAsync();}

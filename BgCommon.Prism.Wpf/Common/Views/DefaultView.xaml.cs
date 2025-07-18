@@ -1,1 +1,1 @@
-using BgCommon.Prism.Wpf.DependencyInjection;namespace BgCommon.Prism.Wpf.Common.Views;/// <summary>/// DefaultView.xaml 的交互逻辑/// </summary>[Registration(Registration.Navigation)]public partial class DefaultView : UserControl, IRegistration{    public DefaultView()    {        InitializeComponent();    }}
+namespace BgCommon.Prism.Wpf.Common.Views;/// <summary>/// DefaultView.xaml 的交互逻辑/// </summary>public partial class DefaultView : UserControl{    public DefaultView()    {        InitializeComponent();    }}

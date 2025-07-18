@@ -1,245 +1,1 @@
-using BgCommon;
-using BgLogger;
-using ToolkitDemo.Services;
-using ToolkitDemo.ViewModels.Windows;
-using ToolkitDemo.Views.Windows;
-
-namespace ToolkitDemo;
-
-/// <summary>
-///  Bootstrapper
-/// </summary>
-internal class Bootstrapper : PrismBootstrapper
-{
-    private SplashWindow? splashScreen;
-    private SplashWindowViewModel? splashViewModel;
-
-    /// <inheritdoc/>
-    protected override Window CreateShell()
-    {
-        try
-        {
-            Window window = Container.Resolve<MainWindow>();
-
-            // 强制主窗体最大化
-            window.WindowState = WindowState.Maximized;
-            return window;
-        }
-        catch (Exception)
-        {
-            throw;
-        }
-    }
-
-    /// <summary>
-    /// Run.
-    /// </summary>
-    public async Task RunEx()
-    {
-        // 创建并显示启动画面
-        splashViewModel = Container.Resolve<SplashWindowViewModel>();
-        splashScreen = new SplashWindow()
-        {
-            DataContext = splashViewModel
-        };
-        splashScreen.Show();
-
-        Run();
-
-        try
-        {
-            // 执行初始化
-            IInitializationService initService = Container.Resolve<IInitializationService>();
-            await initService.InitializeAsync();
-
-            // 在初始化完成后关闭启动画面并显示主窗口
-            Application.Current.Dispatcher.Invoke(() =>
-            {
-                splashScreen.Close();
-
-                if (Shell is Window mainWindow)
-                {
-                    mainWindow.Show();
-                }
-            });
-        }
-        catch (Exception ex)
-        {
-            // 处理初始化错误
-            Application.Current.Dispatcher.Invoke(() =>
-            {
-                splashViewModel.StatusMessage = $"初始化失败: {ex.Message}";
-                _ = MessageBox.Show($"应用程序初始化失败: {ex.Message}", "错误", MessageBoxButton.OK, MessageBoxImage.Error);
-                Application.Current.Shutdown();
-            });
-        }
-    }
-
-    /// <summary>
-    /// 初始化主窗口Shell
-    /// </summary>
-    /// <param name="shell">主进程容器</param>
-    protected override void InitializeShell(DependencyObject shell)
-    {
-        base.InitializeShell(shell);
-
-        // 如果需要先登录
-        // TLoginWindow? loginWin = Container.Resolve<TLoginWindow>();
-        // if (loginWin == null || loginWin.ShowDialog() != true)
-        // {
-        //     Application.Current.Shutdown();
-        // }
-        // else
-        // {
-        //     Common.Log.Logger.Info($"{Assembly.GetEntryAssembly()?.GetName().Name} 进程启动中");
-        //     base.InitializeShell(shell);
-        // }
-    }
-
-    /// <summary>
-    /// 初始化
-    /// </summary>
-    protected override async void OnInitialized()
-    {
-        // 创建并显示启动画面
-        splashViewModel = Container.Resolve<SplashWindowViewModel>();
-        splashScreen = new SplashWindow()
-        {
-            DataContext = splashViewModel
-        };
-        splashScreen.Show();
-
-        try
-        {
-
-            // 执行初始化
-            IInitializationService initService = Container.Resolve<IInitializationService>();
-            await initService.InitializeAsync();
-
-            BgLoggerFactory.OnInitialized();
-
-            // 在初始化完成后关闭启动画面并显示主窗口
-            Application.Current.Dispatcher.Invoke(() =>
-            {
-                splashScreen.Close();
-
-                // 显示主窗口
-                if (Shell is Window mainWindow)
-                {
-                    mainWindow.Show();
-                }
-            });
-        }
-        catch (Exception ex)
-        {
-            // 处理初始化错误
-            Application.Current.Dispatcher.Invoke(() =>
-            {
-                splashViewModel.StatusMessage = $"初始化失败: {ex.Message}";
-                _ = MessageBox.Show($"应用程序初始化失败: {ex.Message}", "错误", MessageBoxButton.OK, MessageBoxImage.Error);
-                Application.Current.Shutdown();
-            });
-        }
-    }
-
-    /// <inheritdoc/>
-    protected override IModuleCatalog CreateModuleCatalog()
-    {
-        // 从配置文件加载
-        var config = new ConfigurationModuleCatalog();
-
-        return config;
-
-        // 从文件夹加载
-        // return new DirectoryModuleCatalog() { ModulePath = AppDomain.CurrentDomain.BaseDirectory }; 
-    }
-
-    /// <inheritdoc/>
-    protected override void RegisterTypes(IContainerRegistry containerRegistry)
-    {
-        // 0. 初始化全局参数
-        if (!GlobalVar.Initialize())
-        {
-            LogDialog.Warn("GlobalVar initialize is failure");
-            return;
-        }
-
-        // 1. 注册日志服务服务
-        BgLoggerFactory.Register(containerRegistry);
-
-        // 1. 注册服务
-        _ = containerRegistry.Register<IConfigService, ConfigService>();
-        _ = containerRegistry.Register<ILocalizationService, LocalizationService>();
-        _ = containerRegistry.Register<IDialogWindowsService, DialogWindowsService>();
-        _ = containerRegistry.RegisterSingleton<IInitializationService, InitializationService>();
-
-        // 注入闪窗
-        _ = containerRegistry.RegisterSingleton<SplashWindowViewModel>();
-        containerRegistry.RegisterDialog<SplashWindow>();
-
-        // 3.依赖注入其他公共实体集合
-        _ = containerRegistry.RegisterSingleton<MainWindow>();
-    }
-
-    /// <inheritdoc/>
-    protected override void ConfigureDefaultRegionBehaviors(IRegionBehaviorFactory regionBehaviors)
-    {
-        base.ConfigureDefaultRegionBehaviors(regionBehaviors);
-    }
-
-    /// <inheritdoc/>
-    protected override void ConfigureViewModelLocator()
-    {
-        base.ConfigureViewModelLocator();
-
-        // type / type
-        // ViewModelLocationProvider.Register(typeof(MainWindow).ToString(), typeof(CustomViewModel));
-
-        // type / factory
-        // ViewModelLocationProvider.Register(typeof(MainWindow).ToString(), () => Container.Resolve<CustomViewModel>());
-
-        // generic factory
-        // ViewModelLocationProvider.Register<MainWindow>(() => Container.Resolve<CustomViewModel>());
-
-        // generic type
-        // ViewModelLocationProvider.Register<MainWindow, MainWindowVM>();
-        // ViewModelLocationProvider.Register<DebugView, DebugViewModel>();
-        // ViewModelLocationProvider.Register<RunView, RunViewModel>();
-
-        // 默认获取View 的VM的解决方案
-        ViewModelLocationProvider.SetDefaultViewTypeToViewModelTypeResolver(ToViewModelType);
-    }
-
-    /// <summary>
-    /// 通过ViewType获取 ViewModelType
-    /// </summary>
-    /// <param name="viewType">View类型</param>
-    /// <returns>ViewModelType</returns>
-    protected virtual Type? ToViewModelType(Type viewType)
-    {
-        if (viewType != null && viewType.Namespace != null)
-        {
-            var vmTypeName = $"{viewType.Name}ViewModel";
-            if (vmTypeName.EndsWith("ViewViewModel"))
-            {
-                vmTypeName = vmTypeName.Replace("ViewViewModel", "ViewModel");
-            }
-
-            var @namespace = viewType.Namespace;
-            if (@namespace.EndsWith("Views") || @namespace.Contains(".Views."))
-            {
-                @namespace = @namespace.Replace("Views", "ViewModels");
-            }
-            else
-            {
-                @namespace = $"{@namespace}.ViewModels";
-            }
-
-            var viewAssemblyName = viewType.GetTypeInfo().Assembly.FullName;
-            var viewModelName = $"{@namespace}.{vmTypeName}, {viewAssemblyName}";
-            return Type.GetType(viewModelName);
-        }
-
-        return null;
-    }
-}
+using BgCommon;using BgCommon.Localization.DependencyInjection;using BgCommon.Prism.Wpf;using ToolkitDemo.Services;namespace ToolkitDemo;/// <summary>///  Bootstrapper/// </summary>internal class Bootstrapper : BootstrapperBase{    public Bootstrapper(Application app)        : base(app)    {    }    protected override string[]? ModuleDirectories => null;    protected override Type GetInitialServiceType()    {        return typeof(InitializationService);    }    protected override Type GetGlobalVarService()    {        return typeof(GlobalVarService);    }    protected override Type GetModuleService()    {        return typeof(ModuleService);    }    /// <inheritdoc/>    protected override Window CreateShell()    {        Window window = Container.Resolve<MainWindow>();        // 强制主窗体最大化        window.WindowState = WindowState.Maximized;        return window;    }    /// <inheritdoc/>    protected override void RegisterTypes(IContainerRegistry containerRegistry)    {        _ = containerRegistry.AddStringLocalizer(b =>        {            // CurveEdge3D            b.FromResource<Assets.Localization.Tanslations>(new CultureInfo("zh-CN"), false);            b.FromResource<Assets.Localization.Tanslations>(new CultureInfo("en-US"), false);            b.SetCulture(new CultureInfo("zh-CN"));        });        // 3.依赖注入其他公共实体集合        _ = containerRegistry.RegisterSingleton<MainWindow>();    }}

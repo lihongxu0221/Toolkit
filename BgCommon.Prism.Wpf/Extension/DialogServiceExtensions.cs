@@ -1,5 +1,3 @@
-using BgCommon;
-using BgCommon.Prism.Wpf;
 using BgCommon.Prism.Wpf.Controls.Services;
 
 namespace BgCommon.Prism.Wpf;

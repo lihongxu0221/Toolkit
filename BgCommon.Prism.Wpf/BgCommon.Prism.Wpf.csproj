@@ -71,6 +71,22 @@
 
   <ItemGroup>
     <None Remove="..\..\packages\nlog.schema\5.4.0\contentFiles\any\any\NLog.xsd" />
+    <None Remove="Assets\Images\icon.ico" />
+    <None Remove="Assets\Images\logo.png" />
+    <None Remove="Assets\Images\Logo\logo-bg.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="Assets\Images\icon.ico">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Assets\Images\logo.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Assets\Images\Logo\logo-bg.png" />
+    <Resource Include="Assets\Images\Splash.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
   </ItemGroup>
 
 </Project>

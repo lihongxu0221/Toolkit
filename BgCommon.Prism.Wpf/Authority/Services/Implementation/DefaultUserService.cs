@@ -185,6 +185,7 @@ internal class DefaultUserService : ObservableObject, IUserService
                     {
                         keys.Add(Constraints.LoginParam, loginParam!);
                     });
+
                 if (ret != null)
                 {
                     loginResult = ret.Parameters.GetValue<LoginResult>(Constraints.LoginResult);

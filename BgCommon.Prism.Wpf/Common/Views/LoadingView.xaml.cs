@@ -1,1 +1,12 @@
-using BgCommon.Prism.Wpf.DependencyInjection;namespace BgCommon.Prism.Wpf.Common.Views;/// <summary>/// LoadingView.xaml 的交互逻辑/// </summary>[Registration(Registration.Navigation)]public partial class LoadingView : UserControl, IRegistration{    public LoadingView()    {        InitializeComponent();    }}
+namespace BgCommon.Prism.Wpf.Common.Views;
+
+/// <summary>
+/// LoadingView.xaml 的交互逻辑
+/// </summary>
+public partial class LoadingView : UserControl
+{
+    public LoadingView()
+    {
+        InitializeComponent();
+    }
+}

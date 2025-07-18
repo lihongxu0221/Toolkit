@@ -18,7 +18,9 @@ public class SplashScreenViewModel : ViewModelBase
     /// </summary>
     /// <param name="container">Ioc容器实例.</param>
     /// <param name="globalVarService">全局变量服务.</param>
-    public SplashScreenViewModel(IContainerExtension container, IGlobalVarService globalVarService)
+    public SplashScreenViewModel(
+        IContainerExtension container,
+        IGlobalVarService globalVarService)
         : base(container)
     {
         this.globalVarService = globalVarService;
@@ -76,12 +78,14 @@ public class SplashScreenViewModel : ViewModelBase
         _ = Application.Current.Dispatcher.InvokeAsync(new Action(() =>
         {
             string? splashImagePath = globalVarService.GetSplashScreenImage();
-            if (!string.IsNullOrEmpty(splashImagePath) && System.IO.File.Exists(splashImagePath))
+            if (string.IsNullOrEmpty(splashImagePath) || !System.IO.File.Exists(splashImagePath))
             {
-                this.SplashImage = new BitmapImage(new Uri(splashImagePath, UriKind.Absolute));
-                this.Width = this.SplashImage.Width;
-                this.Height = this.SplashImage.Height;
+                splashImagePath = "pack://application:,,,/BgCommon.Prism.Wpf;component/Assets/Images/Splash.png";
             }
+
+            this.SplashImage = new BitmapImage(new Uri(splashImagePath, UriKind.Absolute));
+            this.Width = this.SplashImage.Width;
+            this.Height = this.SplashImage.Height;
         }));
 
         return base.OnLoadedAsync(parameter);

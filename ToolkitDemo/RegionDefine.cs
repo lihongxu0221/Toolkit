@@ -1,1 +1,0 @@
-namespace ToolkitDemo;/// <summary>/// Prism 区域名称定义./// </summary>public class RegionDefine{    /// <summary>    /// Gets 边框可以调整大小的窗体注入名称.    /// </summary>    public static string DialogWindow => nameof(DialogWindow);}

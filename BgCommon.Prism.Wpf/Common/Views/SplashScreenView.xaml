@@ -16,7 +16,13 @@
         Background="{x:Null}"
         SizeToContent="WidthAndHeight">
     <Window.Resources>
-        <ResourceDictionary Source="pack://application:,,,/BgCommon.Prism.Wpf;component/Assets/Style/Theme.xaml" />
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="pack://application:,,,/BgCommon.Prism.Wpf;component/Assets/Style/Theme.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+            <!-- WPF 内置的布尔到可见性转换器 -->
+            <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
+        </ResourceDictionary>
     </Window.Resources>
     <bg:Interaction.Triggers>
         <bg:EventTrigger EventName="Loaded">

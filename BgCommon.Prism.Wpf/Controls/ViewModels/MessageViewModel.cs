@@ -12,7 +12,7 @@ public partial class MessageViewModel : DialogViewModelBase
     private string cancel = string.Empty;
     private string confirm = string.Empty;
     private int icon = 0;
-    private bool isShowCopy2Clipboard = false;
+    private Visibility copyToClipboardVisibility = Visibility.Collapsed;
 
     /// <summary>
     /// Gets or sets 消息主体
@@ -53,10 +53,10 @@ public partial class MessageViewModel : DialogViewModelBase
     /// <summary>
     /// Gets or sets a value indicating whether 是否显示复制提示信息的按钮.
     /// </summary>
-    public bool IsShowCopy2Clipboard
+    public Visibility CopyToClipboardVisibility
     {
-        get => isShowCopy2Clipboard;
-        set => SetProperty(ref isShowCopy2Clipboard, value);
+        get => copyToClipboardVisibility;
+        set => SetProperty(ref copyToClipboardVisibility, value);
     }
 
     public MessageViewModel(IContainerExtension container)
@@ -93,7 +93,10 @@ public partial class MessageViewModel : DialogViewModelBase
             Icon = icon.Value;
         }
 
-        IsShowCopy2Clipboard = Icon == 2 || Icon == 3;
+        if (Icon == 2 || Icon == 3)
+        {
+            CopyToClipboardVisibility = Visibility.Visible;
+        }
     }
 
     /// <summary>

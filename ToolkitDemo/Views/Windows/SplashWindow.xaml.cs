@@ -1,1 +1,0 @@
-namespace ToolkitDemo.Views.Windows;/// <summary>/// SplashWindow.xaml 的交互逻辑./// </summary>public partial class SplashWindow : Window{    /// <summary>    /// Initializes a new instance of the <see cref="SplashWindow"/> class.    /// </summary>    public SplashWindow()    {        this.InitializeComponent();    }}
