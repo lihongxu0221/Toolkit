@@ -6,6 +6,165 @@
 
     <cvt:CornerRadiusConverter x:Key="CornerRadiusConverter" />
 
+    <!-- 默认 (黑/灰) -->
+    <RadialGradientBrush x:Key="DefaultNormal" GradientOrigin="0.5,0.2">
+        <GradientStop Color="#FF4D4D4D" Offset="0.0" />
+        <GradientStop Color="#FF1C1C1C" Offset="1.0" />
+    </RadialGradientBrush>
+    <RadialGradientBrush x:Key="DefaultMouseOver" GradientOrigin="0.5,0.2">
+        <GradientStop Color="#FF6B6B6B" Offset="0.0" />
+        <GradientStop Color="#FF333333" Offset="1.0" />
+    </RadialGradientBrush>
+    <RadialGradientBrush x:Key="DefaultPressed" GradientOrigin="0.5,0.2">
+        <GradientStop Color="#FF3C3C3C" Offset="0.0" />
+        <GradientStop Color="#FF0A0A0A" Offset="1.0" />
+    </RadialGradientBrush>
+
+    <!-- 禁用状态 -->
+    <LinearGradientBrush x:Key="DisabledBrush" StartPoint="0,0" EndPoint="0,1">
+        <GradientStop Color="#FF888888" Offset="0.0" />
+        <GradientStop Color="#FF666666" Offset="1.0" />
+    </LinearGradientBrush>
+
+    <RadialGradientBrush x:Key="SuccessNormal" GradientOrigin="0.5,0.2">
+        <GradientStop Color="#FF00C800" Offset="0.0" />
+        <GradientStop Color="#FF007D00" Offset="1.0" />
+    </RadialGradientBrush>
+    <RadialGradientBrush x:Key="SuccessPressed" GradientOrigin="0.5,0.2">
+        <GradientStop Color="#FF32FF32" Offset="0.0" />
+        <GradientStop Color="#FF00A500" Offset="1.0" />
+    </RadialGradientBrush>
+    <RadialGradientBrush x:Key="SuccessMouseOver" GradientOrigin="0.5,0.2">
+        <GradientStop Color="#FF78FF78" Offset="0.0" />
+        <GradientStop Color="#FF1FC21F" Offset="1.0" />
+    </RadialGradientBrush>
+
+    <RadialGradientBrush x:Key="ErrorNormal" GradientOrigin="0.5,0.2">
+        <GradientStop Color="#FFD30000" Offset="0.0" />
+        <GradientStop Color="#FFA00000" Offset="1.0" />
+    </RadialGradientBrush>
+    <RadialGradientBrush x:Key="ErrorPressed" GradientOrigin="0.5,0.2">
+        <GradientStop Color="#FFFF2E2E" Offset="0.0" />
+        <GradientStop Color="#FFD30000" Offset="1.0" />
+    </RadialGradientBrush>
+    <RadialGradientBrush x:Key="ErrorMouseOver" GradientOrigin="0.5,0.2">
+        <GradientStop Color="#FFFF5C5C" Offset="0.0" />
+        <GradientStop Color="#FFEA2424" Offset="1.0" />
+    </RadialGradientBrush>
+
+    <RadialGradientBrush x:Key="WarningNormal" GradientOrigin="0.5,0.2">
+        <GradientStop Color="#FFEAB600" Offset="0.0" />
+        <GradientStop Color="#FFBF8300" Offset="1.0" />
+    </RadialGradientBrush>
+    <RadialGradientBrush x:Key="WarningPressed" GradientOrigin="0.5,0.2">
+        <GradientStop Color="#FFFFD100" Offset="0.0" />
+        <GradientStop Color="#FFD49A00" Offset="1.0" />
+    </RadialGradientBrush>
+    <RadialGradientBrush x:Key="WarningMouseOver" GradientOrigin="0.5,0.2">
+        <GradientStop Color="#FFFFE04D" Offset="0.0" />
+        <GradientStop Color="#FFE8B21F" Offset="1.0" />
+    </RadialGradientBrush>
+
+    <Style x:Key="ButtonStyle.GlossyCircular" TargetType="Button">
+        <Setter Property="Width" Value="120"/>
+        <Setter Property="Height" Value="120"/>
+        <Setter Property="Foreground" Value="White"/>
+        <Setter Property="FontWeight" Value="Bold"/>
+        <Setter Property="FontSize" Value="28"/>
+        <Setter Property="FontFamily" Value="Microsoft YaHei UI"/>
+        <Setter Property="Background" Value="{StaticResource DefaultNormal}"/>
+        <Setter Property="local:BackgroundSwitchElement.MouseDownBackground" Value="{StaticResource DefaultPressed}"/>
+        <Setter Property="local:BackgroundSwitchElement.MouseHoverBackground" Value="{StaticResource DefaultMouseOver}"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <Grid x:Name="RootGrid">
+                        <!-- 金属边框 (不变) -->
+                        <Ellipse x:Name="OuterBezel">
+                            <Ellipse.Fill>
+                                <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                                    <GradientStop Color="#FFF0F0F0" Offset="0.0"/>
+                                    <GradientStop Color="#FFAEAEAE" Offset="1.0"/>
+                                </LinearGradientBrush>
+                            </Ellipse.Fill>
+                        </Ellipse>
+                        <Ellipse Margin="4" StrokeThickness="3">
+                            <Ellipse.Stroke>
+                                <LinearGradientBrush StartPoint="0.5,0" EndPoint="0.5,1">
+                                    <GradientStop Color="#B2FFFFFF" Offset="0.0" />
+                                    <GradientStop Color="#33FFFFFF" Offset="0.5" />
+                                    <GradientStop Color="#33000000" Offset="0.51" />
+                                    <GradientStop Color="#80000000" Offset="1.0" />
+                                </LinearGradientBrush>
+                            </Ellipse.Stroke>
+                        </Ellipse>
+                        <Ellipse Margin="7" Stroke="#4C000000" StrokeThickness="1" />
+
+                        <!-- 按钮主体: Fill 绑定到按钮的 Background 属性 -->
+                        <Ellipse x:Name="ButtonBody" Margin="8" Fill="{TemplateBinding Background}"/>
+
+                        <!-- 高光 (不变) -->
+                        <Ellipse x:Name="Highlight" Margin="13,13,13,55" >
+                            <Ellipse.Fill>
+                                <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                                    <GradientStop Color="#80FFFFFF" Offset="0.0" />
+                                    <GradientStop Color="#00FFFFFF" Offset="1.0" />
+                                </LinearGradientBrush>
+                            </Ellipse.Fill>
+                        </Ellipse>
+
+                        <!-- 内容 (不变) -->
+                        <ContentPresenter x:Name="Content" HorizontalAlignment="Center" VerticalAlignment="Center">
+                            <ContentPresenter.Effect>
+                                <DropShadowEffect ShadowDepth="1" BlurRadius="2" Color="Black" Opacity="0.4"/>
+                            </ContentPresenter.Effect>
+                        </ContentPresenter>
+                    </Grid>
+                    <ControlTemplate.Triggers>
+                        <!-- 禁用状态 -->
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter TargetName="ButtonBody" Property="Fill" Value="{StaticResource DisabledBrush}"/>
+                            <Setter TargetName="RootGrid" Property="Opacity" Value="0.6"/>
+                        </Trigger>
+                        <!-- 悬停状态 -->
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="ButtonBody" Property="Fill">
+                                <Setter.Value>
+                                    <PriorityBinding>
+                                        <!-- 优先尝试绑定到附加属性 -->
+                                        <Binding Path="(local:BackgroundSwitchElement.MouseHoverBackground)" RelativeSource="{RelativeSource TemplatedParent}" />
+                                        <!-- 如果上面失败，则回退到绑定按钮自身的 Background -->
+                                        <Binding Path="Background" RelativeSource="{RelativeSource TemplatedParent}" />
+                                    </PriorityBinding>
+                                </Setter.Value>
+                            </Setter>
+                        </Trigger>
+
+                        <!-- 按下状态 -->
+                        <Trigger Property="IsPressed" Value="True">
+                            <Setter TargetName="ButtonBody" Property="Fill">
+                                <Setter.Value>
+                                    <PriorityBinding>
+                                        <!-- 优先尝试绑定到附加属性 -->
+                                        <Binding Path="(local:BackgroundSwitchElement.MouseDownBackground)" RelativeSource="{RelativeSource TemplatedParent}" />
+                                        <!-- 如果上面失败，则回退到绑定按钮自身的 Background -->
+                                        <Binding Path="Background" RelativeSource="{RelativeSource TemplatedParent}" />
+                                    </PriorityBinding>
+                                </Setter.Value>
+                            </Setter>
+                            <Setter TargetName="Highlight" Property="Opacity" Value="0.6"/>
+                            <Setter TargetName="Content" Property="RenderTransform">
+                                <Setter.Value>
+                                    <TranslateTransform Y="1"/>
+                                </Setter.Value>
+                            </Setter>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
     <Style x:Key="Button.GeometryIcon" TargetType="Button" BasedOn="{StaticResource BaseStyle}">
         <Setter Property="Background" Value="Transparent" />
         <Setter Property="BorderBrush" Value="Transparent" />

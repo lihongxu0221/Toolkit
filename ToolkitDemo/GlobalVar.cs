@@ -1,4 +1,5 @@
 using BgCommon.Localization;
+using BgCommon.Prism.Wpf.Authority.Entities;
 using BgCommon.Prism.Wpf.Authority.Models;
 
 namespace ToolkitDemo;

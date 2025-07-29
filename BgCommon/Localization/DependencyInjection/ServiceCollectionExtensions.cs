@@ -14,39 +14,26 @@ public static class ServiceCollectionExtensions
     public static IContainerRegistry AddStringLocalizer(this IContainerRegistry services, Action<LocalizationBuilder> configure)
     {
         DependencyInjectionLocalizationBuilder builder;
-        try
+        if (LocalizationProviderFactory.GetInstance() == null)
         {
-            if (LocalizationProviderFactory.GetInstance() == null)
-            {
-                builder = new DependencyInjectionLocalizationBuilder(services);
-                configure(builder);
+            builder = new DependencyInjectionLocalizationBuilder(services);
+            configure?.Invoke(builder);
 
-                // IEventAggregator? eventAggregator = null;
-                // if (services is IContainerExtension container && container != null)
-                // {
-                //     eventAggregator = container.Resolve<IEventAggregator>();
-                // }
+            LocalizationProviderFactory.SetInstance(builder.Build());
 
-                LocalizationProviderFactory.SetInstance(builder.Build());// eventAggregator));
-
-                _ = services.RegisterSingleton(typeof(DependencyInjectionLocalizationBuilder), _ => builder);
-                _ = services.RegisterSingleton(typeof(ILocalizationProvider), _ => LocalizationProviderFactory.GetInstance()!);
-                _ = services.Register<IStringLocalizerFactory, ProviderBasedStringLocalizerFactory>();
-                _ = services.Register<ILocalizationCultureManager, LocalizationCultureManager>();
-                _ = services.Register<IStringLocalizer, ProviderBasedStringLocalizer>();
-            }
-            else
-            {
-                if (services is IContainerExtension container && container != null)
-                {
-                    builder = container.Resolve<DependencyInjectionLocalizationBuilder>();
-                    configure(builder);
-                }
-            }
+            _ = services.RegisterSingleton(typeof(DependencyInjectionLocalizationBuilder), _ => builder);
+            _ = services.RegisterSingleton(typeof(ILocalizationProvider), _ => LocalizationProviderFactory.GetInstance()!);
+            _ = services.Register<IStringLocalizerFactory, ProviderBasedStringLocalizerFactory>();
+            _ = services.Register<ILocalizationCultureManager, LocalizationCultureManager>();
+            _ = services.Register<IStringLocalizer, ProviderBasedStringLocalizer>();
         }
-        catch (Exception)
+        else
         {
-            throw;
+            if (services is IContainerExtension container && container != null)
+            {
+                builder = container.Resolve<DependencyInjectionLocalizationBuilder>();
+                configure?.Invoke(builder);
+            }
         }
 
         return services;

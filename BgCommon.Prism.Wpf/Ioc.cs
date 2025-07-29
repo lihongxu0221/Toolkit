@@ -12,6 +12,8 @@ public static class Ioc
 {
     private static IContainerExtension? _container;
 
+    public static IContainerExtension? Container => _container;
+
     public static IDialogService? DialogService { get; set; }
 
     public static IEventAggregator? EventAggregator { get; set; }

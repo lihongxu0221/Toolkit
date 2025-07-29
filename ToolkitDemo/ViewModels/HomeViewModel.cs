@@ -1,0 +1,1 @@
+using BgCommon.Prism.Wpf.MVVM;namespace ToolkitDemo.ViewModels;/// <summary>/// 首页ViewModel类./// </summary>public partial class HomeViewModel : ViewModelBase{    public HomeViewModel(IContainerExtension container)        : base(container)    {    }}

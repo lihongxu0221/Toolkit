@@ -28,6 +28,9 @@
         <bg:EventTrigger EventName="Loaded">
             <bg:InvokeCommandAction Command="{Binding LoadedCommand}" />
         </bg:EventTrigger>
+        <bg:EventTrigger EventName="Unloaded">
+            <bg:InvokeCommandAction Command="{Binding UnloadedCommand}" />
+        </bg:EventTrigger>
     </bg:Interaction.Triggers>
     <Grid Height="{Binding Height,Mode=TwoWay}" Width="{Binding Width,Mode=TwoWay}">
         <Grid.Background>

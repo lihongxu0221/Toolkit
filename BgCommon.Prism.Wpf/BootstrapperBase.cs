@@ -1,7 +1,7 @@
 using BgCommon;
 using BgCommon.Localization.DependencyInjection;
+using BgCommon.Prism.Wpf.Authority.Data;
 using BgCommon.Prism.Wpf.Authority.Services;
-using BgCommon.Prism.Wpf.Authority.Services.Implementation;
 using BgCommon.Prism.Wpf.Common.ViewModels;
 using BgCommon.Prism.Wpf.Common.Views;
 using BgCommon.Prism.Wpf.Controls;
@@ -46,21 +46,6 @@ public abstract class BootstrapperBase : PrismBootstrapper
     /// </summary>
     /// <returns>返回 初始化全局参数服务</returns>
     protected abstract Type GetGlobalVarService();
-
-    /// <summary>
-    /// 获取用户管理服务.
-    /// </summary>
-    /// <returns>返回 用户管理服务.</returns>
-    protected virtual Type GetUserServiceType()
-    {
-        return typeof(DefaultUserService);
-    }
-
-    /// <summary>
-    /// 获取功能模块权限相关服务.
-    /// </summary>
-    /// <returns>返回 功能模块权限相关服务</returns>
-    protected abstract Type GetModuleService();
 
     /// <summary>
     /// 通过ViewType获取 ViewModelType.
@@ -130,17 +115,15 @@ public abstract class BootstrapperBase : PrismBootstrapper
         // 2. 注入日志模块
         BgLoggerFactory.Register(containerRegistry);
 
-        // 3. 注入服务
+        // 3. 注入权限系统数据库 将 AuthorityDbContext 注册为单例，确保整个应用共享同一个数据库连接实例
+        _ = containerRegistry.Register<AuthorityDbContextSqlite>();
+        _ = containerRegistry.Register(typeof(IRepository<>), typeof(EFRepository<>));
+
+        // 4. 注入服务
         Type initialService = GetInitialServiceType();
         if (initialService == null || !initialService.IsAssignableTo(typeof(InitializationServiceBase)))
         {
             throw new ArgumentException(Ioc.GetString("InitialServiceType 不能为空，且必须从InitializationServiceBase派生!"));
-        }
-
-        Type moduleService = GetModuleService();
-        if (moduleService == null || !moduleService.IsAssignableTo(typeof(ModuleServiceBase)))
-        {
-            throw new ArgumentException(Ioc.GetString("ModuleService 不能为空，且必须从ModuleServiceBase派生!"));
         }
 
         Type globalVarService = GetGlobalVarService();
@@ -149,23 +132,19 @@ public abstract class BootstrapperBase : PrismBootstrapper
             throw new ArgumentException(Ioc.GetString("GlobalVarService不能为空!"));
         }
 
-        Type userService = GetUserServiceType();
-        if (userService == null)
-        {
-            throw new ArgumentException(Ioc.GetString("UserServiceType不能为空!"));
-        }
-
         // 进程初始化服务
         _ = containerRegistry.RegisterSingleton(typeof(IInitializationService), initialService);
 
         // 全局变量管理服务
         _ = containerRegistry.RegisterSingleton(typeof(IGlobalVarService), globalVarService);
 
-        // 用户管理服务
-        _ = containerRegistry.RegisterSingleton(typeof(IUserService), userService);
-
-        // 功能模块权限相关服务
-        _ = containerRegistry.RegisterSingleton(typeof(IModuleService), moduleService);
+        // 权限管理服务
+        _ = containerRegistry.RegisterSingleton(typeof(ILoggingService), typeof(DatabaseLoggingService));
+        _ = containerRegistry.RegisterSingleton(typeof(IAuthService), typeof(AuthService));
+        _ = containerRegistry.RegisterSingleton(typeof(IUserService), typeof(UserService));
+        _ = containerRegistry.RegisterSingleton(typeof(IRoleService), typeof(RoleService));
+        _ = containerRegistry.RegisterSingleton(typeof(IModuleService), typeof(ModuleService));
+        _ = containerRegistry.RegisterSingleton(typeof(IAuthorityService), typeof(AuthorityService));
 
         // Prism 视图自动注入服务.
         _ = containerRegistry.RegisterSingleton(typeof(IRegistrationService), typeof(DynamicRegistrationService));
@@ -267,15 +246,14 @@ public abstract class BootstrapperBase : PrismBootstrapper
                     catch (Exception ex)
                     {
                         string msg = ex.ToString() + "\r\n";
-                        //if (ex.InnerException != null)
-                        //{
-                        //    msg += ex.InnerException.ToString();
-                        //}
 
-                        MessageBox.Show($"无法加载插件模块." + $"Folder:{folder}" + "\r\n" + msg);
+                        // if (ex.InnerException != null)
+                        // {
+                        //     msg += ex.InnerException.ToString();
+                        // }
+                        _ = MessageBox.Show($"无法加载插件模块." + $"Folder:{folder}" + "\r\n" + msg);
                         Environment.Exit(0);
                     }
-
 
                     components.AddRange(dirCatelog.Items);
                 }
@@ -288,10 +266,11 @@ public abstract class BootstrapperBase : PrismBootstrapper
 
         var catelog = new ModuleCatalog();
 
-        foreach (var com in components)
+        foreach (IModuleCatalogItem com in components)
         {
             catelog.Items.Add(com);
         }
+
         return catelog;
     }
 

@@ -1,8 +1,7 @@
 using BgCommon;
 using BgCommon.Prism.Wpf.Common.Views;
 using BgCommon.Prism.Wpf.MVVM;
-using BgLogger;
-using ModuleInfo = BgCommon.Prism.Wpf.Authority.Models.ModuleInfo;
+using ModuleInfo = BgCommon.Prism.Wpf.Authority.Entities.ModuleInfo;
 using Regions = Prism.Navigation.Regions;
 
 namespace BgCommon.Prism.Wpf.Common.ViewModels;
@@ -114,6 +113,7 @@ public partial class ModuleHostViewModel : NavigationViewModelBase
 
             // 发布视图变更事件，通知其他部分
             this.PublishEx(new ModuleHostViewChanged(false, currentView, view.DataContext as ViewModelBase, null));
+
             // LogRun.Trace($"{currentView?.ModuleName} 导航到区域 {regionName} 成功，耗时 {sw.ElapsedMilliseconds} ms");
         }
         catch (Exception ex)
@@ -124,7 +124,7 @@ public partial class ModuleHostViewModel : NavigationViewModelBase
         finally
         {
             // 无论成功或失败，都取消延迟任务并停止计时
-            await cts.CancelAsync();
+            cts.Cancel();
             sw.Stop();
         }
     }
@@ -253,7 +253,10 @@ public partial class ModuleHostViewModel : NavigationViewModelBase
         }
 
         // 步骤 2: 从DI容器解析新视图
+        var sw = new Stopwatch();
+        sw.Start();
         var view = Container.Resolve(viewType) as FrameworkElement;
+        Debug.WriteLine($"【Resolve】{viewType.Name} cost {sw.ElapsedMilliseconds} ms");
         if (view is null)
         {
             return null;
@@ -280,6 +283,8 @@ public partial class ModuleHostViewModel : NavigationViewModelBase
             _ = this.viewCache.TryAdd(viewType, view);
         }
 
+        Debug.WriteLine($"【Total】{viewType.Name} cost {sw.ElapsedMilliseconds} ms");
+        sw.Stop();
         return view;
     }
 
@@ -340,7 +345,6 @@ public partial class ModuleHostViewModel : NavigationViewModelBase
         {
             disposable.Dispose();
         }
-
     }
 
     /// <summary>

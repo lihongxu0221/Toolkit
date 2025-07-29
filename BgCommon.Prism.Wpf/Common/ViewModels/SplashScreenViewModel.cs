@@ -3,14 +3,29 @@ using BgCommon.Prism.Wpf.Services;
 
 namespace BgCommon.Prism.Wpf.Common.ViewModels;
 
-public class SplashScreenViewModel : ViewModelBase
+/// <summary>
+/// SplashScreenViewModel.cs .
+/// </summary>
+public partial class SplashScreenViewModel : ViewModelBase
 {
     private readonly IGlobalVarService globalVarService;
-    private ImageSource? imageSource = null;
+
+    [ObservableProperty]
+    private ImageSource? splashImage = null;
+
+    [ObservableProperty]
     private double width = 800;
+
+    [ObservableProperty]
     private double height = 600;
+
+    [ObservableProperty]
     private double progress = 0.0d;
+
+    [ObservableProperty]
     private string title = string.Empty;
+
+    [ObservableProperty]
     private string statusMessage = string.Empty;
 
     /// <summary>
@@ -24,53 +39,13 @@ public class SplashScreenViewModel : ViewModelBase
         : base(container)
     {
         this.globalVarService = globalVarService;
-    }
-
-    public ImageSource? SplashImage
-    {
-        get => imageSource;
-        set => _ = SetProperty(ref imageSource, value);
-    }
-
-    public double Width
-    {
-        get => width;
-        set => _ = SetProperty(ref width, value);
-    }
-
-    public double Height
-    {
-        get => height;
-        set => _ = SetProperty(ref height, value);
-    }
-
-    public double Progress
-    {
-        get => progress;
-        set => _ = SetProperty(ref progress, value);
-    }
-
-    public string Title
-    {
-        get => title;
-        set => _ = SetProperty(ref title, value);
-    }
-
-    public string StatusMessage
-    {
-        get => statusMessage;
-        set => _ = SetProperty(ref statusMessage, value);
-    }
-
-    protected override void OnActivated()
-    {
-        base.OnActivated();
         _ = this.Subscribe<(double, string, string)>(OnShowSplash);
     }
 
-    protected override void OnDeactivated()
+    protected override Task OnUnloadAsync(object? parameter)
     {
         _ = this.Subscribe<(double, string, string)>(OnShowSplash);
+        return base.OnUnloadAsync(parameter);
     }
 
     protected override Task OnLoadedAsync(object? parameter)

@@ -1,5 +1,6 @@
 using BgCommon.Prism.Wpf;
 using BgCommon.Prism.Wpf.Authority;
+using BgCommon.Prism.Wpf.Authority.Entities;
 using BgCommon.Prism.Wpf.Authority.Models;
 using BgCommon.Prism.Wpf.Authority.Services;
 using BgCommon.Prism.Wpf.MVVM;
@@ -11,7 +12,7 @@ namespace ToolkitDemo.ViewModels;
 /// </summary>
 public partial class MainViewModel : NavigationHostViewModelBase, IPersistAcrossNavigation, ICachedView
 {
-    private readonly IUserService userService;
+    private readonly IAuthorityService userService;
 
     [ObservableProperty]
     private string userName = string.Empty;
@@ -22,7 +23,7 @@ public partial class MainViewModel : NavigationHostViewModelBase, IPersistAcross
     [ObservableProperty]
     private string appVersion = "V 1.0.0";
 
-    public MainViewModel(IContainerExtension container, IUserService userService)
+    public MainViewModel(IContainerExtension container, IAuthorityService userService)
         : base(container, RegionDefine.MainContentRegion, true)
     {
         this.userService = userService;
@@ -41,7 +42,7 @@ public partial class MainViewModel : NavigationHostViewModelBase, IPersistAcross
     private async Task OnLogin()
     {
         UserInfo? user = null;
-        LoginResult result = await this.userService.ShowLoginViewAsync();
+        AuthorityResult result = await this.userService.ShowLoginViewAsync();
         if (result.Code != 0)
         {
             if (result.Success)

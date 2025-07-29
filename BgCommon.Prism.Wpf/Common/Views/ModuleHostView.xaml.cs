@@ -1,3 +1,6 @@
+using BgCommon.Prism.Wpf.Common.ViewModels;
+using BgCommon.Prism.Wpf.DependencyInjection;
+
 namespace BgCommon.Prism.Wpf.Common.Views;
 
 /// <summary>

@@ -1,41 +1,50 @@
-using ModuleInfo = BgCommon.Prism.Wpf.Authority.Models.ModuleInfo;
+using BgCommon.Prism.Wpf.Authority.Entities;
+using BgCommon.Prism.Wpf.Authority.Models;
 
 namespace BgCommon.Prism.Wpf.Authority.Services;
 
-/// <summary>
-/// 模块服务接口.
-/// </summary>
-public interface IModuleService : IDebugMode
+public interface IModuleService
 {
     /// <summary>
-    /// 初始化模块服务.
+    /// 获取全部模块列表.<br/>
+    /// 管理员使用的接口.
     /// </summary>
-    Task<bool> InitializeAsync();
-
-    /// <summary>
-    /// 获取全部模块列表.
-    /// </summary>
+    /// <param name="operatorUser">当前用户.</param>
     /// <returns>模块列表.</returns>
-    IEnumerable<ModuleInfo> GetAllModules();
+    Task<AuthorityResult<List<Entities.ModuleInfo>>> GetAllSystemModulesAsync(UserInfo operatorUser);
 
     /// <summary>
-    /// 通过父模块ID查找子模块列表.
+    /// 添加一个新模块.<br/>
+    /// 管理员使用的接口.
     /// </summary>
+    /// <param name="moduleToAdd">要添加的模块信息.</param>
+    /// <param name="operatorUser">执行此操作的用户.</param>
+    /// <returns>操作结果.</returns>
+    Task<AuthorityResult> AddModuleAsync(Entities.ModuleInfo moduleToAdd, UserInfo operatorUser);
+
+    /// <summary>
+    /// 更新一个已有的模块信息.<br/>
+    /// 管理员使用的接口.
+    /// </summary>
+    /// <param name="moduleToUpdate">要更新的模块信息.</param>
+    /// <param name="operatorUser">执行此操作的用户.</param>
+    /// <returns>操作结果.</returns>
+    Task<AuthorityResult> UpdateModuleAsync(Entities.ModuleInfo moduleToUpdate, UserInfo operatorUser);
+
+    /// <summary>
+    /// 删除一个模块.<br/>
+    /// 管理员使用的接口.
+    /// </summary>
+    /// <param name="moduleIdToDelete">要删除的模块ID.</param>
+    /// <param name="operatorUser">执行此操作的用户.</param>
+    /// <returns>操作结果.</returns>
+    Task<AuthorityResult> DeleteModuleAsync(long moduleIdToDelete, UserInfo operatorUser);
+
+    /// <summary>
+    /// 普通用户基于权限获取模块的接口
+    /// </summary>
+    /// <param name="operatorUser">当前用户.</param>
     /// <param name="parentId">父模块ID.</param>
     /// <returns>子模块列表.</returns>
-    IEnumerable<ModuleInfo> GetModules(int? parentId = null);
-
-    /// <summary>
-    /// 校验当前用户是否有权限访问指定模块.
-    /// </summary>
-    /// <param name="module">模块实例.</param>
-    /// <returns>返回 是否权限访问.</returns>
-    bool Verify(ModuleInfo module);
-
-    /// <summary>
-    /// 校验当前用户是否有权限访问指定模块.
-    /// </summary>
-    /// <param name="moduleId">模块实例Id.</param>
-    /// <returns>返回 是否权限访问.</returns>
-    bool Verify(int moduleId);
+    Task<AuthorityResult<List<Entities.ModuleInfo>>> GetAuthorizedModulesAsync(UserInfo operatorUser, long? parentId = null);
 }

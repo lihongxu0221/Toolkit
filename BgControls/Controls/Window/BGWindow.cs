@@ -85,8 +85,8 @@ public class BGWindow : Window
 
     public bool ShowRightArea
     {
-        get => (bool)GetValue(ShowLeftAreaProperty);
-        set => SetValue(ShowLeftAreaProperty, value);
+        get => (bool)GetValue(ShowRightAreaProperty);
+        set => SetValue(ShowRightAreaProperty, value);
     }
 
     public Brush CloseButtonHoverBackground
@@ -234,52 +234,45 @@ public class BGWindow : Window
 
     protected void OnLoaded(RoutedEventArgs args)
     {
-        try
+        _actualBorderThickness = BorderThickness;
+        _tempNonClientAreaHeight = NonClientAreaHeight;
+
+        if (WindowState == WindowState.Maximized)
         {
-            _actualBorderThickness = BorderThickness;
-            _tempNonClientAreaHeight = NonClientAreaHeight;
-
-            if (WindowState == WindowState.Maximized)
-            {
-                BorderThickness = new Thickness(0);
-                _tempNonClientAreaHeight += 8;
-            }
-
-            _ = CommandBindings.Add(new CommandBinding(SystemCommands.MinimizeWindowCommand, (s, e) => WindowState = WindowState.Minimized));
-            _ = CommandBindings.Add(new CommandBinding(SystemCommands.MaximizeWindowCommand, (s, e) => WindowState = WindowState.Maximized));
-            _ = CommandBindings.Add(new CommandBinding(SystemCommands.RestoreWindowCommand, (s, e) => WindowState = WindowState.Normal));
-            _ = CommandBindings.Add(new CommandBinding(SystemCommands.CloseWindowCommand, (s, e) => Close()));
-            _ = CommandBindings.Add(new CommandBinding(SystemCommands.ShowSystemMenuCommand, ShowSystemMenu));
-
-            _tempWindowState = WindowState;
-            _tempWindowStyle = WindowStyle;
-            _tempResizeMode = ResizeMode;
-
-            SwitchIsFullScreen(_isFullScreen);
-            SwitchShowNonClientArea(_showNonClientArea);
-            SwitchShowArea(_leftArea, _showLeftArea);
-            SwitchShowArea(_rightArea, _showRightArea);
-
-            if (WindowState == WindowState.Maximized)
-            {
-                _tempNonClientAreaHeight -= 8;
-            }
-
-            if (SizeToContent != SizeToContent.WidthAndHeight)
-            {
-                return;
-            }
-
-            SizeToContent = SizeToContent.Height;
-            _ = Dispatcher.BeginInvoke(new Action(() =>
-            {
-                SizeToContent = SizeToContent.WidthAndHeight;
-            }));
+            BorderThickness = new Thickness(0);
+            _tempNonClientAreaHeight += 8;
         }
-        catch (Exception ex)
+
+        _ = CommandBindings.Add(new CommandBinding(SystemCommands.MinimizeWindowCommand, (s, e) => WindowState = WindowState.Minimized));
+        _ = CommandBindings.Add(new CommandBinding(SystemCommands.MaximizeWindowCommand, (s, e) => WindowState = WindowState.Maximized));
+        _ = CommandBindings.Add(new CommandBinding(SystemCommands.RestoreWindowCommand, (s, e) => WindowState = WindowState.Normal));
+        _ = CommandBindings.Add(new CommandBinding(SystemCommands.CloseWindowCommand, (s, e) => Close()));
+        _ = CommandBindings.Add(new CommandBinding(SystemCommands.ShowSystemMenuCommand, ShowSystemMenu));
+
+        _tempWindowState = WindowState;
+        _tempWindowStyle = WindowStyle;
+        _tempResizeMode = ResizeMode;
+
+        SwitchIsFullScreen(_isFullScreen);
+        SwitchShowNonClientArea(_showNonClientArea);
+        SwitchShowArea(_leftArea, _showLeftArea);
+        SwitchShowArea(_rightArea, _showRightArea);
+
+        if (WindowState == WindowState.Maximized)
         {
-            throw;
+            _tempNonClientAreaHeight -= 8;
         }
+
+        if (SizeToContent != SizeToContent.WidthAndHeight)
+        {
+            return;
+        }
+
+        SizeToContent = SizeToContent.Height;
+        _ = Dispatcher.BeginInvoke(new Action(() =>
+        {
+            SizeToContent = SizeToContent.WidthAndHeight;
+        }));
     }
 
     protected override void OnContentRendered(EventArgs e)

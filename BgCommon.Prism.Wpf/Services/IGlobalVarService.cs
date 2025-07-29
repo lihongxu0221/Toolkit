@@ -1,37 +1,1 @@
-namespace BgCommon.Prism.Wpf.Services;
-
-/// <summary>
-/// 全局调用的变量.
-/// </summary>
-public interface IGlobalVarService : IDebugMode
-{
-    /// <summary>
-    /// 获取闪窗图片路径.
-    /// </summary>
-    /// <returns>返回闪窗图片路径. </returns>
-    string? GetSplashScreenImage();
-
-    /// <summary>
-    /// 获取Ioc图标路径.
-    /// </summary>
-    /// <returns>返回Ioc图标路径.</returns>
-    string? GetAppIconImage();
-
-    /// <summary>
-    /// 获取Logo图标路径.
-    /// </summary>
-    /// <returns>返回Logo图标路径.</returns>
-    string? GetAppLogoImage();
-
-    /// <summary>
-    /// 获取程序名称.
-    /// </summary>
-    /// <returns>返回 程序名称.</returns>
-    string? GetAppName();
-
-    /// <summary>
-    /// 全局设置初始化
-    /// </summary>
-    /// <returns>返回 是否成功初始化</returns>
-    Task<bool> InitializeAsync();
-}
+using BgCommon.Prism.Wpf.Authority.Entities;namespace BgCommon.Prism.Wpf.Services;/// <summary>/// 全局调用的变量./// </summary>public interface IGlobalVarService : IDebugMode{    /// <summary>    /// Gets or sets 当前登陆的用户.    /// </summary>    UserInfo? CurrentUser { get; set; }    /// <summary>    /// 获取闪窗图片路径.    /// </summary>    /// <returns>返回闪窗图片路径. </returns>    string? GetSplashScreenImage();    /// <summary>    /// 获取Ioc图标路径.    /// </summary>    /// <returns>返回Ioc图标路径.</returns>    string? GetAppIconImage();    /// <summary>    /// 获取Logo图标路径.    /// </summary>    /// <returns>返回Logo图标路径.</returns>    string? GetAppLogoImage();    /// <summary>    /// 获取程序名称.    /// </summary>    /// <returns>返回 程序名称.</returns>    string? GetAppName();    /// <summary>    /// 全局设置初始化    /// </summary>    /// <returns>返回 是否成功初始化</returns>    Task<bool> InitializeAsync();}

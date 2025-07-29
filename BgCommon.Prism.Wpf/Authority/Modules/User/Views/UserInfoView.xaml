@@ -1,0 +1,89 @@
+<UserControl x:Class="BgCommon.Prism.Wpf.Authority.Modules.User.Views.UserInfoView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:prism="http://prismlibrary.com/"
+             xmlns:hc="https://handyorg.github.io/handycontrol"
+             xmlns:bg="http://www.sz-baigu.com/"
+             xmlns:local="clr-namespace:BgCommon.Prism.Wpf.Authority"
+             xmlns:view="clr-namespace:BgCommon.Prism.Wpf.Authority.Modules.User.Views"
+             xmlns:vm="clr-namespace:BgCommon.Prism.Wpf.Authority.Modules.User.ViewModels"
+             xmlns:sys="clr-namespace:System;assembly=mscorlib"
+             mc:Ignorable="d" 
+             d:DesignHeight="600" Height="600"  
+             d:DesignWidth="480" Width="480"
+             d:DataContext="{d:DesignInstance vm:UserInfoViewModel}"
+             prism:ViewModelLocator.AutoWireViewModel="True"
+             FontSize="{DynamicResource SubHeadFontSize}"
+             Foreground="{DynamicResource PrimaryTextBrush}"
+             Background="Transparent">
+    <UserControl.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="pack://application:,,,/BgCommon.Prism.Wpf;component/Assets/Style/Theme.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </UserControl.Resources>
+    <Grid Margin="30">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <StackPanel Grid.Row="0">
+            <TextBox Style="{DynamicResource TextBoxExtend}"
+                     hc:TitleElement.Title="{bg:StringResource 用户}"
+                     hc:TitleElement.TitlePlacement="Top"
+                     hc:TitleElement.VerticalAlignment="Center"
+                     hc:TitleElement.TitleWidth="120"
+                     Text="{Binding User.UserName}"
+                     IsReadOnly="{Binding IsCreateNew,Converter={StaticResource Boolean2BooleanReConverter}}"
+                     Margin="0 15 0 0 "/>
+            <PasswordBox Style="{DynamicResource PasswordBoxExtend}"
+                         hc:TitleElement.Title="{bg:StringResource 密码}"
+                         hc:TitleElement.TitlePlacement="Top"
+                         hc:TitleElement.VerticalAlignment="Center"
+                         hc:TitleElement.TitleWidth="120"                                       
+                         bg:PasswordHelper.Attach="True"
+                         bg:PasswordHelper.Password="{Binding User.Password,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"
+                         Margin="0 15 0 0 "/>
+            <PasswordBox Style="{DynamicResource PasswordBoxExtend}"
+                         hc:TitleElement.Title="{bg:StringResource 确认密码}"
+                         hc:TitleElement.TitlePlacement="Top"
+                         hc:TitleElement.VerticalAlignment="Center"
+                         hc:TitleElement.TitleWidth="120"                                       
+                         bg:PasswordHelper.Attach="True"
+                         bg:PasswordHelper.Password="{Binding ConfirmPassword,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"
+                         Visibility="{Binding IsCreateNew,Converter={StaticResource Boolean2VisibilityReConverter}}"
+                         Margin="0 15 0 0 "/>
+            <ComboBox Style="{DynamicResource ComboBoxExtend}"
+                      hc:TitleElement.Title="{bg:StringResource 用户角色}"
+                      hc:TitleElement.TitlePlacement="Top"
+                      hc:TitleElement.VerticalAlignment="Center"
+                      hc:TitleElement.TitleWidth="120"                      
+                      ItemsSource="{Binding Source={StaticResource AuthorityEnum}}"
+                      SelectedItem="{Binding User.Authority}"
+                      Margin="0 15 0 0 "/>
+            <CheckBox Style="{DynamicResource CheckBoxExtend}"
+                      hc:TitleElement.Title="{bg:StringResource 是否启用}"
+                      hc:TitleElement.TitlePlacement="Top"
+                      hc:TitleElement.VerticalAlignment="Center"
+                      hc:TitleElement.TitleWidth="120"
+                      IsChecked="{Binding User.IsActive}"
+                      Margin="0 15 0 0 "/>
+        </StackPanel>
+        <StackPanel Grid.Row="2" Orientation="Vertical" >
+            <Button Style="{DynamicResource ButtonPrimary}"
+                    HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
+                    Width="Auto" Height="40" Content="{bg:StringResource 确定}" 
+                    Command="{Binding OkCommand}"
+                    IsDefault="True"/>
+            <Button Style="{DynamicResource ButtonDashedInfo}" 
+                    HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
+                    Width="Auto" Height="40" Content="{bg:StringResource 取消}"  Margin="0 15 0 0"
+                    Command="{Binding CancelCommand}"
+                    IsCancel="True"/>
+        </StackPanel>
+    </Grid>
+</UserControl>

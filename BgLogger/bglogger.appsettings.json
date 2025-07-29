@@ -10,6 +10,8 @@
     "autoReload": true,
     "internalLogLevel": "Info",
     "internalLogFile": "${basedir}/logs/nlog-appsettings-internal.log",
+    "internalLogToConsole": true,
+    "throwConfigExceptions": true,
     "extensions": [
       { "assembly": "NLog.Database" },
       { "assembly": "BgLogger" }
@@ -20,7 +22,6 @@
       "defaultLayout": "${longdate}|${level:uppercase=true}|${threadid}|${logger}|${message} ${exception:format=ToString}"
     },
     "targets": {
-      // --- 顶层现在只剩下一个目标：中央路由器 ---
       "centralAsyncRouter": {
         "type": "AsyncWrapper",
         "batchSize": 100,
@@ -111,7 +112,6 @@
       }
     },
     "rules": [
-      // --- 规则保持不变，极其简单 ---
       {
         "logger": "*",
         "minLevel": "Trace",

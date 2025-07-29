@@ -11,13 +11,13 @@ namespace BgCommon.Prism.Wpf.Services.Implementation;
 /// </summary>
 public abstract class InitializationServiceBase : IInitializationService
 {
-    private readonly IContainerExtension container;  // Prism Ioc容器实例.
-    private readonly IGlobalVarService globalVarService; // 弹窗服务.
-    private readonly IUserService userService; // 用户服务.
-    private readonly IModuleService moduleService; // 模块.
-    private readonly IRegistrationService registrationService; // 动态注册服务.
-    private readonly IDialogService dialogService; // 弹窗服务.
-    private readonly IEventAggregator eventAggregator;
+    protected readonly IContainerExtension container;  // Prism Ioc容器实例.
+    protected readonly IGlobalVarService globalVarService; // 弹窗服务.
+    protected readonly IAuthorityService userService; // 用户服务.
+    protected readonly IModuleService moduleService; // 模块.
+    protected readonly IRegistrationService registrationService; // 动态注册服务.
+    protected readonly IDialogService dialogService; // 弹窗服务.
+    protected readonly IEventAggregator eventAggregator;
 
     private SplashScreenView? splashScreenView = null;
 
@@ -25,7 +25,7 @@ public abstract class InitializationServiceBase : IInitializationService
     {
         this.container = container;
         this.globalVarService = container.Resolve<IGlobalVarService>();
-        this.userService = container.Resolve<IUserService>();
+        this.userService = container.Resolve<IAuthorityService>();
         this.moduleService = container.Resolve<IModuleService>();
         this.registrationService = container.Resolve<IRegistrationService>();
         this.dialogService = container.Resolve<IDialogService>();
@@ -138,22 +138,6 @@ public abstract class InitializationServiceBase : IInitializationService
     }
 
     /// <summary>
-    /// 登录.
-    /// </summary>
-    /// <returns>Task.</returns>
-    private async Task<bool> LoginAsync()
-    {
-        bool result = false;
-        LoginResult loginRet = await this.userService.ShowLoginViewAsync();
-        if (loginRet != null && loginRet.Success)
-        {
-            result = true;
-        }
-
-        return result;
-    }
-
-    /// <summary>
     /// 启动画面.
     /// </summary>
     /// <returns>Task.</returns>
@@ -194,6 +178,22 @@ public abstract class InitializationServiceBase : IInitializationService
     }
 
     /// <summary>
+    /// 登录.
+    /// </summary>
+    /// <returns>Task.</returns>
+    protected virtual async Task<bool> OnLoginAsync()
+    {
+        bool result = false;
+        AuthorityResult loginRet = await this.userService.ShowLoginViewAsync();
+        if (loginRet != null && loginRet.Success)
+        {
+            result = true;
+        }
+
+        return result;
+    }
+
+    /// <summary>
     /// 更多的初始化.
     /// </summary>
     /// <returns>初始化是否成功.</returns>
@@ -225,7 +225,7 @@ public abstract class InitializationServiceBase : IInitializationService
         }
 
         // 1. 登陆鉴权失败，关闭进程并返回.
-        if (!await this.LoginAsync())
+        if (!await this.OnLoginAsync())
         {
             return false;
         }

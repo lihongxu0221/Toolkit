@@ -10,7 +10,6 @@ namespace BgCommon.Prism.Wpf.MVVM;
 /// </summary>
 public abstract partial class NavigationViewModelBase : ViewModelBase, INavigationAware, IConfirmNavigationRequest, IDestructible, IRegionMemberLifetime
 {
-
     protected NavigationViewModelBase(IContainerExtension container)
         : base(container)
     {

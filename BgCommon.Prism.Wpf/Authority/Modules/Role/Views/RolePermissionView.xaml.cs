@@ -1,0 +1,1 @@
+namespace BgCommon.Prism.Wpf.Authority.Modules.Role.Views;/// <summary>/// RoleView.xaml 的交互逻辑/// </summary>public partial class RolePermissionView : UserControl{    public RolePermissionView()    {        InitializeComponent();    }}
