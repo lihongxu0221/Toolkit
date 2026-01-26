@@ -1,3 +1,6 @@
+using System.Windows;
+using System.Windows.Markup;
+
 [assembly: ThemeInfo(
 
     // where theme specific resource dictionaries are located
@@ -12,23 +15,12 @@
 )]
 
 [assembly: InternalsVisibleTo("BgControls")]
-[assembly: InternalsVisibleTo("BgCommon.Prism.Wpf")]
-[assembly: InternalsVisibleTo("CurveEdge3D")]
 [assembly: XmlnsDefinition("http://www.sz-baigu.com/", "BgCommon")]
-[assembly: XmlnsDefinition("http://www.sz-baigu.com/", "BgCommon.Attributes")]
+[assembly: XmlnsDefinition("http://www.sz-baigu.com/", "BgCommon.Collections")]
+[assembly: XmlnsDefinition("http://www.sz-baigu.com/", "BgCommon.Collections.Generic")]
 [assembly: XmlnsDefinition("http://www.sz-baigu.com/", "BgCommon.Configuration")]
-[assembly: XmlnsDefinition("http://www.sz-baigu.com/", "BgCommon.DependencyInjection")]
-[assembly: XmlnsDefinition("http://www.sz-baigu.com/", "BgCommon.Localization")]
-[assembly: XmlnsDefinition("http://www.sz-baigu.com/", "BgCommon.Localization.ComponentModel")]
-[assembly: XmlnsDefinition("http://www.sz-baigu.com/", "BgCommon.Localization.Converters")]
-[assembly: XmlnsDefinition("http://www.sz-baigu.com/", "BgCommon.Localization.IO")]
-[assembly: XmlnsDefinition("http://www.sz-baigu.com/", "BgCommon.Localization.Json.Models")]
-[assembly: XmlnsDefinition("http://www.sz-baigu.com/", "BgCommon.Localization.Markup")]
-[assembly: XmlnsDefinition("http://www.sz-baigu.com/", "BgCommon.MVVM")]
-[assembly: XmlnsDefinition("http://www.sz-baigu.com/", "BgCommon.MVVM.ComponentModel")]
-[assembly: XmlnsDefinition("http://www.sz-baigu.com/", "BgCommon.Serialization")]
-[assembly: XmlnsDefinition("http://www.sz-baigu.com/", "BgCommon.Serialization.Exceptions")]
-[assembly: XmlnsDefinition("http://www.sz-baigu.com/", "BgCommon.Serialization.Implementation")]
-[assembly: XmlnsDefinition("http://www.sz-baigu.com/", "BgCommon.Serialization.Implementation.Internal")]
-[assembly: XmlnsDefinition("http://www.sz-baigu.com/", "BgCommon.Serialization.Interop")]
+[assembly: XmlnsDefinition("http://www.sz-baigu.com/", "BgCommon.Core")]
+[assembly: XmlnsDefinition("http://www.sz-baigu.com/", "BgCommon.Core.Models")]
+[assembly: XmlnsDefinition("http://www.sz-baigu.com/", "BgCommon.Text.Json.Converters")]
+[assembly: XmlnsDefinition("http://www.sz-baigu.com/", "BgCommon.Text.Json")]
 [assembly: XmlnsPrefix("http://www.sz-baigu.com/", "bg")]

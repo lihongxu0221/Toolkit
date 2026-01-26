@@ -5,14 +5,23 @@ namespace BgCommon.Collections;
 /// </summary>
 public class ObservableRangeCollection<T> : ObservableCollection<T>
 {
-    // 是否抑制通知.
-    private bool _suppressNotification = false;
+    /// <summary>
+    /// 是否抑制集合变更通知的标志.
+    /// </summary>
+    private bool suppressNotification;
 
+    /// <summary>
+    /// 初始化 ObservableRangeCollection 类的新实例.
+    /// </summary>
     public ObservableRangeCollection()
         : base()
     {
     }
 
+    /// <summary>
+    /// 初始化 ObservableRangeCollection 类的新实例，该实例包含从指定集合复制的元素.
+    /// </summary>
+    /// <param name="collection">要复制元素的集合.</param>
     public ObservableRangeCollection(IEnumerable<T> collection)
         : base(collection)
     {
@@ -24,7 +33,7 @@ public class ObservableRangeCollection<T> : ObservableCollection<T>
     /// <param name="e">变更事件参数.</param>
     protected override void OnCollectionChanged(NotifyCollectionChangedEventArgs e)
     {
-        if (!_suppressNotification)
+        if (!suppressNotification)
         {
             base.OnCollectionChanged(e);
         }
@@ -36,7 +45,7 @@ public class ObservableRangeCollection<T> : ObservableCollection<T>
     /// <param name="e">属性变更事件参数.</param>
     protected override void OnPropertyChanged(PropertyChangedEventArgs e)
     {
-        if (!_suppressNotification)
+        if (!suppressNotification)
         {
             base.OnPropertyChanged(e);
         }
@@ -49,30 +58,30 @@ public class ObservableRangeCollection<T> : ObservableCollection<T>
     /// <param name="items">要添加的元素集合.</param>
     public void InsertRange(int index, IEnumerable<T> items)
     {
-        // 如果传入集合为 null，直接返回.
+        // 如果传入集合为 null，直接返回
         if (items == null)
         {
             return;
         }
 
-        // 将集合转为列表以避免多次枚举.
+        // 将集合转为列表以避免多次枚举
         var itemList = items as ICollection<T> ?? items.ToList();
         if (itemList.Count == 0)
         {
             return;
         }
 
-        _suppressNotification = true;
+        suppressNotification = true;
 
-        // 批量插入元素.
+        // 批量插入元素
         foreach (T item in itemList)
         {
             Insert(index++, item);
         }
 
-        _suppressNotification = false;
+        suppressNotification = false;
 
-        // 触发一次重置通知，告知UI整个集合已变更.
+        // 触发一次重置通知，告知UI整个集合已变更
         OnPropertyChanged(new PropertyChangedEventArgs("Count"));
         OnPropertyChanged(new PropertyChangedEventArgs("Item[]"));
         OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
@@ -84,30 +93,30 @@ public class ObservableRangeCollection<T> : ObservableCollection<T>
     /// <param name="list">要添加的元素集合.</param>
     public void AddRange(IEnumerable<T> list)
     {
-        // 如果传入集合为 null，直接返回.
+        // 如果传入集合为 null，直接返回
         if (list == null)
         {
             return;
         }
 
-        // 将集合转为列表以避免多次枚举.
+        // 将集合转为列表以避免多次枚举
         var items = list as ICollection<T> ?? list.ToList();
         if (items.Count == 0)
         {
             return;
         }
 
-        _suppressNotification = true;
+        suppressNotification = true;
 
-        // 批量添加元素.
+        // 批量添加元素
         foreach (T item in items)
         {
             Add(item);
         }
 
-        _suppressNotification = false;
+        suppressNotification = false;
 
-        // 触发一次重置通知，告知UI整个集合已变更.
+        // 触发一次重置通知，告知UI整个集合已变更
         OnPropertyChanged(new PropertyChangedEventArgs("Count"));
         OnPropertyChanged(new PropertyChangedEventArgs("Item[]"));
         OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
@@ -120,7 +129,7 @@ public class ObservableRangeCollection<T> : ObservableCollection<T>
     /// <param name="length">要移除的元素数量.</param>
     public void RemoveRange(int startIndex, int length)
     {
-        // 参数校验.
+        // 参数校验
         if (startIndex < 0 || startIndex >= Count)
         {
             throw new ArgumentOutOfRangeException(nameof(startIndex), "起始索引超出范围.");
@@ -131,7 +140,7 @@ public class ObservableRangeCollection<T> : ObservableCollection<T>
             throw new ArgumentOutOfRangeException(nameof(length), "长度不能为负数.");
         }
 
-        // 调整长度以避免越界.
+        // 调整长度以避免越界
         if (startIndex + length > Count)
         {
             length = Count - startIndex;
@@ -139,54 +148,52 @@ public class ObservableRangeCollection<T> : ObservableCollection<T>
 
         if (length == 0)
         {
-            return; // 没有元素可移除.
+            return; // 没有元素可移除
         }
 
-        _suppressNotification = true;
+        suppressNotification = true;
 
-        // 逆序移除，避免索引偏移.
+        // 逆序移除，避免索引偏移
         for (int i = length - 1; i >= 0; i--)
         {
             RemoveAt(startIndex + i);
         }
 
-        _suppressNotification = false;
+        suppressNotification = false;
 
-        // 触发一次重置通知，告知UI集合已变更.
+        // 触发一次重置通知，告知UI集合已变更
         OnPropertyChanged(new PropertyChangedEventArgs("Count"));
         OnPropertyChanged(new PropertyChangedEventArgs("Item[]"));
         OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
     }
 
     /// <summary>
-    /// 高效地清除当前集合，并用新集合替换其内容。
+    /// 高效地清除当前集合，并用新集合替换其内容.
     /// </summary>
-    /// <param name="range">要替换当前内容的新元素集合。</param>
+    /// <param name="range">要替换当前内容的新元素集合.</param>
     public void ReplaceRange(IEnumerable<T> range)
     {
         try
         {
-
             // 确保此操作在UI线程上是安全的
             CheckReentrancy();
 
             // 直接操作内部的 Items 列表，这是 List<T> 类型
-            _suppressNotification = true;
+            suppressNotification = true;
 
             Clear();
             AddRange(range);
-            _suppressNotification = false;
+            suppressNotification = false;
 
-
-            // 触发一次重置通知，告诉UI整个集合已更改。
-            // 这是最高效的刷新方式。
+            // 触发一次重置通知，告诉UI整个集合已更改
+            // 这是最高效的刷新方式
             OnPropertyChanged(new PropertyChangedEventArgs("Count"));
             OnPropertyChanged(new PropertyChangedEventArgs("Item[]"));
             OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
         }
         finally
         {
-            _suppressNotification = false;
+            suppressNotification = false;
         }
     }
 
@@ -196,7 +203,7 @@ public class ObservableRangeCollection<T> : ObservableCollection<T>
     /// <returns>IDisposable 对象.</returns>
     public IDisposable SuppressNotifications()
     {
-        _suppressNotification = true;
+        suppressNotification = true;
         return new SuppressNotificationsDisposable(this);
     }
 
@@ -205,11 +212,13 @@ public class ObservableRangeCollection<T> : ObservableCollection<T>
     /// </summary>
     private class SuppressNotificationsDisposable : IDisposable
     {
-        // 关联的集合.
+        /// <summary>
+        /// 关联的集合.
+        /// </summary>
         private readonly ObservableRangeCollection<T> _collection;
 
         /// <summary>
-        /// 构造函数.
+        /// 初始化 SuppressNotificationsDisposable 类的新实例.
         /// </summary>
         /// <param name="collection">目标集合.</param>
         public SuppressNotificationsDisposable(ObservableRangeCollection<T> collection)
@@ -222,7 +231,7 @@ public class ObservableRangeCollection<T> : ObservableCollection<T>
         /// </summary>
         public void Dispose()
         {
-            _collection._suppressNotification = false;
+            _collection.suppressNotification = false;
             _collection.OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
         }
     }

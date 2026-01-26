@@ -1,1 +1,0 @@
-namespace BgCommon.Serialization.Implementation;public interface IHasChanged{    bool HasChanged { get; set; }}

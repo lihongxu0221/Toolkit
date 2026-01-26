@@ -1,1 +1,0 @@
-namespace BgCommon.Localization;/// <summary>/// 切换语言事件。/// </summary>public class CultureChangedEvent : Prism.Events.PubSubEvent<ILocalizationProvider?>{}

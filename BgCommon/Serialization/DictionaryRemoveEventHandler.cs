@@ -1,1 +1,0 @@
-namespace BgCommon.Serialization;/// <summary>/// 定义处理字典移除事件的委托/// </summary>public delegate void DictionaryRemoveEventHandler(object? sender, DictionaryRemoveEventArgs e);

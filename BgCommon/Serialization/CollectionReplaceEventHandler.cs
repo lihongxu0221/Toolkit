@@ -1,1 +1,0 @@
-namespace BgCommon.Serialization;/// <summary>/// 替换项（ReplacingItem）和已替换项（ReplacedItem）事件的委托。/// </summary>public delegate void CollectionReplaceEventHandler(object sender, CollectionReplaceEventArgs e);

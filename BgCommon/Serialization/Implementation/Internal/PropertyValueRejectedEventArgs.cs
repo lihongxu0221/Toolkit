@@ -1,1 +1,0 @@
-namespace BgCommon.Serialization.Implementation.Internal;public class PropertyValueRejectedEventArgs : EventArgs{    public readonly Exception Exception;    public PropertyValueRejectedEventArgs(Exception exception)    {        Exception = exception;    }}

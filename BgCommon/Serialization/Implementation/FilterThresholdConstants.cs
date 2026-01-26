@@ -1,1 +1,0 @@
-namespace BgCommon.Serialization.Implementation;public enum FilterThresholdConstants{    All = int.MinValue,    Expanded = 50,    Typical = 100}

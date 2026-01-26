@@ -1,1 +1,0 @@
-namespace BgCommon.Serialization;/// <summary>/// 定义处理字典插入事件的委托/// </summary>public delegate void DictionaryInsertEventHandler(object? sender, DictionaryInsertEventArgs e);

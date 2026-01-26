@@ -1,10 +1,16 @@
 {
   "profiles": {
-    "BgCommon": {
+    "VM": {
       "commandName": "Executable",
-      "executablePath": "..\\..\\LG\\Debug\\LG.Studio.exe",
-      "executablePath1": "..\\..\\bin\\Debug\\CurveEdge3D.exe",
-      "workingDirectory1": "..\\..\\bin\\Debug"
+      "executablePath": "..\\Debug\\VM.Studio.exe"
+    },
+    "LG": {
+      "commandName": "Executable",
+      "executablePath": "..\\Debug\\LG.Studio.exe"
+    },
+    "CE3D": {
+      "commandName": "Executable",
+      "executablePath": "..\\Debug\\CurveEdge3D.exe"
     }
   }
 }

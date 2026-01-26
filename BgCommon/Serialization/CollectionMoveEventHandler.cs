@@ -1,1 +1,0 @@
-namespace BgCommon.Serialization;/// <summary>/// 移动项（MovingItem）和已移动项（MovedItem）事件的委托。/// </summary>public delegate void CollectionMoveEventHandler(object sender, CollectionMoveEventArgs e);

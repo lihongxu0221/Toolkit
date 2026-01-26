@@ -1,86 +1,15 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
+	<PropertyGroup>
+		<TargetFramework>$(DefaultTargetFramework)-windows</TargetFramework>
+		<UseWPF>true</UseWPF>
+		<OutputType>Library</OutputType>
+		<VersionPrefix>2.0.0</VersionPrefix>
+		<VersionSuffix>beta1</VersionSuffix>
+    <!-- 强制不复制所有 NuGet 依赖到输出目录 -->
+    <CopyLocalLockFileAssemblies>false</CopyLocalLockFileAssemblies>
+	</PropertyGroup>
 
-  <PropertyGroup>
-    <TargetFramework>net8.0-windows</TargetFramework>
-    <Nullable>enable</Nullable>
-    <UseWPF>true</UseWPF>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <Platforms>AnyCPU;x64</Platforms>
-
-    <OutputType>Library</OutputType>
-
-    <!--生成输出路径-->
-    <OutputPath>..\..\bin\$(Configuration)\</OutputPath>
-
-
-    <!-- (使用通用输出目录) 启用后无法将Nuget引用的DLL复制到输出目录-->
-    <UseCommonOutputDirectory>false</UseCommonOutputDirectory>
-    <!--把NuGet包放到项目中-->
-    <RestorePackagesPath>..\..\packages</RestorePackagesPath>
-    <!--生成的输出路径不带Target-->
-    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
-    <AppendRuntimeIdentifierToOutputPath>false</AppendRuntimeIdentifierToOutputPath>
-
-    <!-- Disable "BinaryFormatter is obsolete" warnings for entire project -->
-    <NoWarn>$(NoWarn);SYSLIB0011;SYSLIB0050</NoWarn>
-    <!-- Warning: Setting the following switch is *NOT* recommended in web apps. -->
-    <EnableUnsafeBinaryFormatterSerialization>true</EnableUnsafeBinaryFormatterSerialization>
-    <GenerateDocumentationFile>True</GenerateDocumentationFile>
-  </PropertyGroup>
-
-  <ItemGroup>
-
-    <PackageReference Include="CommunityToolkit.Mvvm" />
-    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" />
-    <PackageReference Include="Microsoft.Extensions.Hosting" />
-    <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" />
-    <PackageReference Include="Microsoft.Extensions.Localization.Abstractions" />
-    <PackageReference Include="Microsoft.SourceLink.GitHub">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
-    <PackageReference Include="NLog" />
-    <PackageReference Include="NLog.Extensions.Logging" />
-    <PackageReference Include="Prism.DryIoc" />
-    <PackageReference Include="Prism.Wpf" />
-    <PackageReference Include="PolySharp">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
-    <PackageReference Include="StyleCop.Analyzers">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
-    <PackageReference Include="System.Drawing.Common" />
-    
-  </ItemGroup>
-
-  <ItemGroup>
-    <Compile Update="Assets\Localization\Translations.Designer.cs">
-      <DependentUpon>Translations.resx</DependentUpon>
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-    </Compile>
-    <Compile Update="Assets\Localization\TranslationsEnum.Designer.cs">
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-      <DependentUpon>TranslationsEnum.resx</DependentUpon>
-    </Compile>
-  </ItemGroup>
-
-  <ItemGroup>
-    <EmbeddedResource Update="Assets\Localization\Translations.resx">
-      <LastGenOutput>Translations.Designer.cs</LastGenOutput>
-      <Generator>ResXFileCodeGenerator</Generator>
-    </EmbeddedResource>
-    <EmbeddedResource Update="Assets\Localization\TranslationsEnum.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>TranslationsEnum.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Tools\" />
-  </ItemGroup>
-
+	<ItemGroup>
+		<PackageReference Include="CommunityToolkit.Mvvm" />
+	</ItemGroup>
 </Project>
