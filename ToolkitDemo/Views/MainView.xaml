@@ -37,19 +37,19 @@
                                VerticalAlignment="Center" 
                                Padding="15 10"/>
                 </Border>
-                <UniformGrid Rows="1" Columns="2">
-                    <Button Style="{StaticResource ButtonStyle1}" 
-                            Content="{bg:StringResource 登陆}" 
+                <UniformGrid Rows="1" Columns="1">
+                    <Button Style="{StaticResource BgButtonBaseStyle}" 
+                            Content="{bg:StringResource 切换用户}" 
                             Tag="{Binding Authority}"
                             Height="56"
                             Background="{DynamicResource PrimaryBrush}"
                             Command="{Binding LoginCommand}"/>
-                    <Button Style="{StaticResource ButtonStyle1}" 
+                    <!--<Button Style="{StaticResource ButtonStyle1}" 
                             Content="{bg:StringResource 注销}" 
                             Tag="{Binding Authority}"
                             Height="56"
                             Background="{DynamicResource DangerBrush}"
-                            Command="{Binding QuitCommand}"/>
+                            Command="{Binding QuitCommand}"/>-->
                 </UniformGrid>
             </StackPanel>
             <Border Grid.Row="1" Margin="5 0" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1">
@@ -58,19 +58,14 @@
                          SelectedItem="{Binding SelectedView}"/>
             </Border>
             <StackPanel Grid.Row="2" HorizontalAlignment="Stretch" Margin="5 0">
-                <ToggleButton Content="{bg:StringResource 左区域}" Margin="0 5 0 0" Visibility="{Binding IsDoubleReginn}" IsChecked="{Binding IsLeftRegionEnable}" Style="{StaticResource ToggleButtonSwitchBaseStyle}" HorizontalAlignment="Center"/>
-                <ToggleButton Content="{bg:StringResource 右区域}" Margin="0 5 0 0" Visibility="{Binding IsDoubleReginn}" IsChecked="{Binding IsRightRegionEnable}" Style="{StaticResource ToggleButtonSwitchBaseStyle}" HorizontalAlignment="Center"/>
-                <Button Style="{StaticResource ButtonStyle1}" 
-                        Content="{bg:StringResource 启动/暂停}" 
-                        Height="56" Margin="0 5 0 0"
-                        Background="{Binding StateColorBrush}"
-                        Foreground="{Binding StateForeground}"
-                        Command="{Binding ExecuteCommand}"/>
-                <Button Style="{StaticResource ButtonStyle1}" 
-                        Content="{bg:StringResource 停止}" 
-                        Background="{DynamicResource WarningBrush}"
-                        Height="56" Margin="0 5 0 0"
-                        Command="{Binding StopCommand}"/>
+                <ToggleButton Content="{bg:StringResource 左区域}" Margin="0 5 0 0" Style="{StaticResource ToggleButtonSwitchBaseStyle}" HorizontalAlignment="Center"/>
+                <ToggleButton Content="{bg:StringResource 右区域}" Margin="0 5 0 0" Style="{StaticResource ToggleButtonSwitchBaseStyle}" HorizontalAlignment="Center"/>
+                <Button Style="{StaticResource BgButtonBaseStyle}" Content="{bg:StringResource 启动/暂停}" Height="56" Margin="0 5 0 0" Command="{Binding ShowNumberInputDemoCommand}"/>
+                <Button Style="{StaticResource BgButtonBaseStyle}" Content="{bg:StringResource 停止}" Height="56" Margin="0 5 0 0"/>
+                <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Height="32">
+                    <TextBlock Foreground="{DynamicResource PrimaryTextBrush}" VerticalAlignment="Center" Text="{bg:StringResource 内存,StringFormat={}{0}：}" />
+                    <TextBlock Foreground="{DynamicResource PrimaryTextBrush}"  VerticalAlignment="Center" Text="{Binding Status.Memory, Converter={StaticResource Bit2CurrentMaxUnitStringConverter}}" />
+                </StackPanel>
                 <Border VerticalAlignment="Stretch" Margin="0 10 0 5" Background="{DynamicResource SecondaryRegionBrush}">
                     <TextBlock Text="{Binding AppVersion}" 
                                Foreground="{DynamicResource PrimaryTextBrush}" 

@@ -1,0 +1,81 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:bg="http://www.sz-baigu.com/"
+                    xmlns:sys="clr-namespace:System;assembly=mscorlib">
+
+    <!--窗口相关-->
+    <sys:Double x:Key="WindowButttonWidth">39</sys:Double>
+    <sys:Double x:Key="WindowButttonHeight">29</sys:Double>
+    <sys:Double x:Key="WindowTitleHeight">29</sys:Double>
+    <GridLength x:Key="WindowTitleHeightGrid">29</GridLength>
+
+    <!--主界面分辨率-->
+    <sys:Double x:Key="MainWidth">1280</sys:Double>
+    <sys:Double x:Key="MainHeight">800</sys:Double>
+
+    <!--子模块分辨率-->
+    <sys:Double x:Key="SubMainWidth">1073</sys:Double>
+    <sys:Double x:Key="SubMainHeight">800</sys:Double>
+
+    <!--主界面左右区域比例-->
+    <GridLength x:Key="MainBannerHeight">29</GridLength>
+    <GridLength x:Key="MainLeftRegion">90</GridLength>
+    <GridLength x:Key="MainCenterRegion">*</GridLength>
+    <GridLength x:Key="MainRightRegion">117</GridLength>
+
+    <!--子模块左右区域比例-->
+    <GridLength x:Key="SubMainLeftRegion">215*</GridLength>
+    <GridLength x:Key="SubMainRightRegion">983*</GridLength>
+
+    <!--主模块树 ListBoxItem -->
+    <Thickness x:Key="MainTreeButtonMargin">5 5 5 0</Thickness>
+    <CornerRadius x:Key="MainTreeButtonCornerRadius">12 12 12 12</CornerRadius>
+    <!--主模块树 ListBoxItem 文本-->
+    <sys:Double x:Key="MainTreeButtonFontSize">15</sys:Double>
+    <Thickness x:Key="MainTreeButtonFontMargin">0 5 0 5</Thickness>
+    <!--主模块树 ListBoxItem 图标-->
+    <sys:Double x:Key="MainTreeButtonIconSize">26</sys:Double>
+    <Thickness x:Key="MainTreeButtonIconMargin">0 10 0 0</Thickness>
+
+    <!--子模块树-->
+    <sys:Double x:Key="SubMainTreeButtonHeight">39</sys:Double>
+
+    <!--子模块树 ListBoxItem -->
+    <Thickness x:Key="SubMainTreeButtonMargin">4 8 4 0</Thickness>
+    <CornerRadius x:Key="SubMainTreeButtonCornerRadius">0 0 0 0</CornerRadius>
+    <!--子模块树 ListBoxItem 文本-->
+    <sys:Double x:Key="SubMainTreeButtonFontSize">13</sys:Double>
+    <Thickness x:Key="SubMainTreeButtonFontMargin">15 0 0 0</Thickness>
+    <!--子模块树 ListBoxItem 图标-->
+    <sys:Double x:Key="SubMainTreeButtonIconSize">18</sys:Double>
+    <Thickness x:Key="SubMainTreeButtonIconMargin">0 0 0 0</Thickness>
+
+    <!--启动，暂停，停止 按钮-->
+    <sys:Double x:Key="MainActionButtonWidth">93</sys:Double>
+    <sys:Double x:Key="MainActionButtonHeight">93</sys:Double>
+
+    <!--管理员按钮-->
+    <sys:Double x:Key="LoginButtonWidth">108</sys:Double>
+    <sys:Double x:Key="LoginButtonHeight">32</sys:Double>
+    <sys:Double x:Key="LoginButtonIconSize">15</sys:Double>
+    <sys:Double x:Key="LoginButtonFontSize">15</sys:Double>
+
+    <!--预留切换分辨率时，可重置值的资源-->
+    <sys:Double x:Key="DialogContentWidth">1280</sys:Double>
+    <sys:Double x:Key="DialogContentHeight">740</sys:Double>
+
+    <sys:Double x:Key="ProjectItemHeight">350</sys:Double>
+    <sys:Double x:Key="ButtonHeight">48</sys:Double>
+    <sys:Double x:Key="ButtonWidth">120</sys:Double>
+    <sys:Double x:Key="ScrollBarWidth">30</sys:Double>
+    <sys:Double x:Key="ScrollBarHeight">30</sys:Double>
+    <sys:Double x:Key="DefaultControlHeight">48</sys:Double>
+    <sys:Double x:Key="FontIconSize">36</sys:Double>
+
+    <!--CAD主界面，右侧上下比例-->
+    <GridLength x:Key="CADColumnLeft">80*</GridLength>
+    <GridLength x:Key="CADColumnMiddle">900*</GridLength>
+    <GridLength x:Key="CADColumnRight">210*</GridLength>
+    <GridLength x:Key="CADProjectListHeightUp">140*</GridLength>
+    <GridLength x:Key="CADProjectListHeightDown">660*</GridLength>
+</ResourceDictionary>

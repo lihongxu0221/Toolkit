@@ -1,4 +1,4 @@
-using BgCommon.Prism.Wpf;
+using BgCommon.Prism.Wpf.Modules.Logging;
 using BgCommon.Prism.Wpf.MVVM;
 using BgLogger;
 using ToolkitDemo.Views;

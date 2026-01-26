@@ -1,79 +1,91 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <OutputType>WinExe</OutputType>
-    <TargetFramework>net8.0-windows</TargetFramework>
-    <Nullable>enable</Nullable>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <UseWPF>true</UseWPF>
+	<PropertyGroup>
+		<OutputType>WinExe</OutputType>
+		<TargetFramework>net8.0-windows</TargetFramework>
+		<Nullable>enable</Nullable>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<UseWPF>true</UseWPF>
 
-    <!--生成输出路径-->
-    <OutputPath>..\..\bin\$(Configuration)\</OutputPath>
+		<!--生成输出路径-->
+		<OutputPath>..\..\bin\Demo\$(Configuration)\</OutputPath>
 
-    <!-- (使用通用输出目录) 启用后无法将Nuget引用的DLL复制到输出目录-->
-    <UseCommonOutputDirectory>false</UseCommonOutputDirectory>
-    <!--把NuGet包放到项目中-->
-    <RestorePackagesPath>..\..\packages</RestorePackagesPath>
-    <!--生成的输出路径不带Target-->
-    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
-    <AppendRuntimeIdentifierToOutputPath>false</AppendRuntimeIdentifierToOutputPath>
+		<!-- (使用通用输出目录) 启用后无法将Nuget引用的DLL复制到输出目录-->
+		<UseCommonOutputDirectory>false</UseCommonOutputDirectory>
+		<!--把NuGet包放到项目中-->
+		<RestorePackagesPath>..\..\packages</RestorePackagesPath>
+		<!--生成的输出路径不带Target-->
+		<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+		<AppendRuntimeIdentifierToOutputPath>false</AppendRuntimeIdentifierToOutputPath>
 
-    <!-- Disable "BinaryFormatter is obsolete" warnings for entire project -->
-    <NoWarn>$(NoWarn);SYSLIB0011</NoWarn>
-    <!-- Warning: Setting the following switch is *NOT* recommended in web apps. -->
-    <EnableUnsafeBinaryFormatterSerialization>true</EnableUnsafeBinaryFormatterSerialization>
-    <Platforms>AnyCPU;x64</Platforms>
-  </PropertyGroup>
-  
-  <ItemGroup>
-    <PackageReference Include="HandyControl" />
-    <PackageReference Include="CommunityToolkit.Mvvm" />
-    <PackageReference Include="Microsoft-WindowsAPICodePack-Shell" />
-    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" />
-    <PackageReference Include="Microsoft.Extensions.Hosting" />
-    <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" />
-    <PackageReference Include="Microsoft.Extensions.Localization.Abstractions" />
-    <PackageReference Include="Microsoft.SourceLink.GitHub">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
-    <PackageReference Include="Newtonsoft.Json" />
-    <PackageReference Include="NLog" />
-    <PackageReference Include="NLog.Extensions.Logging" />
-    <PackageReference Include="Prism.DryIoc" />
-    <PackageReference Include="Prism.Wpf" />
-    <PackageReference Include="PolySharp">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
-    <PackageReference Include="StyleCop.Analyzers">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
-  </ItemGroup>
+		<!-- Disable "BinaryFormatter is obsolete" warnings for entire project -->
+		<NoWarn>$(NoWarn);SYSLIB0011</NoWarn>
+		<!-- Warning: Setting the following switch is *NOT* recommended in web apps. -->
+		<EnableUnsafeBinaryFormatterSerialization>true</EnableUnsafeBinaryFormatterSerialization>
+		<Platforms>AnyCPU;x64</Platforms>
 
-  <ItemGroup>
-    <ProjectReference Include="..\BgCommon\BgCommon.csproj" />
-    <ProjectReference Include="..\BgControls\BgControls.csproj" />
-    <ProjectReference Include="..\BgLogger\BgLogger.csproj" />
-    <ProjectReference Include="..\BgCommon.Prism.Wpf\BgCommon.Prism.Wpf.csproj" />
-  </ItemGroup>
+		<NeutralLanguage>zh-CN</NeutralLanguage>
 
-  <ItemGroup>
-    <Folder Include="Assets\Style\" />
-    <Folder Include="Models\" />
-  </ItemGroup>
+		<!-- 2. 关键：只配置需要生成的文化代码（用分号分隔） -->
+		<SupportedCultures>zh-CN;zh-TW;en-US;vi</SupportedCultures>
 
-  <ItemGroup>
-    <Resource Include="Assets\Images\Motion\Left.png" />
-    <Resource Include="Assets\Images\Motion\LeftTop.png" />
-    <Resource Include="Assets\Images\Motion\LeftTop_Selected.png" />
-    <Resource Include="Assets\Images\Motion\LeftX.png" />
-    <Resource Include="Assets\Images\Motion\LeftX_Selected.png" />
-    <Resource Include="Assets\Images\Motion\Left_Selected.png" />
-    <Resource Include="Assets\Images\Splash.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Resource>
-  </ItemGroup>
+		<!-- 3. 确保只生成指定文化的卫星程序集（.NET 5+ 推荐配置） -->
+		<GenerateSatelliteAssembliesForCore>true</GenerateSatelliteAssembliesForCore>
+		<SatelliteResourceLanguages>$(SupportedCultures)</SatelliteResourceLanguages>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="HandyControl" />
+		<PackageReference Include="CommunityToolkit.Mvvm" />
+		<PackageReference Include="Microsoft-WindowsAPICodePack-Shell" />
+		<PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" />
+		<PackageReference Include="Microsoft.Extensions.Hosting" />
+		<PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" />
+		<PackageReference Include="Microsoft.Extensions.Localization.Abstractions" />
+		<PackageReference Include="Microsoft.SourceLink.GitHub">
+			<PrivateAssets>all</PrivateAssets>
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageReference>
+		<PackageReference Include="Newtonsoft.Json" />
+		<PackageReference Include="NLog" />
+		<PackageReference Include="NLog.Extensions.Logging" />
+		<PackageReference Include="Prism.DryIoc" />
+		<PackageReference Include="Prism.Wpf" />
+		<PackageReference Include="PolySharp">
+			<PrivateAssets>all</PrivateAssets>
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageReference>
+		<PackageReference Include="StyleCop.Analyzers">
+			<PrivateAssets>all</PrivateAssets>
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageReference>
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\BgCommon.Script\BgCommon.Script.csproj" />
+		<ProjectReference Include="..\BgCommon\BgCommon.csproj" />
+		<ProjectReference Include="..\BgCommon.Localization\BgCommon.Localization.csproj" />
+		<ProjectReference Include="..\BgControls\BgControls.csproj" />
+		<ProjectReference Include="..\BgLogger\BgLogger.csproj" />
+		<ProjectReference Include="..\BgCommon.Prism.Wpf\BgCommon.Prism.Wpf.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<Resource Include="Assets\Images\Motion\Left.png" />
+		<Resource Include="Assets\Images\Motion\LeftTop.png" />
+		<Resource Include="Assets\Images\Motion\LeftTop_Selected.png" />
+		<Resource Include="Assets\Images\Motion\LeftX.png" />
+		<Resource Include="Assets\Images\Motion\LeftX_Selected.png" />
+		<Resource Include="Assets\Images\Motion\Left_Selected.png" />
+		<Resource Include="Assets\Images\Splash.png">
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</Resource>
+	</ItemGroup>
+
+	<ItemGroup>
+		<None Update="bglogger.appsettings.json">
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+	</ItemGroup>
 
 </Project>

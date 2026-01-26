@@ -1,12 +1,13 @@
-using BgCommon;
-using BgCommon.Localization.DependencyInjection;
-using BgCommon.Prism.Wpf;
+using BgCommon.Localization;
+using BgCommon.Prism.Wpf.Modules;
+using BgCommon.Script;
 using ToolkitDemo.Services;
+using ToolKitDemo.Services;
 
 namespace ToolkitDemo;
 
 /// <summary>
-///  Bootstrapper
+///  Bootstrapper.
 /// </summary>
 internal class Bootstrapper : BootstrapperBase
 {
@@ -14,8 +15,6 @@ internal class Bootstrapper : BootstrapperBase
         : base(app)
     {
     }
-
-    protected override string[]? ModuleDirectories => null;
 
     protected override Type GetInitialServiceType()
     {
@@ -25,11 +24,6 @@ internal class Bootstrapper : BootstrapperBase
     protected override Type GetGlobalVarService()
     {
         return typeof(GlobalVarService);
-    }
-
-    protected override Type GetModuleService()
-    {
-        return typeof(ModuleService);
     }
 
     /// <inheritdoc/>
@@ -42,19 +36,29 @@ internal class Bootstrapper : BootstrapperBase
         return window;
     }
 
+    protected override void RegisterStringLocalizer(LocalizationBuilder builder)
+    {
+        // CurveEdge3D
+        builder.FromResource<Assets.Localization.Tanslations>(new CultureInfo("zh-CN"), false);
+        builder.FromResource<Assets.Localization.Tanslations>(new CultureInfo("en-US"), false);
+
+        builder.SetCulture(new CultureInfo("zh-CN"));
+    }
+
     /// <inheritdoc/>
     protected override void RegisterTypes(IContainerRegistry containerRegistry)
     {
-        _ = containerRegistry.AddStringLocalizer(b =>
-        {
-            // CurveEdge3D
-            b.FromResource<Assets.Localization.Tanslations>(new CultureInfo("zh-CN"), false);
-            b.FromResource<Assets.Localization.Tanslations>(new CultureInfo("en-US"), false);
-
-            b.SetCulture(new CultureInfo("zh-CN"));
-        });
-
         // 3.依赖注入其他公共实体集合
+        _ = containerRegistry.RegisterSingleton<IFeatureProvider, ToolkitDemoFeatureProvider>();
+        _ = containerRegistry.RegisterSingleton<IMonitoringService, MonitoringService>();
         _ = containerRegistry.RegisterSingleton<MainWindow>();
+        _ = containerRegistry.RegisterSingleton<PropertyGridDemoWindow>();
+        _ = containerRegistry.RegisterSingleton<PropertyGridDemoWindow>();
+    }
+
+    protected override void ConfigureModuleCatalog(IModuleCatalog moduleCatalog)
+    {
+        _ = moduleCatalog.AddModule<ScriptModule>();
+        base.ConfigureModuleCatalog(moduleCatalog);
     }
 }

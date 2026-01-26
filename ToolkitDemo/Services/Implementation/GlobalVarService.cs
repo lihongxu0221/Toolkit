@@ -1,0 +1,68 @@
+using BgCommon.Prism.Wpf.Services;
+
+namespace ToolkitDemo.Services;
+
+internal class GlobalVarService : IGlobalVarService
+{
+    /// <summary>
+    /// 程序根目录.
+    /// </summary>
+    public static readonly string AppRootPath = AppDomain.CurrentDomain.BaseDirectory;
+
+    /// <summary>
+    /// 配置文件根目录.
+    /// </summary>
+    public static readonly string AppConfigPath = Path.Combine(AppRootPath, "Configs");
+
+    /// <summary>
+    /// 程序资产文件根目录.
+    /// </summary>
+    public static readonly string AppAssetsPath = Path.Combine(AppRootPath, "Assets");
+
+    /// <summary>
+    /// 程序资产图片文件根目录.
+    /// </summary>
+    public static readonly string AppAssetsImagePath = Path.Combine(AppAssetsPath, "Images");
+
+    /// <summary>
+    /// Gets or sets Logo 图片路径.
+    /// </summary>
+    public string? LogoPath { get; set; } = Path.Combine(AppAssetsImagePath, "logo.png");
+
+    /// <summary>
+    /// Gets or sets Icon 图片路径.
+    /// </summary>
+    public string? IconPath { get; set; } = Path.Combine(AppAssetsImagePath, "Icon.ico");
+
+    /// <summary>
+    /// Gets or sets Splash 图片路径.
+    /// </summary>
+    public string? SplashImagePath { get; set; } = Path.Combine(AppAssetsImagePath, "Splash.png");
+
+    public bool IsDebugMode { get; set; }
+
+    public string? GetAppIconImage()
+    {
+        return IconPath;
+    }
+
+    public string? GetAppLogoImage()
+    {
+        return LogoPath;
+    }
+
+    public string? GetSplashScreenImage()
+    {
+        return SplashImagePath;
+    }
+
+    public string? GetAppName()
+    {
+        return "ToolkitDemo";
+    }
+
+    public Task<bool> InitializeAsync()
+    {
+        return Task.FromResult(true);
+    }
+}

@@ -7,7 +7,7 @@ namespace ToolkitDemo.Views;
 /// ModuleHostView.xaml 的交互逻辑
 /// </summary>
 [Registration(Registration.Navigation, typeof(ModuleHostViewModel))]
-public partial class ModuleHostView : UserControl
+public partial class ModuleHostView : UserControl, IRegistration
 {
     public ModuleHostView()
     {

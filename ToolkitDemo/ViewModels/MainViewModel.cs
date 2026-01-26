@@ -1,77 +1,104 @@
-using BgCommon.Prism.Wpf;
-using BgCommon.Prism.Wpf.Authority;
+using BgCommon.Prism.Wpf.Authority.Core;
 using BgCommon.Prism.Wpf.Authority.Entities;
-using BgCommon.Prism.Wpf.Authority.Models;
 using BgCommon.Prism.Wpf.Authority.Services;
 using BgCommon.Prism.Wpf.MVVM;
+using BgLogger;
+using ToolkitDemo.Models;
+using ToolkitDemo.Views;
+using ToolKitDemo.Services;
 
 namespace ToolkitDemo.ViewModels;
 
 /// <summary>
 /// 主界面ViewModel类.
 /// </summary>
-public partial class MainViewModel : NavigationHostViewModelBase, IPersistAcrossNavigation, ICachedView
+public partial class MainViewModel : NavigationHostViewModelBase
 {
-    private readonly IAuthorityService userService;
+    private readonly IRoleService roleService;
+    private readonly ILoginService loginService; // 用户登陆管理服务
+    private readonly IMonitoringService monitoringService;
 
     [ObservableProperty]
     private string userName = string.Empty;
 
     [ObservableProperty]
-    private UserAuthority? authority = UserAuthority.Operator;
+    private SystemRole? authority = SystemRole.Operator;
 
     [ObservableProperty]
     private string appVersion = "V 1.0.0";
 
-    public MainViewModel(IContainerExtension container, IAuthorityService userService)
-        : base(container, RegionDefine.MainContentRegion, true)
+    /// <summary>
+    /// 系统实时监控信息.
+    /// </summary>
+    [ObservableProperty]
+    private SystemRealTimeStatus? status = null;
+
+    public MainViewModel(
+        IContainerExtension container,
+        IRoleService roleService,
+        ILoginService loginService,
+        IMonitoringService monitoringService)
+        : base(container, RegionDefine.MainContentRegion)
     {
-        this.userService = userService;
+        this.roleService = roleService;
+        this.loginService = loginService;
+        this.SetUser(this.loginService.CurrentUser);
+        this.monitoringService = monitoringService;
+        this.Status = this.monitoringService.SystemStatus;
+    }
+
+    protected override void OnSubscribe()
+    {
+        base.OnSubscribe();
+        _ = this.EventAggregator.Subscribe<UserInfo?>(OnSwitchUser);
+    }
+
+    protected override void OnUnsubscribe()
+    {
+        base.OnUnsubscribe();
+        this.EventAggregator.Unsubscribe<UserInfo?>(OnSwitchUser);
+    }
+
+    protected override void OnActivated()
+    {
+        base.OnActivated();
+    }
+
+    protected override void OnDeactivated()
+    {
+        base.OnDeactivated();
+    }
+
+    private void OnSwitchUser(UserInfo? userInfo)
+    {
+        this.SetUser(userInfo);
+        _ = this.ReloadAsync();
     }
 
     public override void OnNavigatedTo(NavigationContext navigationContext)
     {
         base.OnNavigatedTo(navigationContext);
-        this.Initialize(null);
+
+        // 不等待执行结果.
+        _ = this.InitializeMonitoringAsync();
     }
 
     /// <summary>
     /// 切换权限.
     /// </summary>
-    [RelayCommand(CanExecute = nameof(CanLoginExecute))]
+    [RelayCommand]
     private async Task OnLogin()
     {
-        UserInfo? user = null;
-        AuthorityResult result = await this.userService.ShowLoginViewAsync();
-        if (result.Code != 0)
-        {
-            if (result.Success)
-            {
-                user = this.userService.CurrentUser;
-            }
-
-            this.SetUser(user);
-        }
+        _ = await this.loginService.SwitchUserAsync();
     }
 
-    private bool CanLoginExecute => GlobalVar.CurrentUser == null;
-
-    /// <summary>
-    /// 登出.
-    /// </summary>
-    [RelayCommand(CanExecute = nameof(CanQuitExecute))]
-    private async Task OnQuit()
+    [RelayCommand]
+    private async Task OnShowNumberInputDemo()
     {
-        UserInfo? user = null;
-        var result = await this.userService.LogoutAsync();
-        if (result)
-        {
-            user = this.userService.CurrentUser;
-            this.SetUser(user);
-        }
+        // var result = await Ioc.ShowDialogAsync<NumberInputDemoView>();
+        TestDemoView testDemoView = new TestDemoView();
+        testDemoView.Show();
     }
-
-    private bool CanQuitExecute => GlobalVar.CurrentUser != null;
 
     private void SetUser(UserInfo? user = null)
     {
@@ -84,10 +111,43 @@ public partial class MainViewModel : NavigationHostViewModelBase, IPersistAcross
         else
         {
             this.UserName = GlobalVar.CurrentUser.UserName;
-            this.Authority = GlobalVar.CurrentUser.Authority;
-        }
 
-        // 重新初始化视图.
-        this.Initialize();
+            var result = this.roleService.GetRolesByUserIdAsync(GlobalVar.CurrentUser.Id)
+                .ConfigureAwait(true)
+                .GetAwaiter()
+                .GetResult();
+            this.Authority = result.Result?.MaxRole?.SystemRole;
+        }
+    }
+
+    /// <summary>
+    /// 初始化启动后台监控.
+    /// </summary>
+    /// <returns>Task.</returns>
+    private async Task InitializeMonitoringAsync()
+    {
+        try
+        {
+            var startResult = await this.monitoringService.StartAsync()
+                .ConfigureAwait(false);
+
+            if (startResult?.Success != true)
+            {
+                return;
+            }
+
+            await this.monitoringService.StartMonitoringAsync(
+                MonitoringTarget.Application | MonitoringTarget.Devices)
+                .ConfigureAwait(false);
+        }
+        catch (OperationCanceledException)
+        {
+            // 处理取消操作
+        }
+        catch (Exception ex)
+        {
+            // 处理其他异常
+            LogRun.Error(ex, "Failed to initialize monitoring");
+        }
     }
 }
