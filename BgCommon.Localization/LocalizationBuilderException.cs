@@ -1,0 +1,1 @@
+namespace BgCommon.Localization;/// <summary>/// 表示在执行本地化生成器期间发生的错误./// </summary>public class LocalizationBuilderException : Exception{    public LocalizationBuilderException(string message, Exception innerException)        : base(message, innerException)    {    }    public LocalizationBuilderException(string message)        : base(message)    {    }}
