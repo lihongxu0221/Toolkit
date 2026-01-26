@@ -17,10 +17,12 @@
 mono_crash.*
 
 # Build results
+[Pp]ackages/
 [Dd]ebug/
 [Dd]ebugPublic/
 [Rr]elease/
 [Rr]eleases/
+[Bb]uild/
 x64/
 x86/
 [Ww][Ii][Nn]32/
@@ -32,7 +34,6 @@ bld/
 [Oo]ut/
 [Ll]og/
 [Ll]ogs/
-.idea/
 
 # Visual Studio 2015/2017 cache/options directory
 .vs/
@@ -362,4 +363,8 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
-/.idea
+
+riderModule.iml
+_ReSharper.Caches/
+.idea
+ProjectDlls

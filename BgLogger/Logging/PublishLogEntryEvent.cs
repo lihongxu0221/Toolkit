@@ -1,1 +1,0 @@
-using BgLogger.Logging.Models;namespace BgLogger.Logging;internal class PublishLogEntryEvent : PubSubEvent<List<LogEntry>>{}

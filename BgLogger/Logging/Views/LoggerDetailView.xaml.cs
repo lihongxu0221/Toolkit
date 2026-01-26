@@ -1,1 +1,0 @@
-namespace BgLogger.Logging.Views;/// <summary>/// LoggerDetailView.xaml 的交互逻辑/// </summary>public partial class LoggerDetailView : UserControl{    public LoggerDetailView()    {        InitializeComponent();    }}

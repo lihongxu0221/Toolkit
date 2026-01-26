@@ -1,1 +1,0 @@
-namespace BgLogger.Logging.Views;/// <summary>/// HistoricalLogView.xaml 的交互逻辑/// </summary>public partial class HistoricalLogView : UserControl{    public HistoricalLogView()    {        InitializeComponent();    }}

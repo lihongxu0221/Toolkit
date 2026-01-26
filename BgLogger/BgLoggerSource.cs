@@ -1,10 +1,9 @@
 using BgCommon.Localization.ComponentModel;
-using System.ComponentModel.DataAnnotations;
 
 namespace BgLogger;
 
 /// <summary>
-/// 日志数据源
+/// 日志数据源.
 /// </summary>
 [TypeConverter(typeof(EnumLocalizationConverter))]
 public enum BgLoggerSource
