@@ -1,0 +1,1029 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="CAD编辑" xml:space="preserve">
+    <value></value>
+  </data>
+  <data name="上料点" xml:space="preserve">
+    <value></value>
+  </data>
+  <data name="出胶测试" xml:space="preserve">
+    <value></value>
+  </data>
+  <data name="功能按钮" xml:space="preserve">
+    <value></value>
+  </data>
+  <data name="加工速度" xml:space="preserve">
+    <value></value>
+  </data>
+  <data name="参数编辑" xml:space="preserve">
+    <value></value>
+  </data>
+  <data name="回零点" xml:space="preserve">
+    <value></value>
+  </data>
+  <data name="当前件数" xml:space="preserve">
+    <value></value>
+  </data>
+  <data name="循环运行" xml:space="preserve">
+    <value></value>
+  </data>
+  <data name="文件管理" xml:space="preserve">
+    <value></value>
+  </data>
+  <data name="日期时间" xml:space="preserve">
+    <value></value>
+  </data>
+  <data name="涂胶升降" xml:space="preserve">
+    <value></value>
+  </data>
+  <data name="涂胶阀" xml:space="preserve">
+    <value></value>
+  </data>
+  <data name="清胶点" xml:space="preserve">
+    <value></value>
+  </data>
+  <data name="点胶升降" xml:space="preserve">
+    <value></value>
+  </data>
+  <data name="点胶阀" xml:space="preserve">
+    <value></value>
+  </data>
+  <data name="目标件数" xml:space="preserve">
+    <value></value>
+  </data>
+  <data name="系统状态" xml:space="preserve">
+    <value></value>
+  </data>
+  <data name="累计件数" xml:space="preserve">
+    <value></value>
+  </data>
+  <data name="编码器坐标" xml:space="preserve">
+    <value></value>
+  </data>
+  <data name="视觉编辑" xml:space="preserve">
+    <value></value>
+  </data>
+  <data name="调试维护" xml:space="preserve">
+    <value></value>
+  </data>
+  <data name="轴控制" xml:space="preserve">
+    <value></value>
+  </data>
+  <data name="运行日志" xml:space="preserve">
+    <value></value>
+  </data>
+  <data name="连续采集" xml:space="preserve">
+    <value></value>
+  </data>
+  <data name="逻辑坐标" xml:space="preserve">
+    <value></value>
+  </data>
+  <data name="间距/总点数" xml:space="preserve">
+    <value></value>
+  </data>
+  <data name="首页" xml:space="preserve">
+    <value></value>
+  </data>
+  <data name="单次采集" xml:space="preserve">
+    <value></value>
+  </data>
+  <data name="寸动" xml:space="preserve">
+    <value></value>
+  </data>
+  <data name="回零" xml:space="preserve">
+    <value></value>
+  </data>
+  <data name="慢速" xml:space="preserve">
+    <value />
+  </data>
+  <data name="中速" xml:space="preserve">
+    <value />
+  </data>
+  <data name="快速" xml:space="preserve">
+    <value />
+  </data>
+  <data name="点胶" xml:space="preserve">
+    <value />
+  </data>
+  <data name="涂胶" xml:space="preserve">
+    <value />
+  </data>
+  <data name="持续冲胶" xml:space="preserve">
+    <value />
+  </data>
+  <data name="持续点射" xml:space="preserve">
+    <value />
+  </data>
+  <data name="单点点射" xml:space="preserve">
+    <value />
+  </data>
+  <data name="手动测试" xml:space="preserve">
+    <value />
+  </data>
+  <data name="涂胶冲胶" xml:space="preserve">
+    <value />
+  </data>
+  <data name="涂胶测试" xml:space="preserve">
+    <value />
+  </data>
+  <data name="适应窗口" xml:space="preserve">
+    <value />
+  </data>
+  <data name="显示中心线" xml:space="preserve">
+    <value />
+  </data>
+  <data name="保存原始图像" xml:space="preserve">
+    <value />
+  </data>
+  <data name="保存截图" xml:space="preserve">
+    <value />
+  </data>
+  <data name="点点距离" xml:space="preserve">
+    <value />
+  </data>
+  <data name="暂停控制" xml:space="preserve">
+    <value />
+  </data>
+  <data name="跳转" xml:space="preserve">
+    <value />
+  </data>
+  <data name="点" xml:space="preserve">
+    <value />
+  </data>
+  <data name="快退" xml:space="preserve">
+    <value />
+  </data>
+  <data name="从头开始" xml:space="preserve">
+    <value />
+  </data>
+  <data name="下一段" xml:space="preserve">
+    <value />
+  </data>
+  <data name="加工时长" xml:space="preserve">
+    <value />
+  </data>
+  <data name="打外框" xml:space="preserve">
+    <value />
+  </data>
+  <data name="参数设置" xml:space="preserve">
+    <value />
+  </data>
+  <data name="启动" xml:space="preserve">
+    <value />
+  </data>
+  <data name="停止" xml:space="preserve">
+    <value />
+  </data>
+  <data name="暂停" xml:space="preserve">
+    <value />
+  </data>
+  <data name="继续" xml:space="preserve">
+    <value />
+  </data>
+  <data name="文件名称" xml:space="preserve">
+    <value />
+  </data>
+  <data name="上一页" xml:space="preserve">
+    <value />
+  </data>
+  <data name="下一页" xml:space="preserve">
+    <value />
+  </data>
+  <data name="新建项目" xml:space="preserve">
+    <value />
+  </data>
+  <data name="删除项目" xml:space="preserve">
+    <value />
+  </data>
+  <data name="加载项目" xml:space="preserve">
+    <value />
+  </data>
+  <data name="导入项目" xml:space="preserve">
+    <value />
+  </data>
+  <data name="导出项目" xml:space="preserve">
+    <value />
+  </data>
+  <data name="复制项目" xml:space="preserve">
+    <value />
+  </data>
+  <data name="重命名项目" xml:space="preserve">
+    <value />
+  </data>
+  <data name="创建时间" xml:space="preserve">
+    <value />
+  </data>
+  <data name="最后修改时间" xml:space="preserve">
+    <value />
+  </data>
+  <data name="当前项目名称" xml:space="preserve">
+    <value />
+  </data>
+  <data name="保存图纸" xml:space="preserve">
+    <value />
+  </data>
+  <data name="自适应图案" xml:space="preserve">
+    <value />
+  </data>
+  <data name="重新加载" xml:space="preserve">
+    <value />
+  </data>
+  <data name="参数配置" xml:space="preserve">
+    <value />
+  </data>
+  <data name="全选" xml:space="preserve">
+    <value />
+  </data>
+  <data name="删除" xml:space="preserve">
+    <value />
+  </data>
+  <data name="撤销" xml:space="preserve">
+    <value />
+  </data>
+  <data name="恢复" xml:space="preserve">
+    <value />
+  </data>
+  <data name="设为起始点" xml:space="preserve">
+    <value />
+  </data>
+  <data name="设为点胶" xml:space="preserve">
+    <value />
+  </data>
+  <data name="设为涂胶" xml:space="preserve">
+    <value />
+  </data>
+  <data name="设为外框" xml:space="preserve">
+    <value />
+  </data>
+  <data name="设置序号" xml:space="preserve">
+    <value />
+  </data>
+  <data name="设置功能码" xml:space="preserve">
+    <value />
+  </data>
+  <data name="点距" xml:space="preserve">
+    <value />
+  </data>
+  <data name="距离" xml:space="preserve">
+    <value />
+  </data>
+  <data name="画边框使用的工具" xml:space="preserve">
+    <value />
+  </data>
+  <data name="优先选择" xml:space="preserve">
+    <value />
+  </data>
+  <data name="高级" xml:space="preserve">
+    <value />
+  </data>
+  <data name="点胶优先" xml:space="preserve">
+    <value />
+  </data>
+  <data name="涂胶优先" xml:space="preserve">
+    <value />
+  </data>
+  <data name="原始顺序" xml:space="preserve">
+    <value />
+  </data>
+  <data name="自定义顺序" xml:space="preserve">
+    <value />
+  </data>
+  <data name="预设" xml:space="preserve">
+    <value />
+  </data>
+  <data name="颜色功能提示" xml:space="preserve">
+    <value />
+  </data>
+  <data name="显示针点" xml:space="preserve">
+    <value />
+  </data>
+  <data name="显示序号" xml:space="preserve">
+    <value />
+  </data>
+  <data name="显示功能码" xml:space="preserve">
+    <value />
+  </data>
+  <data name="选中所有点胶图元" xml:space="preserve">
+    <value />
+  </data>
+  <data name="选中所有涂胶图元" xml:space="preserve">
+    <value />
+  </data>
+  <data name="显示CAD源图形" xml:space="preserve">
+    <value />
+  </data>
+  <data name="选择删除" xml:space="preserve">
+    <value />
+  </data>
+  <data name="选择延长" xml:space="preserve">
+    <value />
+  </data>
+  <data name="视觉设置" xml:space="preserve">
+    <value />
+  </data>
+  <data name="注册模板图" xml:space="preserve">
+    <value />
+  </data>
+  <data name="注册离线图" xml:space="preserve">
+    <value />
+  </data>
+  <data name="CAD-图像配准" xml:space="preserve">
+    <value />
+  </data>
+  <data name="寻边-边缘提取" xml:space="preserve">
+    <value />
+  </data>
+  <data name="寻边-创建模板" xml:space="preserve">
+    <value />
+  </data>
+  <data name="步进距离" xml:space="preserve">
+    <value />
+  </data>
+  <data name="针点数量" xml:space="preserve">
+    <value />
+  </data>
+  <data name="重新打散" xml:space="preserve">
+    <value />
+  </data>
+  <data name="段首延长" xml:space="preserve">
+    <value />
+  </data>
+  <data name="段首缩短" xml:space="preserve">
+    <value />
+  </data>
+  <data name="段尾延长" xml:space="preserve">
+    <value />
+  </data>
+  <data name="段尾缩短" xml:space="preserve">
+    <value />
+  </data>
+  <data name="首尾延长" xml:space="preserve">
+    <value />
+  </data>
+  <data name="首尾缩短" xml:space="preserve">
+    <value />
+  </data>
+  <data name="反向加工" xml:space="preserve">
+    <value />
+  </data>
+  <data name="缩放" xml:space="preserve">
+    <value />
+  </data>
+  <data name="偏移" xml:space="preserve">
+    <value />
+  </data>
+  <data name="图形旋转" xml:space="preserve">
+    <value />
+  </data>
+  <data name="复制选中图元" xml:space="preserve">
+    <value />
+  </data>
+  <data name="通用" xml:space="preserve">
+    <value />
+  </data>
+  <data name="软件名称" xml:space="preserve">
+    <value />
+  </data>
+  <data name="界面语言" xml:space="preserve">
+    <value />
+  </data>
+  <data name="系统主题" xml:space="preserve">
+    <value />
+  </data>
+  <data name="选择LOGO" xml:space="preserve">
+    <value />
+  </data>
+  <data name="日志管理" xml:space="preserve">
+    <value />
+  </data>
+  <data name="导出日志" xml:space="preserve">
+    <value />
+  </data>
+  <data name="清除历史日志" xml:space="preserve">
+    <value />
+  </data>
+  <data name="启动画面" xml:space="preserve">
+    <value />
+  </data>
+  <data name="修改画面" xml:space="preserve">
+    <value />
+  </data>
+  <data name="点胶阀标定" xml:space="preserve">
+    <value />
+  </data>
+  <data name="阀对位" xml:space="preserve">
+    <value />
+  </data>
+  <data name="换阀位" xml:space="preserve">
+    <value />
+  </data>
+  <data name="偏差" xml:space="preserve">
+    <value />
+  </data>
+  <data name="误差" xml:space="preserve">
+    <value />
+  </data>
+  <data name="标定" xml:space="preserve">
+    <value />
+  </data>
+  <data name="结果" xml:space="preserve">
+    <value />
+  </data>
+  <data name="拾起" xml:space="preserve">
+    <value />
+  </data>
+  <data name="定位" xml:space="preserve">
+    <value />
+  </data>
+  <data name="软件维护" xml:space="preserve">
+    <value />
+  </data>
+  <data name="阀标定" xml:space="preserve">
+    <value />
+  </data>
+  <data name="相机标定" xml:space="preserve">
+    <value />
+  </data>
+  <data name="硬件调试" xml:space="preserve">
+    <value />
+  </data>
+  <data name="轴/IO配置" xml:space="preserve">
+    <value />
+  </data>
+  <data name="IO面板" xml:space="preserve">
+    <value />
+  </data>
+  <data name="相机" xml:space="preserve">
+    <value />
+  </data>
+  <data name="曝光" xml:space="preserve">
+    <value />
+  </data>
+  <data name="增益" xml:space="preserve">
+    <value />
+  </data>
+  <data name="旋转角度" xml:space="preserve">
+    <value />
+  </data>
+  <data name="水平镜像" xml:space="preserve">
+    <value />
+  </data>
+  <data name="垂直镜像" xml:space="preserve">
+    <value />
+  </data>
+  <data name="清除标定" xml:space="preserve">
+    <value />
+  </data>
+  <data name="起点" xml:space="preserve">
+    <value />
+  </data>
+  <data name="开始阀标定" xml:space="preserve">
+    <value />
+  </data>
+  <data name="停止阀标定" xml:space="preserve">
+    <value />
+  </data>
+  <data name="出胶位" xml:space="preserve">
+    <value />
+  </data>
+  <data name="涂胶位" xml:space="preserve">
+    <value />
+  </data>
+  <data name="点胶阀位置" xml:space="preserve">
+    <value />
+  </data>
+  <data name="涂胶阀位置" xml:space="preserve">
+    <value />
+  </data>
+  <data name="出胶" xml:space="preserve">
+    <value />
+  </data>
+  <data name="计算标定" xml:space="preserve">
+    <value />
+  </data>
+  <data name="涂胶阀偏差" xml:space="preserve">
+    <value />
+  </data>
+  <data name="保存" xml:space="preserve">
+    <value />
+  </data>
+  <data name="打点" xml:space="preserve">
+    <value />
+  </data>
+  <data name="验证" xml:space="preserve">
+    <value />
+  </data>
+  <data name="对位" xml:space="preserve">
+    <value />
+  </data>
+  <data name="标定速度" xml:space="preserve">
+    <value />
+  </data>
+  <data name="开阀时间" xml:space="preserve">
+    <value />
+  </data>
+  <data name="延时" xml:space="preserve">
+    <value />
+  </data>
+  <data name="步长" xml:space="preserve">
+    <value />
+  </data>
+  <data name="暂停打点" xml:space="preserve">
+    <value />
+  </data>
+  <data name="开始打点" xml:space="preserve">
+    <value />
+  </data>
+  <data name="测试打点" xml:space="preserve">
+    <value />
+  </data>
+  <data name="定位 第2点" xml:space="preserve">
+    <value />
+  </data>
+  <data name="定位 第1点" xml:space="preserve">
+    <value />
+  </data>
+  <data name="示教 第1点" xml:space="preserve">
+    <value />
+  </data>
+  <data name="示教 第2点" xml:space="preserve">
+    <value />
+  </data>
+  <data name="对角点" xml:space="preserve">
+    <value />
+  </data>
+  <data name="继续打点" xml:space="preserve">
+    <value />
+  </data>
+  <data name="开始验证" xml:space="preserve">
+    <value />
+  </data>
+  <data name="图像" xml:space="preserve">
+    <value />
+  </data>
+  <data name="阈值设置" xml:space="preserve">
+    <value />
+  </data>
+  <data name="屏蔽区域" xml:space="preserve">
+    <value />
+  </data>
+  <data name="正常显示" xml:space="preserve">
+    <value />
+  </data>
+  <data name="绘制涂抹" xml:space="preserve">
+    <value />
+  </data>
+  <data name="涂抹擦除" xml:space="preserve">
+    <value />
+  </data>
+  <data name="方形" xml:space="preserve">
+    <value />
+  </data>
+  <data name="圆形" xml:space="preserve">
+    <value />
+  </data>
+  <data name="阈值上限" xml:space="preserve">
+    <value />
+  </data>
+  <data name="阈值下限" xml:space="preserve">
+    <value />
+  </data>
+  <data name="像素当量" xml:space="preserve">
+    <value />
+  </data>
+  <data name="导入离线图" xml:space="preserve">
+    <value />
+  </data>
+  <data name="上一段" xml:space="preserve">
+    <value />
+  </data>
+  <data name="在线采集+框选点" xml:space="preserve">
+    <value />
+  </data>
+  <data name="RMS误差" xml:space="preserve">
+    <value />
+  </data>
+  <data name="输入信号" xml:space="preserve">
+    <value />
+  </data>
+  <data name="输出信号" xml:space="preserve">
+    <value />
+  </data>
+  <data name="初始化" xml:space="preserve">
+    <value />
+  </data>
+  <data name="工位模式" xml:space="preserve">
+    <value />
+  </data>
+  <data name="Z轴控制方式" xml:space="preserve">
+    <value />
+  </data>
+  <data name="工作模式" xml:space="preserve">
+    <value />
+  </data>
+  <data name="板卡型号" xml:space="preserve">
+    <value />
+  </data>
+  <data name="相机型号" xml:space="preserve">
+    <value />
+  </data>
+  <data name="画笔" xml:space="preserve">
+    <value />
+  </data>
+  <data name="点涂一体" xml:space="preserve">
+    <value />
+  </data>
+  <data name="仅点胶" xml:space="preserve">
+    <value />
+  </data>
+  <data name="仅涂胶" xml:space="preserve">
+    <value />
+  </data>
+  <data name="气缸" xml:space="preserve">
+    <value />
+  </data>
+  <data name="电机" xml:space="preserve">
+    <value />
+  </data>
+  <data name="单工位无相机" xml:space="preserve">
+    <value />
+  </data>
+  <data name="单工位单相机" xml:space="preserve">
+    <value />
+  </data>
+  <data name="单工位双相机" xml:space="preserve">
+    <value />
+  </data>
+  <data name="CAD导入路径对位方式" xml:space="preserve">
+    <value />
+  </data>
+  <data name="图像中心" xml:space="preserve">
+    <value />
+  </data>
+  <data name="基准点" xml:space="preserve">
+    <value />
+  </data>
+  <data name="左区域原点" xml:space="preserve">
+    <value />
+  </data>
+  <data name="右区域原点" xml:space="preserve">
+    <value />
+  </data>
+  <data name="清胶位" xml:space="preserve">
+    <value />
+  </data>
+  <data name="上料位" xml:space="preserve">
+    <value />
+  </data>
+  <data name="整体补偿" xml:space="preserve">
+    <value />
+  </data>
+  <data name="角点微调距离" xml:space="preserve">
+    <value />
+  </data>
+  <data name="角点微调数量" xml:space="preserve">
+    <value />
+  </data>
+  <data name="变速" xml:space="preserve">
+    <value />
+  </data>
+  <data name="默认Z轴安全高度" xml:space="preserve">
+    <value />
+  </data>
+  <data name="默认空移速度" xml:space="preserve">
+    <value />
+  </data>
+  <data name="默认Z轴速度" xml:space="preserve">
+    <value />
+  </data>
+  <data name="默认起步速度" xml:space="preserve">
+    <value />
+  </data>
+  <data name="默认加速速度" xml:space="preserve">
+    <value />
+  </data>
+  <data name="默认拐角速度平滑" xml:space="preserve">
+    <value />
+  </data>
+  <data name="默认拐角加速等级" xml:space="preserve">
+    <value />
+  </data>
+  <data name="默认拐角圆弧过渡半径" xml:space="preserve">
+    <value />
+  </data>
+  <data name="快进/快退速度" xml:space="preserve">
+    <value />
+  </data>
+  <data name="跟随误差检测" xml:space="preserve">
+    <value />
+  </data>
+  <data name="跟随误差上限" xml:space="preserve">
+    <value />
+  </data>
+  <data name="循环运行延时时间" xml:space="preserve">
+    <value />
+  </data>
+  <data name="工作区域" xml:space="preserve">
+    <value />
+  </data>
+  <data name="左区域" xml:space="preserve">
+    <value />
+  </data>
+  <data name="右区域" xml:space="preserve">
+    <value />
+  </data>
+  <data name="多文件加工" xml:space="preserve">
+    <value />
+  </data>
+  <data name="实时匹配" xml:space="preserve">
+    <value />
+  </data>
+  <data name="保存图像" xml:space="preserve">
+    <value />
+  </data>
+  <data name="清零累计件数" xml:space="preserve">
+    <value />
+  </data>
+  <data name="全区域" xml:space="preserve">
+    <value />
+  </data>
+  <data name="双区域" xml:space="preserve">
+    <value />
+  </data>
+  <data name="起步速度" xml:space="preserve">
+    <value />
+  </data>
+  <data name="点/分钟" xml:space="preserve">
+    <value />
+  </data>
+  <data name="空移速度" xml:space="preserve">
+    <value />
+  </data>
+  <data name="加速度" xml:space="preserve">
+    <value />
+  </data>
+  <data name="气阀开启时间" xml:space="preserve">
+    <value />
+  </data>
+  <data name="气阀关闭时间" xml:space="preserve">
+    <value />
+  </data>
+  <data name="提速空走距离" xml:space="preserve">
+    <value />
+  </data>
+  <data name="减速空走距离" xml:space="preserve">
+    <value />
+  </data>
+  <data name="速度平滑" xml:space="preserve">
+    <value />
+  </data>
+  <data name="拐角减速等级" xml:space="preserve">
+    <value />
+  </data>
+  <data name="自动倒角" xml:space="preserve">
+    <value />
+  </data>
+  <data name="气缸延时" xml:space="preserve">
+    <value />
+  </data>
+  <data name="到位稳定时间" xml:space="preserve">
+    <value />
+  </data>
+  <data name="提前出胶时间" xml:space="preserve">
+    <value />
+  </data>
+  <data name="提前关胶距离" xml:space="preserve">
+    <value />
+  </data>
+  <data name="抬起延迟时间" xml:space="preserve">
+    <value />
+  </data>
+  <data name="启用拉丝" xml:space="preserve">
+    <value />
+  </data>
+  <data name="拉丝方式" xml:space="preserve">
+    <value />
+  </data>
+  <data name="拉丝气缸动作" xml:space="preserve">
+    <value />
+  </data>
+  <data name="拉丝上抬高度" xml:space="preserve">
+    <value />
+  </data>
+  <data name="拉丝高度" xml:space="preserve">
+    <value />
+  </data>
+  <data name="拉丝距离" xml:space="preserve">
+    <value />
+  </data>
+  <data name="拉丝速度" xml:space="preserve">
+    <value />
+  </data>
+  <data name="向前" xml:space="preserve">
+    <value />
+  </data>
+  <data name="向后" xml:space="preserve">
+    <value />
+  </data>
+  <data name="向上" xml:space="preserve">
+    <value />
+  </data>
+  <data name="先拉丝再抬气缸" xml:space="preserve">
+    <value />
+  </data>
+  <data name="先抬气缸再拉丝" xml:space="preserve">
+    <value />
+  </data>
+  <data name="当前项目文件" xml:space="preserve">
+    <value />
+  </data>
+  <data name="方向偏移" xml:space="preserve">
+    <value />
+  </data>
+  <data name="角度" xml:space="preserve">
+    <value />
+  </data>
+  <data name="内缩/外扩" xml:space="preserve">
+    <value />
+  </data>
+  <data name="个数" xml:space="preserve">
+    <value />
+  </data>
+  <data name="打开高级参数页面" xml:space="preserve">
+    <value />
+  </data>
+  <data name="操作选中图元" xml:space="preserve">
+    <value />
+  </data>
+  <data name="高级参数设置" xml:space="preserve">
+    <value />
+  </data>
+  <data name="圈数" xml:space="preserve">
+    <value />
+  </data>
+  <data name="线距" xml:space="preserve">
+    <value />
+  </data>
+  <data name="确定" xml:space="preserve">
+    <value />
+  </data>
+  <data name="取消" xml:space="preserve">
+    <value />
+  </data>
+  <data name="旋转选中图元" xml:space="preserve">
+    <value />
+  </data>
+  <data name="CAD源图形窗口" xml:space="preserve">
+    <value />
+  </data>
+  <data name="相机参数" xml:space="preserve">
+    <value />
+  </data>
+  <data name="快速配准" xml:space="preserve">
+    <value />
+  </data>
+  <data name="画搜索框" xml:space="preserve">
+    <value />
+  </data>
+  <data name="一键匹配" xml:space="preserve">
+    <value />
+  </data>
+  <data name="前往[手动配准]" xml:space="preserve">
+    <value />
+  </data>
+  <data name="取消操作" xml:space="preserve">
+    <value />
+  </data>
+  <data name="手动配准" xml:space="preserve">
+    <value />
+  </data>
+  <data name="粗匹配" xml:space="preserve">
+    <value />
+  </data>
+  <data name="点选" xml:space="preserve">
+    <value />
+  </data>
+  <data name="精匹配" xml:space="preserve">
+    <value />
+  </data>
+  <data name="返回[快速配准]" xml:space="preserve">
+    <value />
+  </data>
+</root>

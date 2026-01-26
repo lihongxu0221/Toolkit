@@ -1,0 +1,1 @@
+namespace XceedLicenseGenerator;internal enum LicenseInformationType{    NoNotification,    TrialWelcome,    FirstTrial,    Trial,    TrialExpired,    RegisteredOlderVersion,    FeatureRequireUpgrade,    AdvancedFeature}

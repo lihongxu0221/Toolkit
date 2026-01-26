@@ -1,0 +1,1 @@
+namespace XceedLicenseGenerator;internal enum LicenseErrorCode : uint{    InvalidProductCode = 2147746560U,    InvalidOriginCode,    InvalidVersion,    BufferTooSmall,    UnsupportedKey,    InvalidKeyLength,    ChecksumFailed,    ProductMismatch,    VersionMismatch,    WriteRegistry,    ReadRegistry}
