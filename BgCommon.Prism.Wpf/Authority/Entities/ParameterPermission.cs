@@ -1,0 +1,52 @@
+namespace BgCommon.Prism.Wpf.Authority.Entities;
+
+/// <summary>
+/// 角色对系统参数的权限配置实体.
+/// </summary>
+public partial class ParameterPermission : ObservableValidator
+{
+    /// <summary>
+    /// Gets or sets 权限Id (主键).
+    /// </summary>
+    [Key]
+    [ObservableProperty]
+    private long id;
+
+    /// <summary>
+    /// Gets or sets 角色Id (外键).
+    /// </summary>
+    [Required]
+    [ObservableProperty]
+    private int roleId;
+
+    /// <summary>
+    /// Gets or sets 参数Id (外键).
+    /// </summary>
+    [Required]
+    [ObservableProperty]
+    private long parameterId;
+
+    /// <summary>
+    /// Gets or sets a value indicating whether 角色是否可见此参数.
+    /// </summary>
+    [ObservableProperty]
+    private bool isVisible = true;
+
+    /// <summary>
+    /// Gets or sets a value indicating whether 角色是否可编辑此参数.
+    /// </summary>
+    [ObservableProperty]
+    private bool isEditable = false;
+
+    /// <summary>
+    /// Gets or sets 导航属性：关联的角色.
+    /// </summary>
+    [ForeignKey(nameof(RoleId))]
+    public virtual Role? Role { get; set; }
+
+    /// <summary>
+    /// Gets or sets 导航属性：关联的系统参数.
+    /// </summary>
+    [ForeignKey(nameof(ParameterId))]
+    public virtual SystemParameter? SystemParameter { get; set; }
+}

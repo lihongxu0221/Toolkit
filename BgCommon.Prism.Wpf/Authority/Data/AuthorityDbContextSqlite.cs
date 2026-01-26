@@ -1,29 +1,76 @@
-using BgCommon.Prism.Wpf.Authority.Entities;
-using BgCommon.Prism.Wpf.Authority.Modules.Module.Views;
-using BgCommon.Prism.Wpf.Authority.Modules.Role.Views;
-using BgCommon.Prism.Wpf.Authority.Modules.User.Views;
-using Microsoft.EntityFrameworkCore;
-using ModuleInfo = BgCommon.Prism.Wpf.Authority.Entities.ModuleInfo;
-
 namespace BgCommon.Prism.Wpf.Authority.Data;
 
-public class AuthorityDbContextSqlite : DbContext
+/// <summary>
+/// SQLite 权限管理数据库上下文类.
+/// 继承自 EF Core 的 DbContext，用于管理权限系统相关实体与 SQLite 数据库的交互，包含实体映射、关系配置及数据植入.
+/// </summary>
+public class AuthorityDbContextSQLite : DbContext
 {
+    /// <summary>
+    /// Gets or sets 用户信息数据集，对应数据库中的 UserInfo 表.
+    /// </summary>
     public DbSet<UserInfo> Users { get; set; }
 
+    /// <summary>
+    /// Gets or sets 角色数据集，对应数据库中的 Role 表.
+    /// </summary>
     public DbSet<Role> Roles { get; set; }
 
+    /// <summary>
+    /// Gets or sets 权限数据集，对应数据库中的 Permission 表.
+    /// </summary>
     public DbSet<Permission> Permissions { get; set; }
 
+    /// <summary>
+    /// Gets or sets 模块信息数据集，对应数据库中的 ModuleInfo 表.
+    /// </summary>
     public DbSet<ModuleInfo> Modules { get; set; }
 
+    /// <summary>
+    /// Gets or sets 用户-角色关联数据集，对应数据库中的 UserRole 表（多对多关系连接表）.
+    /// </summary>
     public DbSet<UserRole> UserRoles { get; set; }
 
+    /// <summary>
+    /// Gets or sets 角色-权限关联数据集，对应数据库中的 RolePermission 表（多对多关系连接表）.
+    /// </summary>
     public DbSet<RolePermission> RolePermissions { get; set; }
 
+    /// <summary>
+    /// Gets or sets 操作日志数据集，对应数据库中的 OperationLog 表.
+    /// </summary>
     public DbSet<OperationLog> OperationLogs { get; set; }
 
-    public AuthorityDbContextSqlite(DbContextOptions<AuthorityDbContextSqlite> options)
+    /// <summary>
+    /// Gets or sets 登录信息数据集，对应数据库中的 LoginInfo 表.
+    /// </summary>
+    public DbSet<LoginInfo> LoginInfos { get; set; }
+
+    /// <summary>
+    /// Gets or sets 系统参数数据集，对应数据库中的 SystemParameter 表.
+    /// </summary>
+    public DbSet<SystemParameter> SystemParameters { get; set; }
+
+    /// <summary>
+    /// Gets or sets 参数权限数据集，对应数据库中的 ParameterPermission 表.
+    /// </summary>
+    public DbSet<ParameterPermission> ParameterPermissions { get; set; }
+
+    /// <summary>
+    /// Gets or sets 参数约束数据集，对应数据库中的 ParameterConstraint 表.
+    /// </summary>
+    public DbSet<ParameterConstraint> ParameterConstraints { get; set; }
+
+    /// <summary>
+    /// Gets or sets 用户访问权限数据集，对应数据库中的 UserAccessRights 表.
+    /// </summary>
+    public DbSet<UserAccessRights> UserAccessRights { get; set; }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="AuthorityDbContextSQLite"/> class.
+    /// </summary>
+    /// <param name="options">Sqlite 仓储上下文配置. </param>
+    public AuthorityDbContextSQLite(DbContextOptions<AuthorityDbContextSQLite> options)
         : base(options)
     {
         // 创建迁移: 在“包管理器控制台”中，将默认项目设为 AuthorityManagement.Core，然后运行：
@@ -31,26 +78,98 @@ public class AuthorityDbContextSqlite : DbContext
         // ```    EF Core 会检查你的 `AuthorityDbContext`，生成创建数据库表的代码，并放入 `Core` 项目的 `Migrations` 文件夹。
     }
 
-    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-    {
-        // 定义 SQLite 数据库文件的路径和名称
-        _ = optionsBuilder.UseSqlite("Data Source=Authority.db");
-    }
+    // protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+    // {
+    //     // 定义 SQLite 数据库文件的路径和名称
+    //     _ = optionsBuilder.UseSqlite("Data Source=Authority.db");
+    // }
 
+    /// <inheritdoc/>
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
 
-        #region 关系配置
+        // 用户信息表
+        // 1. 定义主键
+        _ = modelBuilder.Entity<UserInfo>(entity =>
+        {
+            // 指定 Id 是主键 (虽然 [Key] 已经做了，但这里可以重复)
+            _ = entity.HasKey(e => e.Id);
 
-        // ... 原有的唯一索引配置保持不变 ...
+            // 【显式声明】Id 属性的值在添加时由数据库生成
+            _ = entity.Property(e => e.Id).ValueGeneratedOnAdd();
+        });
         _ = modelBuilder.Entity<UserInfo>().HasIndex(u => u.UserName).IsUnique();
+
+        // 角色信息表
+        // 1. 定义主键
+        _ = modelBuilder.Entity<Role>(entity =>
+        {
+            // 指定 Id 是主键 (虽然 [Key] 已经做了，但这里可以重复)
+            _ = entity.HasKey(e => e.Id);
+
+            // 【显式声明】Id 属性的值在添加时由数据库生成
+            _ = entity.Property(e => e.Id).ValueGeneratedOnAdd();
+        });
         _ = modelBuilder.Entity<Role>().HasIndex(r => r.Name).IsUnique();
-        _ = modelBuilder.Entity<Permission>().HasIndex(p => p.Code).IsUnique();
+
+        // 权限表
+        // 1. 定义主键
+        _ = modelBuilder.Entity<Permission>(entity =>
+        {
+            // 指定 Id 是主键 (虽然 [Key] 已经做了，但这里可以重复)
+            _ = entity.HasKey(e => e.Id);
+
+            // 【显式声明】Id 属性的值在添加时由数据库生成
+            _ = entity.Property(e => e.Id).ValueGeneratedOnAdd();
+
+            // 2. 定义与 ModuleInfo 的关系 (一个 Permission 属于一个 ModuleInfo)
+            _ = entity.HasIndex(p => p.Code).IsUnique();
+
+            // 在这里明确定义关系和外键
+            _ = entity.HasOne(p => p.Module) // 一个权限有一个模块
+                      .WithMany(m => m.Permissions) // 一个模块有多个权限
+                      .HasForeignKey(p => p.ModuleId); // 连接它们的外键是 'moduleId' 属性
+        });
+
+        // 模块信息表
+        // 1. 定义主键
+        _ = modelBuilder.Entity<ModuleInfo>(entity =>
+        {
+            // 指定 Id 是主键 (虽然 [Key] 已经做了，但这里可以重复)
+            _ = entity.HasKey(e => e.Id);
+
+            // 【显式声明】Id 属性的值在添加时由数据库生成
+            _ = entity.Property(e => e.Id).ValueGeneratedOnAdd();
+
+            _ = modelBuilder.Entity<ModuleInfo>().HasIndex(m => m.Code).IsUnique();
+
+            // 【核心代码】
+            // 1. HasMany(m => m.ChildModules)
+            //    - 声明一个模块【有多个】子模块
+            // 2. WithOne(m => m.ParentModule)
+            //    - 声明每一个子模块【有一个】父模块
+            // 3. HasForeignKey(m => m.ParentId)
+            //    - 明确告诉EF Core，连接这两者的外键是 `ParentId` 属性
+            // 4. OnDelete(DeleteBehavior.Restrict) (可选，但推荐)
+            //    - 设置级联删除行为。Restrict 表示“如果一个模块有子模块，则不允许删除该模块”，
+            //      这可以防止意外删除整个模块树，增强数据完整性。
+            _ = entity.HasMany(m => m.ChildModules)
+                      .WithOne(m => m.ParentModule)
+                      .HasForeignKey(m => m.ParentId)
+                      .OnDelete(DeleteBehavior.Restrict); // 或 .SetNull 如果您希望删除父模块时，子模块的ParentId变为 null
+        });
 
         // --- 配置 UserRole (用户-角色) 多对多关系的连接表 ---
         // 1. 配置 UserRole
-        _ = modelBuilder.Entity<UserRole>().HasKey(ur => ur.Id);
+        _ = modelBuilder.Entity<UserRole>(entity =>
+        {
+            // 指定 Id 是主键 (虽然 [Key] 已经做了，但这里可以重复)
+            _ = entity.HasKey(e => e.Id);
+
+            // 【显式声明】Id 属性的值在添加时由数据库生成
+            _ = entity.Property(e => e.Id).ValueGeneratedOnAdd();
+        });
 
         // 2. 添加唯一索引来防止重复分配
         _ = modelBuilder.Entity<UserRole>()
@@ -61,7 +180,8 @@ public class AuthorityDbContextSqlite : DbContext
         _ = modelBuilder.Entity<UserRole>()
                         .HasOne(ur => ur.User)
                         .WithMany(ur => ur.UserRoles)
-                        .HasForeignKey(ur => ur.UserId);
+                        .HasForeignKey(ur => ur.UserId)
+                        .OnDelete(DeleteBehavior.Cascade); // 明确设置为级联删除
 
         // 4. 定义与 Role 的关系 (一个 Role 有多个 UserRole)
         _ = modelBuilder.Entity<UserRole>()
@@ -71,7 +191,14 @@ public class AuthorityDbContextSqlite : DbContext
 
         // --- 配置 RolePermission 连接表 ---
         // 1. 定义主键
-        _ = modelBuilder.Entity<RolePermission>().HasKey(rp => rp.Id); // 使用 Id 作为主键
+        _ = modelBuilder.Entity<RolePermission>(entity =>
+        {
+            // 指定 Id 是主键 (虽然 [Key] 已经做了，但这里可以重复)
+            _ = entity.HasKey(e => e.Id);
+
+            // 【显式声明】Id 属性的值在添加时由数据库生成
+            _ = entity.Property(e => e.Id).ValueGeneratedOnAdd();
+        });
 
         // 2. 添加唯一索引来防止重复分配
         _ = modelBuilder.Entity<RolePermission>()
@@ -89,89 +216,64 @@ public class AuthorityDbContextSqlite : DbContext
                         .HasOne(rp => rp.Permission)
                         .WithMany(p => p.RolePermissions)
                         .HasForeignKey(rp => rp.PermissionId);
-        #endregion
 
-        #region 数据植入 (Seeding)
+        // LoginInfo 的 UserName 字段添加唯一索引，确保每个用户只保存一条登录信息
+        _ = modelBuilder.Entity<LoginInfo>()
+            .HasIndex(li => li.UserName)
+            .IsUnique();
 
-        // 1. 植入角色 (Roles)
-        _ = modelBuilder.Entity<Role>().HasData(
-            new Role { Id = 0, Authority = 99, Name = "超级管理员", Description = "拥有系统所有权限", Enabled = false },
-            new Role { Id = 1, Authority = 98, Name = "管理员", Description = "拥有系统所有权限", Enabled = true },
-            new Role { Id = 2, Authority = 2, Name = "工程师", Description = "拥有基本的查看和操作权限", Enabled = true },
-            new Role { Id = 3, Authority = 1, Name = "操作员", Description = "拥有基本的查看和操作权限", Enabled = true }
-        );
+        // 配置 SystemParameter
+        _ = modelBuilder.Entity<SystemParameter>(entity =>
+        {
+            _ = entity.HasIndex(p => new { p.Code, p.ModuleId }).IsUnique();
 
-        // 2. 植入用户 (Users)
-        // 重要提示：在生产环境中，密码绝不能以明文存储！
-        // 必须使用安全的哈希算法（如 Argon2, BCrypt）进行加密。此处为演示方便使用明文。
-        _ = modelBuilder.Entity<UserInfo>().HasData(
-            new UserInfo { Id = 0, UserName = "超级管理员", Password = "666888", CreatedAt = DateTime.Now, IsActive = false, IsOnline = false },
-            new UserInfo { Id = 1, UserName = "管理员", Password = "8888*", CreatedAt = DateTime.Now, IsActive = true, IsOnline = false },
-            new UserInfo { Id = 2, UserName = "工程师", Password = "8888", CreatedAt = DateTime.Now, IsActive = true, IsOnline = false },
-            new UserInfo { Id = 3, UserName = "操作员", Password = "123", CreatedAt = DateTime.Now, IsActive = true, IsOnline = false }
-        );
+            // 配置与 ParameterConstraint 的一对多关系
+            _ = entity.HasMany(p => p.Constraints)
+                      .WithOne(c => c.SystemParameter)
+                      .HasForeignKey(c => c.ParameterId)
+                      .OnDelete(DeleteBehavior.Cascade); // 如果删除了参数，级联删除其所有约束
+        });
 
-        // 3. 植入用户与角色的关系 (UserRole)
-        _ = modelBuilder.Entity<UserRole>().HasData(
-            new UserRole { UserId = 1, RoleId = 1, AssignedAt = DateTime.Now },
-            new UserRole { UserId = 2, RoleId = 2, AssignedAt = DateTime.Now },
-            new UserRole { UserId = 3, RoleId = 3, AssignedAt = DateTime.Now }
-        );
+        // 配置 ParameterConstraint
+        _ = modelBuilder.Entity<ParameterConstraint>(entity =>
+        {
+            // ParameterId 和 Type 的组合必须是唯一的，防止对一个参数重复设置同一种约束
+            _ = entity.HasIndex(c => new { c.ParameterId, c.Type }).IsUnique();
+        });
 
-        // 4. 植入模块 (Modules)
-        _ = modelBuilder.Entity<ModuleInfo>().HasData(
-            new ModuleInfo { Id = 1000, Authority = 98, ParentId = -1, Name = "用户管理", TypeFullName = typeof(UserManagementView).AssemblyQualifiedName ?? string.Empty, IsEnabled = true, CreatedBy = "System", ModifiedBy = "System" },
-            new ModuleInfo { Id = 1001, Authority = 98, ParentId = -1, Name = "角色管理", TypeFullName = typeof(RolePermissionView).AssemblyQualifiedName ?? string.Empty, IsEnabled = true, CreatedBy = "System", ModifiedBy = "System" },
-            new ModuleInfo { Id = 1002, Authority = 98, ParentId = -1, Name = "模块管理", TypeFullName = typeof(ModuleManagementView).AssemblyQualifiedName ?? string.Empty, IsEnabled = true, CreatedBy = "System", ModifiedBy = "System" }
-       );
+        // 配置 ParameterPermission
+        _ = modelBuilder.Entity<ParameterPermission>(entity =>
+        {
+            // RoleId 和 ParameterId 的组合必须是唯一的，防止重复授权
+            _ = entity.HasIndex(pp => new { pp.RoleId, pp.ParameterId }).IsUnique();
 
-        // 5. 植入权限项 (Permissions)
-        // 用户管理相关权限
-        _ = modelBuilder.Entity<Permission>().HasData(
-            new Permission { Id = 1001, ModuleId = 1000, Name = "查看用户", Code = "User.View" },   // 用户管理相关权限
-            new Permission { Id = 1002, ModuleId = 1000, Name = "新增用户", Code = "User.Create" },
-            new Permission { Id = 1003, ModuleId = 1000, Name = "编辑用户", Code = "User.Edit" },
-            new Permission { Id = 1004, ModuleId = 1000, Name = "删除用户", Code = "User.Delete" }
-        );
+            // 配置与 Role 的关系
+            _ = entity.HasOne(pp => pp.Role)
+                      .WithMany() // 一个角色可以有多个参数权限
+                      .HasForeignKey(pp => pp.RoleId)
+                      .OnDelete(DeleteBehavior.Cascade); // 如果删除了角色，级联删除其参数权限
 
-        // 角色权限管理相关权限
-        _ = modelBuilder.Entity<Permission>().HasData(
-            new Permission { Id = 2001, ModuleId = 1001, Name = "查看角色", Code = "Role.View" }
-        );
+            // 配置与 SystemParameter 的关系
+            _ = entity.HasOne(pp => pp.SystemParameter)
+                      .WithMany() // 一个参数可以被多个角色授权
+                      .HasForeignKey(pp => pp.ParameterId)
+                      .OnDelete(DeleteBehavior.Cascade); // 如果删除了参数，级联删除其权限设置
+        });
 
-        // 模块管理
-        _ = modelBuilder.Entity<Permission>().HasData(
-            new Permission { Id = 3001, ModuleId = 1002, Name = "模块管理", Code = "Module.View" },
-            new Permission { Id = 3002, ModuleId = 1002, Name = "新增模块", Code = "Module.Create" },
-            new Permission { Id = 3003, ModuleId = 1002, Name = "编辑模块", Code = "Module.Edit" },
-            new Permission { Id = 3004, ModuleId = 1002, Name = "删除模块", Code = "Module.Delete" }
-        );
+        // 配置 用户权限.
+        _ = modelBuilder.Entity<UserAccessRights>(entity =>
+        {
+            _ = entity.HasKey(ua => ua.Id);
 
-        // 6. 植入角色与权限的关系 (RolePermission)
-        // --- 管理员的权限 (拥有所有权限) ---
-        _ = modelBuilder.Entity<RolePermission>().HasData(
-            new RolePermission { RoleId = 1, PermissionId = 1001 }, // User.View 
-            new RolePermission { RoleId = 1, PermissionId = 1002 }, // User.Create
-            new RolePermission { RoleId = 1, PermissionId = 1003 }, // User.Edit
-            new RolePermission { RoleId = 1, PermissionId = 1004 }, // User.Delete
-            new RolePermission { RoleId = 1, PermissionId = 2001 }, // Role.View
-            new RolePermission { RoleId = 1, PermissionId = 3001 }, // Module.View
-            new RolePermission { RoleId = 1, PermissionId = 3002 }, // Module.Create
-            new RolePermission { RoleId = 1, PermissionId = 3003 }, // Module.Edit
-            new RolePermission { RoleId = 1, PermissionId = 3004 } // Module.Delete
-        );
+            // UserId 和 AccessRight 的组合必须是唯一的，防止重复记录
+            _ = entity.HasIndex(ua => new { ua.UserId, ua.RefObjType, ua.RefObjId })
+                      .IsUnique();
 
-        // --- 工程师的权限 (只有查看权限) ---
-        _ = modelBuilder.Entity<RolePermission>().HasData(
-            new RolePermission { RoleId = 2, PermissionId = 1001 }, // User.View
-            new RolePermission { RoleId = 2, PermissionId = 2001 } // Role.View
-        );
-
-        // --- 操作员的权限 (只有查看权限) ---
-        _ = modelBuilder.Entity<RolePermission>().HasData(
-            new RolePermission { RoleId = 3, PermissionId = 1001 }, // User.View
-            new RolePermission { RoleId = 3, PermissionId = 2001 } // Role.View
-        );
-        #endregion
+            // 添加与 UserInfo 的关系配置
+            _ = entity.HasOne(ua => ua.User)
+                      .WithMany() // UserInfo 中没有导航属性指回 UserAccessRights
+                      .HasForeignKey(ua => ua.UserId)
+                      .OnDelete(DeleteBehavior.Cascade); // 明确设置为级联删除
+        });
     }
 }

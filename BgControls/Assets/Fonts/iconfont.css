@@ -1,6 +1,7 @@
 @font-face {
   font-family: "iconfont"; /* Project id 4814976 */
-  src: url('iconfont.ttf?t=1750145076201') format('truetype');
+  src: url('iconfont.ttf?t=1766393119916') format('truetype'),
+       url('iconfont.svg?t=1766393119916#iconfont') format('svg');
 }
 
 .iconfont {
@@ -9,6 +10,150 @@
   font-style: normal;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+.icon-shendujiance:before {
+  content: "\e622";
+}
+
+.icon-dingweidian:before {
+  content: "\e623";
+}
+
+.icon-paizhaodian:before {
+  content: "\e64f";
+}
+
+.icon-shiqu:before {
+  content: "\e621";
+}
+
+.icon-dingwei:before {
+  content: "\e619";
+}
+
+.icon-dian:before {
+  content: "\e612";
+}
+
+.icon-shiquchaxun:before {
+  content: "\e618";
+}
+
+.icon-banhu:before {
+  content: "\e601";
+}
+
+.icon-xian:before {
+  content: "\e648";
+}
+
+.icon-duoduanxian:before {
+  content: "\e600";
+}
+
+.icon-huitudanchuang_zhengyuan:before {
+  content: "\e63c";
+}
+
+.icon-editor:before {
+  content: "\e6f5";
+}
+
+.icon-config:before {
+  content: "\e684";
+}
+
+.icon-home-fill1:before {
+  content: "\e703";
+}
+
+.icon-a-SystemConfiguration:before {
+  content: "\e640";
+}
+
+.icon-icon-recogn-config-fill:before {
+  content: "\e6ee";
+}
+
+.icon-canshushezhi:before {
+  content: "\e615";
+}
+
+.icon-biansucanshu:before {
+  content: "\e611";
+}
+
+.icon-baocun:before {
+  content: "\e60d";
+}
+
+.icon-dianjiao:before {
+  content: "\e60f";
+}
+
+.icon-tiaoshiweihu:before {
+  content: "\e610";
+}
+
+.icon-gaojigongneng:before {
+  content: "\e616";
+}
+
+.icon-huiling1:before {
+  content: "\e60e";
+}
+
+.icon-jiantou:before {
+  content: "\e609";
+}
+
+.icon-shouye1:before {
+  content: "\e60c";
+}
+
+.icon-qitacanshu:before {
+  content: "\e60a";
+}
+
+.icon-shijuebianji:before {
+  content: "\e60b";
+}
+
+.icon-wenjianguanli:before {
+  content: "\e608";
+}
+
+.icon-duiweicanshu:before {
+  content: "\e603";
+}
+
+.icon-yunhangrizhi:before {
+  content: "\e607";
+}
+
+.icon-tujiao:before {
+  content: "\e605";
+}
+
+.icon-CADbianji:before {
+  content: "\e606";
+}
+
+.icon-a-ziyuan173:before {
+  content: "\e61a";
+}
+
+.icon-guanliyuan:before {
+  content: "\e61b";
+}
+
+.icon-a-ziyuan1711:before {
+  content: "\e620";
+}
+
+.icon-a-ziyuan1691:before {
+  content: "\e617";
 }
 
 .icon-delete1:before {

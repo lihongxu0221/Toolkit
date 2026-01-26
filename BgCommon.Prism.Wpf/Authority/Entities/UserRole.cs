@@ -3,7 +3,7 @@ namespace BgCommon.Prism.Wpf.Authority.Entities;
 /// <summary>
 /// 用户角色类.
 /// </summary>
-public partial class UserRole : ObservableValidator
+public partial class UserRole : ObservableValidator, ICloneable
 {
     /// <summary>
     /// Gets or sets Key.
@@ -16,7 +16,7 @@ public partial class UserRole : ObservableValidator
     /// </summary>
     [Required]
     [ObservableProperty]
-    private int userId;
+    private long userId;
 
     /// <summary>
     /// Gets or sets 角色ID.
@@ -37,7 +37,19 @@ public partial class UserRole : ObservableValidator
     [ObservableProperty]
     private int? assignedByUserId;
 
-    public UserInfo? User { get; set; } = null;
+    /// <summary>
+    /// Gets or sets 外连用户信息实体.
+    /// </summary>
+    public UserInfo? User { get; set; }
 
-    public Role? Role { get; set; } = null;
+    /// <summary>
+    /// Gets or sets 外连角色信息实体.
+    /// </summary>
+    public Role? Role { get; set; }
+
+    /// <inheritdoc/>
+    public object Clone()
+    {
+        return this.MemberwiseClone();
+    }
 }

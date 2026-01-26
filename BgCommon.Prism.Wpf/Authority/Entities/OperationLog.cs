@@ -1,1 +1,55 @@
-namespace BgCommon.Prism.Wpf.Authority.Entities;/// <summary>/// 操作日志./// </summary>public partial class OperationLog : ObservableValidator{    /// <summary>    /// Gets or sets 操作日志ID (主键).    /// </summary>    [Key]    [ObservableProperty]    private long id;    /// <summary>    /// Gets or sets 用户ID (外键 可以是 null，例如系统级别的操作).    /// </summary>    [ObservableProperty]    private int? userId = null;    /// <summary>    /// 冗余存储，方便查询显示.    /// </summary>    [MaxLength(50)]    [ObservableProperty]    private string? username = string.Empty;    /// <summary>    /// Gets or sets 操作类型，例如 "Login", "CreateUser", "DeleteUser".    /// </summary>    [Required]    [MaxLength(50)]    [ObservableProperty]    private string actionType = string.Empty;    /// <summary>    /// Gets or sets  操作详情，例如 "用户 'admin' 登录成功" 或 JSON 格式的详细数据.    /// </summary>    [Required]    [ObservableProperty]    private string details = string.Empty;    /// <summary>    /// Gets or sets 记录时间戳，表示操作发生的时间.    /// </summary>    [ObservableProperty]    private DateTime timestamp = DateTime.Now;    /// <summary>    /// Gets or sets 记录ip地址.    /// </summary>    [MaxLength(45)]    [ObservableProperty]    private string? ipAddress = string.Empty;}
+namespace BgCommon.Prism.Wpf.Authority.Entities;
+
+/// <summary>
+/// 操作日志.
+/// </summary>
+public partial class OperationLog : ObservableValidator
+{
+    /// <summary>
+    /// Gets or sets 操作日志ID (主键).
+    /// </summary>
+    [Key]
+    [ObservableProperty]
+    private long id;
+
+    /// <summary>
+    /// Gets or sets 用户ID (外键 可以是 null，例如系统级别的操作).
+    /// </summary>
+    [ObservableProperty]
+    private int? userId = null;
+
+    /// <summary>
+    /// 冗余存储，方便查询显示.
+    /// </summary>
+    [MaxLength(50)]
+    [ObservableProperty]
+    private string? username = string.Empty;
+
+    /// <summary>
+    /// Gets or sets 操作类型，例如 "Login", "CreateUser", "DeleteUser".
+    /// </summary>
+    [Required]
+    [MaxLength(50)]
+    [ObservableProperty]
+    private string actionType = string.Empty;
+
+    /// <summary>
+    /// Gets or sets  操作详情，例如 "用户 'admin' 登录成功" 或 JSON 格式的详细数据.
+    /// </summary>
+    [Required]
+    [ObservableProperty]
+    private string details = string.Empty;
+
+    /// <summary>
+    /// Gets or sets 记录时间戳，表示操作发生的时间.
+    /// </summary>
+    [ObservableProperty]
+    private DateTime timestamp = DateTime.Now;
+
+    /// <summary>
+    /// Gets or sets 记录ip地址.
+    /// </summary>
+    [MaxLength(45)]
+    [ObservableProperty]
+    private string? ipAddress = string.Empty;
+}

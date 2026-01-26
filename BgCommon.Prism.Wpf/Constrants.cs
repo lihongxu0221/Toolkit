@@ -11,19 +11,14 @@ public class Constraints
     public const string LoginHostWindow = nameof(LoginHostWindow);
 
     /// <summary>
-    /// 登陆参数.
+    /// 登陆参数1.
     /// </summary>
     public const string LoginParam = nameof(LoginParam);
 
     /// <summary>
-    /// 登陆结果.
+    /// 登陆参数2.
     /// </summary>
-    public const string LoginResult = nameof(LoginResult);
-
-    /// <summary>
-    /// 操作用户.
-    /// </summary>
-    public const string OperatorUser = nameof(OperatorUser);
+    public const string IsSwitchUserModel = nameof(IsSwitchUserModel);
 
     /// <summary>
     /// 编辑模式.
@@ -61,6 +56,11 @@ public class Constraints
     public const string Parameter = nameof(Parameter);
 
     /// <summary>
+    /// 父节点.
+    /// </summary>
+    public const string ParentNode = nameof(ParentNode);
+
+    /// <summary>
     /// 参数集合.
     /// </summary>
     public const string Parameters = nameof(Parameters);
@@ -85,9 +85,38 @@ public class Constraints
     /// </summary>
     public const string CancelButtonText = nameof(CancelButtonText);
 
+    /// <summary>
+    /// 目标视图.
+    /// </summary>
     public const string TargetView = nameof(TargetView);
 
+    /// <summary>
+    /// 主模块显示的视图.
+    /// </summary>
     public const string CurrentView = nameof(CurrentView);
 
+    /// <summary>
+    /// 子模块显示的视图.
+    /// </summary>
+    public const string SubCurrentView = nameof(SubCurrentView);
+
+    /// <summary>
+    /// 区域名称.
+    /// </summary>
     public const string RegionName = nameof(RegionName);
+
+    /// <summary>
+    /// 指定插件文件扩展名查找的参数名称.
+    /// </summary>
+    public const string SearchPatterns = nameof(SearchPatterns);
+
+    /// <summary>
+    /// 查找文件过滤名.
+    /// </summary>
+    public const string FileFilter = nameof(FileFilter);
+
+    /// <summary>
+    /// 传入的模块编码.
+    /// </summary>
+    public const string ModuleCode = nameof(ModuleCode);
 }

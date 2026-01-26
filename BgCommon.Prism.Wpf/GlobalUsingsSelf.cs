@@ -1,0 +1,10 @@
+global using BgCommon.Prism.Wpf.Authority.Core;
+global using BgCommon.Prism.Wpf.Authority.Data;
+global using BgCommon.Prism.Wpf.Authority.Entities;
+global using BgCommon.Prism.Wpf.Authority.Models;
+global using BgCommon.Prism.Wpf.Authority.Services;
+global using BgCommon.Prism.Wpf.DependencyInjection;
+global using BgCommon.Prism.Wpf.Localization.DependencyInjection;
+global using BgCommon.Prism.Wpf.Models;
+global using BgCommon.Prism.Wpf.MVVM;
+global using BgCommon.Prism.Wpf.Services;

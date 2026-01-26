@@ -6,6 +6,258 @@
   "description": "",
   "glyphs": [
     {
+      "icon_id": "10933927",
+      "name": "深度检测",
+      "font_class": "shendujiance",
+      "unicode": "e622",
+      "unicode_decimal": 58914
+    },
+    {
+      "icon_id": "19735216",
+      "name": "定位点",
+      "font_class": "dingweidian",
+      "unicode": "e623",
+      "unicode_decimal": 58915
+    },
+    {
+      "icon_id": "24178922",
+      "name": "拍照点",
+      "font_class": "paizhaodian",
+      "unicode": "e64f",
+      "unicode_decimal": 58959
+    },
+    {
+      "icon_id": "45380806",
+      "name": "拾取",
+      "font_class": "shiqu",
+      "unicode": "e621",
+      "unicode_decimal": 58913
+    },
+    {
+      "icon_id": "1494667",
+      "name": "定位",
+      "font_class": "dingwei",
+      "unicode": "e619",
+      "unicode_decimal": 58905
+    },
+    {
+      "icon_id": "1920286",
+      "name": "点",
+      "font_class": "dian",
+      "unicode": "e612",
+      "unicode_decimal": 58898
+    },
+    {
+      "icon_id": "7179829",
+      "name": "拾取查询",
+      "font_class": "shiquchaxun",
+      "unicode": "e618",
+      "unicode_decimal": 58904
+    },
+    {
+      "icon_id": "7655839",
+      "name": "arc",
+      "font_class": "banhu",
+      "unicode": "e601",
+      "unicode_decimal": 58881
+    },
+    {
+      "icon_id": "23719381",
+      "name": "线",
+      "font_class": "xian",
+      "unicode": "e648",
+      "unicode_decimal": 58952
+    },
+    {
+      "icon_id": "38250011",
+      "name": "多段线",
+      "font_class": "duoduanxian",
+      "unicode": "e600",
+      "unicode_decimal": 58880
+    },
+    {
+      "icon_id": "39182548",
+      "name": "绘图弹窗_整圆",
+      "font_class": "huitudanchuang_zhengyuan",
+      "unicode": "e63c",
+      "unicode_decimal": 58940
+    },
+    {
+      "icon_id": "7008924",
+      "name": "editor",
+      "font_class": "editor",
+      "unicode": "e6f5",
+      "unicode_decimal": 59125
+    },
+    {
+      "icon_id": "9204065",
+      "name": "config",
+      "font_class": "config",
+      "unicode": "e684",
+      "unicode_decimal": 59012
+    },
+    {
+      "icon_id": "35094519",
+      "name": "首页",
+      "font_class": "home-fill1",
+      "unicode": "e703",
+      "unicode_decimal": 59139
+    },
+    {
+      "icon_id": "43388760",
+      "name": "System Configuration",
+      "font_class": "a-SystemConfiguration",
+      "unicode": "e640",
+      "unicode_decimal": 58944
+    },
+    {
+      "icon_id": "44420138",
+      "name": "icon-recogn-config-fill",
+      "font_class": "icon-recogn-config-fill",
+      "unicode": "e6ee",
+      "unicode_decimal": 59118
+    },
+    {
+      "icon_id": "44983405",
+      "name": "参数设置",
+      "font_class": "canshushezhi",
+      "unicode": "e615",
+      "unicode_decimal": 58901
+    },
+    {
+      "icon_id": "44983406",
+      "name": "变速参数",
+      "font_class": "biansucanshu",
+      "unicode": "e611",
+      "unicode_decimal": 58897
+    },
+    {
+      "icon_id": "44983407",
+      "name": "保存",
+      "font_class": "baocun",
+      "unicode": "e60d",
+      "unicode_decimal": 58893
+    },
+    {
+      "icon_id": "44983408",
+      "name": "点胶参数",
+      "font_class": "dianjiao",
+      "unicode": "e60f",
+      "unicode_decimal": 58895
+    },
+    {
+      "icon_id": "44983409",
+      "name": "调试维护",
+      "font_class": "tiaoshiweihu",
+      "unicode": "e610",
+      "unicode_decimal": 58896
+    },
+    {
+      "icon_id": "44983410",
+      "name": "高级功能",
+      "font_class": "gaojigongneng",
+      "unicode": "e616",
+      "unicode_decimal": 58902
+    },
+    {
+      "icon_id": "44983411",
+      "name": "回零",
+      "font_class": "huiling1",
+      "unicode": "e60e",
+      "unicode_decimal": 58894
+    },
+    {
+      "icon_id": "44983412",
+      "name": "箭头",
+      "font_class": "jiantou",
+      "unicode": "e609",
+      "unicode_decimal": 58889
+    },
+    {
+      "icon_id": "44983413",
+      "name": "首页",
+      "font_class": "shouye1",
+      "unicode": "e60c",
+      "unicode_decimal": 58892
+    },
+    {
+      "icon_id": "44983414",
+      "name": "其他参数",
+      "font_class": "qitacanshu",
+      "unicode": "e60a",
+      "unicode_decimal": 58890
+    },
+    {
+      "icon_id": "44983415",
+      "name": "视觉编辑",
+      "font_class": "shijuebianji",
+      "unicode": "e60b",
+      "unicode_decimal": 58891
+    },
+    {
+      "icon_id": "44983416",
+      "name": "文件管理",
+      "font_class": "wenjianguanli",
+      "unicode": "e608",
+      "unicode_decimal": 58888
+    },
+    {
+      "icon_id": "44983417",
+      "name": "对位参数",
+      "font_class": "duiweicanshu",
+      "unicode": "e603",
+      "unicode_decimal": 58883
+    },
+    {
+      "icon_id": "44983418",
+      "name": "运行日志",
+      "font_class": "yunhangrizhi",
+      "unicode": "e607",
+      "unicode_decimal": 58887
+    },
+    {
+      "icon_id": "44983420",
+      "name": "涂胶参数",
+      "font_class": "tujiao",
+      "unicode": "e605",
+      "unicode_decimal": 58885
+    },
+    {
+      "icon_id": "44983944",
+      "name": "CAD编辑",
+      "font_class": "CADbianji",
+      "unicode": "e606",
+      "unicode_decimal": 58886
+    },
+    {
+      "icon_id": "45012374",
+      "name": "自适应",
+      "font_class": "a-ziyuan173",
+      "unicode": "e61a",
+      "unicode_decimal": 58906
+    },
+    {
+      "icon_id": "45013447",
+      "name": "管理员",
+      "font_class": "guanliyuan",
+      "unicode": "e61b",
+      "unicode_decimal": 58907
+    },
+    {
+      "icon_id": "45013532",
+      "name": "ctrl",
+      "font_class": "a-ziyuan1711",
+      "unicode": "e620",
+      "unicode_decimal": 58912
+    },
+    {
+      "icon_id": "45013533",
+      "name": "加",
+      "font_class": "a-ziyuan1691",
+      "unicode": "e617",
+      "unicode_decimal": 58903
+    },
+    {
       "icon_id": "1433716",
       "name": "delete",
       "font_class": "delete1",

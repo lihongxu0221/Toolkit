@@ -1,0 +1,20 @@
+namespace BgCommon.Prism.Wpf.Authority.Models;
+
+public class PasswordConfirmationRequest
+{
+    /// <summary>
+    /// Gets 需要确认密码的用户Id.
+    /// </summary>
+    public long UserId { get; }
+
+    /// <summary>
+    /// Gets 需要确认密码的用户名，用于在UI上显示.
+    /// </summary>
+    public string UserName { get; }
+
+    public PasswordConfirmationRequest(long userId, string userName)
+    {
+        UserId = userId;
+        UserName = userName;
+    }
+}

@@ -1,0 +1,196 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=8.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=8.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="ClassesToolTip" xml:space="preserve">
+    <value>類</value>
+  </data>
+  <data name="CompilerSettings_AllowUnsafe" xml:space="preserve">
+    <value>允許不安全程式碼</value>
+  </data>
+  <data name="CompilerSettings_CheckOverflow" xml:space="preserve">
+    <value>檢查算術溢出/下溢</value>
+  </data>
+  <data name="CompilerSettings_EmbedVBRuntime" xml:space="preserve">
+    <value>嵌入Visual Basic運行時</value>
+  </data>
+  <data name="CompilerSettings_Optimize" xml:space="preserve">
+    <value>優化程式碼</value>
+  </data>
+  <data name="CompilerSettings_OptionCompareBinary" xml:space="preserve">
+    <value>選項比較：二進位</value>
+  </data>
+  <data name="CompilerSettings_OptionExplicit" xml:space="preserve">
+    <value>選項明確</value>
+  </data>
+  <data name="CompilerSettings_OptionInfer" xml:space="preserve">
+    <value>選項推斷</value>
+  </data>
+  <data name="CompilerSettings_OptionStrict" xml:space="preserve">
+    <value>選項嚴格</value>
+  </data>
+  <data name="CompilerSettings_PreprocessorSymbols" xml:space="preserve">
+    <value>條件編譯符號</value>
+  </data>
+  <data name="CompletionSet_All" xml:space="preserve">
+    <value>全部</value>
+  </data>
+  <data name="ConstantsToolTip" xml:space="preserve">
+    <value>常數</value>
+  </data>
+  <data name="DebuggerExpressionHasNoValue" xml:space="preserve">
+    <value>運算式已求值，沒有值</value>
+  </data>
+  <data name="DebuggerVarsWindow_CSharp_StaticMembers" xml:space="preserve">
+    <value>靜態成員</value>
+  </data>
+  <data name="DebuggerVarsWindow_DynamicView" xml:space="preserve">
+    <value>動態視圖</value>
+  </data>
+  <data name="DebuggerVarsWindow_Error_PropertyName" xml:space="preserve">
+    <value>錯誤</value>
+  </data>
+  <data name="DebuggerVarsWindow_ExpandDynamicViewMessage" xml:space="preserve">
+    <value>展開動態視圖將獲得對象的動態成員</value>
+  </data>
+  <data name="DebuggerVarsWindow_ExpandResultsViewMessage" xml:space="preserve">
+    <value>展開結果視圖將枚舉IEnumerable</value>
+  </data>
+  <data name="DebuggerVarsWindow_InstanceMembers" xml:space="preserve">
+    <value>實例成員</value>
+  </data>
+  <data name="DebuggerVarsWindow_RawView" xml:space="preserve">
+    <value>原始視圖</value>
+  </data>
+  <data name="DebuggerVarsWindow_ResultsView" xml:space="preserve">
+    <value>結果視圖</value>
+  </data>
+  <data name="DebuggerVarsWindow_VisualBasic_SharedMembers" xml:space="preserve">
+    <value>共亯成員</value>
+  </data>
+  <data name="DelegatesToolTip" xml:space="preserve">
+    <value>代表</value>
+  </data>
+  <data name="DynamicViewAssemblyNotLoaded" xml:space="preserve">
+    <value>動態視圖需要引用{0}</value>
+  </data>
+  <data name="DynamicView_MustBeDynamicOrComType" xml:space="preserve">
+    <value>只有COM或動態對象可以具有動態視圖</value>
+  </data>
+  <data name="EnumsToolTip" xml:space="preserve">
+    <value>枚舉</value>
+  </data>
+  <data name="EventsToolTip" xml:space="preserve">
+    <value>事件</value>
+  </data>
+  <data name="ExtensionMethodsToolTip" xml:space="preserve">
+    <value>擴展方法</value>
+  </data>
+  <data name="FieldsToolTip" xml:space="preserve">
+    <value>領域</value>
+  </data>
+  <data name="FilterExpressionEvaluator_CompiledExpressionThrewAnException" xml:space="preserve">
+    <value>編譯的運算式引發异常：{0}</value>
+  </data>
+  <data name="FilterExpressionEvaluator_InvalidExpression" xml:space="preserve">
+    <value>運算式無效</value>
+  </data>
+  <data name="InterfacesToolTip" xml:space="preserve">
+    <value>介面</value>
+  </data>
+  <data name="KeywordsToolTip" xml:space="preserve">
+    <value>關鍵字</value>
+  </data>
+  <data name="LocalsAndParametersToolTip" xml:space="preserve">
+    <value>局部和參數</value>
+  </data>
+  <data name="LocalsWindow_MethodOrProperty_Returned" xml:space="preserve">
+    <value>返回{0}</value>
+  </data>
+  <data name="LocalsWindow_TypeVariables" xml:space="preserve">
+    <value>類型變數</value>
+  </data>
+  <data name="MethodsToolTip" xml:space="preserve">
+    <value>方法</value>
+  </data>
+  <data name="ModulesToolTip" xml:space="preserve">
+    <value>模塊</value>
+  </data>
+  <data name="NamespacesToolTip" xml:space="preserve">
+    <value>命名空間</value>
+  </data>
+  <data name="PropertiesToolTip" xml:space="preserve">
+    <value>内容</value>
+  </data>
+  <data name="ResultsView_MustBeEnumerableType" xml:space="preserve">
+    <value>只有枚舉類型才能有結果視圖</value>
+  </data>
+  <data name="SnippetsToolTip" xml:space="preserve">
+    <value>程式碼片段</value>
+  </data>
+  <data name="StructuresToolTip" xml:space="preserve">
+    <value>結構</value>
+  </data>
+  <data name="SystemCoreDllNotLoaded" xml:space="preserve">
+    <value>結果視圖需要引用{0}</value>
+  </data>
+  <data name="TypeDoesNotExistInAssembly" xml:space="preserve">
+    <value>程式集“{1}”中不存在類型“{0}”</value>
+  </data>
+</root>

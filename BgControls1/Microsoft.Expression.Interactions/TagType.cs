@@ -1,0 +1,1 @@
+namespace BgControls.Interactivity;public enum TagType{    Element,    DataContext}

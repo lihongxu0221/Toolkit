@@ -1,0 +1,221 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFramework>$(DefaultTargetFramework)-windows</TargetFramework>
+		<UseWPF>true</UseWPF>
+		<OutputType>Library</OutputType>
+		<AllowUnsafeBlocks>True</AllowUnsafeBlocks>
+		<VersionPrefix>1.0.0</VersionPrefix>
+		<VersionSuffix>beta1</VersionSuffix>
+    <!-- 强制不复制所有 NuGet 依赖到输出目录 -->
+    <CopyLocalLockFileAssemblies>false</CopyLocalLockFileAssemblies>
+    <RestoreSources>
+      https://pkgs.dev.azure.com/dnceng/public/_packaging/dotnet-tools/nuget/v3/index.json;
+      https://pkgs.dev.azure.com/azure-public/vside/_packaging/vssdk/nuget/v3/index.json;
+      https://pkgs.dev.azure.com/azure-public/vside/_packaging/vs-impl/nuget/v3/index.json;
+      https://api.nuget.org/v3/index.json
+    </RestoreSources>
+	</PropertyGroup>
+
+	<ItemGroup>
+    <PackageReference Include="Costura.Fody">
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+		<PackageReference Include="AvalonLibrary">
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+		<PackageReference Include="Microsoft.CodeAnalysis.Common">
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+		<PackageReference Include="Microsoft.CodeAnalysis.CSharp">
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+		<PackageReference Include="Microsoft.CodeAnalysis.Workspaces.Common">
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Features">
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+		<PackageReference Include="Microsoft.CodeAnalysis.CSharp.Scripting">
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+		<PackageReference Include="Microsoft.CodeAnalysis.CSharp.Workspaces">
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.VisualStudio.Threading">
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+    <PackageReference Include="CommunityToolkit.Mvvm">
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+		<PackageReference Include="Newtonsoft.Json">
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+    <PackageReference Include="Prism.DryIoc">
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+    <PackageReference Include="Prism.Wpf">
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+    <PackageReference Include="System.Collections.Immutable">
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+    <PackageReference Include="System.Composition">
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+    <PackageReference Include="System.Drawing.Common">
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+    <PackageReference Include="System.Linq.AsyncEnumerable">
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+    <PackageReference Include="System.Reflection.Metadata">
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+    <PackageReference Include="System.Reflection.MetadataLoadContext">
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+    <PackageReference Include="Dirkster.AvalonDock">
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+    <PackageReference Include="Dirkster.AvalonDock.Themes.VS2013">
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+    <PackageReference Include="NuGet.Versioning">
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+    <PackageReference Include="Mono.Cecil">
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+    <PackageReference Include="Nerdbank.Streams">
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+    <PackageReference Include="System.Reactive">
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+    <PackageReference Include="System.Reactive.Core">
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+    <PackageReference Include="System.Reactive.Linq">
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.Win32.SystemEvents" />
+    <!--<PackageReference Include="Microsoft.Extensions.Localization.Abstractions" />-->
+    <!--<PackageReference Include="NLog" />-->
+    <!--<PackageReference Include="NLog.Database" />-->
+    <!--<PackageReference Include="NLog.Extensions.Logging" />-->
+    <!--<PackageReference Include="NLog.Schema" />-->
+	</ItemGroup>
+
+	<ItemGroup>
+    <IgnoresAccessChecksTo Include="Microsoft.CodeAnalysis.Common" />
+		<IgnoresAccessChecksTo Include="Microsoft.CodeAnalysis.CSharp" />
+		<IgnoresAccessChecksTo Include="Microsoft.CodeAnalysis.Features" />
+		<IgnoresAccessChecksTo Include="Microsoft.CodeAnalysis.CSharp.Features" />
+		<IgnoresAccessChecksTo Include="Microsoft.CodeAnalysis.CSharp.EditorFeatures" />
+		<IgnoresAccessChecksTo Include="Microsoft.CodeAnalysis.Scripting" />
+		<IgnoresAccessChecksTo Include="Microsoft.CodeAnalysis.CSharp.Scripting" />
+		<IgnoresAccessChecksTo Include="Microsoft.CodeAnalysis.Workspaces" />
+		<IgnoresAccessChecksTo Include="Microsoft.CodeAnalysis.CSharp.Workspaces" />
+		<IgnoresAccessChecksTo Include="Microsoft.CodeAnalysis.LanguageServer.Protocol" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\BgCommon.Localization\BgCommon.Localization.csproj" />
+		<ProjectReference Include="..\BgCommon\BgCommon.csproj" />
+		<ProjectReference Include="..\BgCommon.Prism.Wpf\BgCommon.Prism.Wpf.csproj" />
+		<ProjectReference Include="..\BgControls\BgControls.csproj" />
+		<ProjectReference Include="..\BgLogger\BgLogger.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<None Remove="..\..\..\packages\nlog.schema\5.4.0\contentFiles\any\any\NLog.xsd" />
+		<None Remove="D:\Projects\AIProjects\packages\nlog.schema\5.4.0\contentFiles\any\any\NLog.xsd" />
+		<None Remove="Themes\dark_modern.json" />
+		<None Remove="Themes\dark_plus.json" />
+		<None Remove="Themes\dark_vs.json" />
+		<None Remove="Themes\light_modern.json" />
+		<None Remove="Themes\light_plus.json" />
+		<None Remove="Themes\light_vs.json" />
+		<None Remove="Themes\vs2019_dark.json" />
+		<None Remove="Themes\vs2019_light.json" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<Content Include="Themes\dark_modern.json">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Content>
+		<Content Include="Themes\dark_plus.json">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Content>
+		<Content Include="Themes\dark_vs.json">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Content>
+		<Content Include="Themes\light_modern.json">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Content>
+		<Content Include="Themes\light_plus.json">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Content>
+		<Content Include="Themes\light_vs.json">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Content>
+	</ItemGroup>
+
+	<ItemGroup>
+		<EmbeddedResource Include="Themes\vs2019_dark.json" />
+		<EmbeddedResource Include="Themes\vs2019_light.json" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<Folder Include="CodeDom\Templates\" />
+		<Folder Include="Core\" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<Reference Include="ICSharpCode.AvalonEdit">
+			<HintPath>..\..\DLL\BaiguCore\Toolkit\RoslynPad\ICSharpCode.AvalonEdit.dll</HintPath>
+			<Private>False</Private>
+    </Reference>
+		<Reference Include="Microsoft.CodeAnalysis.LanguageServer.Protocol">
+		  <HintPath>..\..\DLL\BaiguCore\Toolkit\RoslynPad\Microsoft.CodeAnalysis.LanguageServer.Protocol.dll</HintPath>
+		  <Private>False</Private>
+		</Reference>
+
+		<Reference Include="RoslynPad.Editor.Windows">
+			<HintPath>..\..\DLL\BaiguCore\Toolkit\RoslynPad\RoslynPad.Editor.Windows.dll</HintPath>
+			<Private>False</Private>
+		</Reference>
+		<Reference Include="RoslynPad.Roslyn">
+			<HintPath>..\..\DLL\BaiguCore\Toolkit\RoslynPad\RoslynPad.Roslyn.dll</HintPath>
+			<Private>False</Private>
+		</Reference>
+		<Reference Include="RoslynPad.Roslyn.Windows">
+			<HintPath>..\..\DLL\BaiguCore\Toolkit\RoslynPad\RoslynPad.Roslyn.Windows.dll</HintPath>
+			<Private>False</Private>
+		</Reference>
+		<Reference Include="RoslynPad.Runtime">
+			<HintPath>..\..\DLL\BaiguCore\Toolkit\RoslynPad\RoslynPad.Runtime.dll</HintPath>
+			<Private>True</Private>
+		</Reference>
+		<Reference Include="RoslynPad.Themes">
+			<HintPath>..\..\DLL\BaiguCore\Toolkit\RoslynPad\RoslynPad.Themes.dll</HintPath>
+			<Private>True</Private>
+		</Reference>
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Compile Update="Assets\Localization\Translations.Designer.cs">
+	    <DesignTime>True</DesignTime>
+	    <AutoGen>True</AutoGen>
+	    <DependentUpon>Translations.resx</DependentUpon>
+	  </Compile>
+	</ItemGroup>
+
+	<ItemGroup>
+	  <EmbeddedResource Update="Assets\Localization\Translations.resx">
+	    <Generator>ResXFileCodeGenerator</Generator>
+	    <LastGenOutput>Translations.Designer.cs</LastGenOutput>
+	  </EmbeddedResource>
+	</ItemGroup>
+</Project>

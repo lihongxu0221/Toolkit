@@ -1,7 +1,3 @@
-using BgCommon.Prism.Wpf.Controls.ViewModels;
-using BgCommon.Prism.Wpf.DependencyInjection;
-using BgCommon.Prism.Wpf.DependencyInjection;
-
 namespace BgCommon.Prism.Wpf.Controls;
 
 /// <summary>

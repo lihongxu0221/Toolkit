@@ -1,0 +1,196 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=8.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=8.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="ClassesToolTip" xml:space="preserve">
+    <value>Các lớp học</value>
+  </data>
+  <data name="CompilerSettings_AllowUnsafe" xml:space="preserve">
+    <value>Cho phép mã không an toàn</value>
+  </data>
+  <data name="CompilerSettings_CheckOverflow" xml:space="preserve">
+    <value>Kiểm tra số học overflow / underflow</value>
+  </data>
+  <data name="CompilerSettings_EmbedVBRuntime" xml:space="preserve">
+    <value>Nhúng thời gian chạy Visual Basic</value>
+  </data>
+  <data name="CompilerSettings_Optimize" xml:space="preserve">
+    <value>Tối ưu hóa mã</value>
+  </data>
+  <data name="CompilerSettings_OptionCompareBinary" xml:space="preserve">
+    <value>Tùy chọn so sánh: nhị phân</value>
+  </data>
+  <data name="CompilerSettings_OptionExplicit" xml:space="preserve">
+    <value>Tùy chọn rõ ràng</value>
+  </data>
+  <data name="CompilerSettings_OptionInfer" xml:space="preserve">
+    <value>Tùy chọn suy luận</value>
+  </data>
+  <data name="CompilerSettings_OptionStrict" xml:space="preserve">
+    <value>Tùy chọn nghiêm ngặt</value>
+  </data>
+  <data name="CompilerSettings_PreprocessorSymbols" xml:space="preserve">
+    <value>Biên soạn điều kiện biểu tượng</value>
+  </data>
+  <data name="CompletionSet_All" xml:space="preserve">
+    <value>Tất cả</value>
+  </data>
+  <data name="ConstantsToolTip" xml:space="preserve">
+    <value>Hằng số</value>
+  </data>
+  <data name="DebuggerExpressionHasNoValue" xml:space="preserve">
+    <value>Biểu thức đã được đánh giá và không có giá trị</value>
+  </data>
+  <data name="DebuggerVarsWindow_CSharp_StaticMembers" xml:space="preserve">
+    <value>Thành viên tĩnh</value>
+  </data>
+  <data name="DebuggerVarsWindow_DynamicView" xml:space="preserve">
+    <value>Xem năng động</value>
+  </data>
+  <data name="DebuggerVarsWindow_Error_PropertyName" xml:space="preserve">
+    <value>Lỗi</value>
+  </data>
+  <data name="DebuggerVarsWindow_ExpandDynamicViewMessage" xml:space="preserve">
+    <value>Mở rộng Dynamic View sẽ có được các thành viên động cho đối tượng</value>
+  </data>
+  <data name="DebuggerVarsWindow_ExpandResultsViewMessage" xml:space="preserve">
+    <value>Mở rộng xem kết quả sẽ liệt kê IEnumerable</value>
+  </data>
+  <data name="DebuggerVarsWindow_InstanceMembers" xml:space="preserve">
+    <value>Thành viên instance</value>
+  </data>
+  <data name="DebuggerVarsWindow_RawView" xml:space="preserve">
+    <value>Xem thô</value>
+  </data>
+  <data name="DebuggerVarsWindow_ResultsView" xml:space="preserve">
+    <value>Xem kết quả</value>
+  </data>
+  <data name="DebuggerVarsWindow_VisualBasic_SharedMembers" xml:space="preserve">
+    <value>Các thành viên được chia sẻ</value>
+  </data>
+  <data name="DelegatesToolTip" xml:space="preserve">
+    <value>Đại biểu</value>
+  </data>
+  <data name="DynamicViewAssemblyNotLoaded" xml:space="preserve">
+    <value>Dynamic View yêu cầu tham chiếu {0}</value>
+  </data>
+  <data name="DynamicView_MustBeDynamicOrComType" xml:space="preserve">
+    <value>Chỉ COM hoặc đối tượng động mới có thể có Dynamic View</value>
+  </data>
+  <data name="EnumsToolTip" xml:space="preserve">
+    <value>Enums</value>
+  </data>
+  <data name="EventsToolTip" xml:space="preserve">
+    <value>Sự kiện</value>
+  </data>
+  <data name="ExtensionMethodsToolTip" xml:space="preserve">
+    <value>Phương pháp mở rộng</value>
+  </data>
+  <data name="FieldsToolTip" xml:space="preserve">
+    <value>Các lĩnh vực</value>
+  </data>
+  <data name="FilterExpressionEvaluator_CompiledExpressionThrewAnException" xml:space="preserve">
+    <value>Biên dịch biểu thức đã ném một ngoại lệ: {0}</value>
+  </data>
+  <data name="FilterExpressionEvaluator_InvalidExpression" xml:space="preserve">
+    <value>Expression không hợp lệ</value>
+  </data>
+  <data name="InterfacesToolTip" xml:space="preserve">
+    <value>Giao diện</value>
+  </data>
+  <data name="KeywordsToolTip" xml:space="preserve">
+    <value>Từ khóa</value>
+  </data>
+  <data name="LocalsAndParametersToolTip" xml:space="preserve">
+    <value>Địa phương và thông số</value>
+  </data>
+  <data name="LocalsWindow_MethodOrProperty_Returned" xml:space="preserve">
+    <value> {0} trở lại</value>
+  </data>
+  <data name="LocalsWindow_TypeVariables" xml:space="preserve">
+    <value>Các biến loại</value>
+  </data>
+  <data name="MethodsToolTip" xml:space="preserve">
+    <value>Phương pháp</value>
+  </data>
+  <data name="ModulesToolTip" xml:space="preserve">
+    <value>Mô-đun</value>
+  </data>
+  <data name="NamespacesToolTip" xml:space="preserve">
+    <value>Không gian tên</value>
+  </data>
+  <data name="PropertiesToolTip" xml:space="preserve">
+    <value>Tài sản</value>
+  </data>
+  <data name="ResultsView_MustBeEnumerableType" xml:space="preserve">
+    <value>Chỉ các loại có thể liệt kê có thể có kết quả Xem</value>
+  </data>
+  <data name="SnippetsToolTip" xml:space="preserve">
+    <value>Snippets</value>
+  </data>
+  <data name="StructuresToolTip" xml:space="preserve">
+    <value>Cấu trúc</value>
+  </data>
+  <data name="SystemCoreDllNotLoaded" xml:space="preserve">
+    <value>Xem kết quả yêu cầu tham chiếu {0}</value>
+  </data>
+  <data name="TypeDoesNotExistInAssembly" xml:space="preserve">
+    <value>Kiểu '{0}' không tồn tại trong lắp ráp '{1}'</value>
+  </data>
+</root>

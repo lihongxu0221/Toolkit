@@ -1,0 +1,11 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:hc="https://handyorg.github.io/handycontrol"
+                    xmlns:bg="http://www.sz-baigu.com/"
+                    xmlns:local="clr-namespace:BgControls.Controls">
+
+    <Style x:Key="TextBlock.IconFont" TargetType="{x:Type TextBlock}" BasedOn="{StaticResource TextBlockBaseStyle}">
+        <Setter Property="FontFamily" Value="{DynamicResource IconFont}" />
+        <Setter Property="FontSize" Value="{DynamicResource HeadFontSize}" />
+    </Style>
+</ResourceDictionary>

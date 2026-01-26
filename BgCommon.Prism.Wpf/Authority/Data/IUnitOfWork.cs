@@ -1,0 +1,19 @@
+namespace BgCommon.Prism.Wpf.Authority.Data;
+
+/// <summary>
+/// 工作单元.
+/// </summary>
+public interface IUnitOfWork
+{
+    /// <summary>
+    /// 【异步】保存更改到数据库中。
+    /// </summary>
+    /// <param name="cancellationToken">取消令牌.</param>
+    /// <returns>返回 保存结果.</returns>
+    Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// 【同步】将在此工作单元中进行的所有内存中的更改保存到数据库.
+    /// </summary>
+    int SaveChanges();
+}

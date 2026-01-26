@@ -1,0 +1,1 @@
+using BgCommon.Prism.Wpf.DependencyInjection;namespace BgCommon.Prism.Wpf.Views;/// <summary>/// MessageDialogWindow.xaml 的交互逻辑/// </summary>public partial class MessageDialogWindow : HandyControl.Controls.Window, IDialogWindow{    public IDialogResult Result { get; set; }    public MessageDialogWindow()    {        InitializeComponent();    }}

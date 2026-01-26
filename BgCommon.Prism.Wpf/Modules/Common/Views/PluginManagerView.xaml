@@ -1,0 +1,72 @@
+<UserControl x:Class="BgCommon.Prism.Wpf.Modules.Common.Views.PluginManagerView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:prism="http://prismlibrary.com/"
+             xmlns:hc="https://handyorg.github.io/handycontrol"
+             xmlns:bg="http://www.sz-baigu.com/"
+             xmlns:local="clr-namespace:BgCommon.Prism.Wpf"
+             xmlns:v="clr-namespace:BgCommon.Prism.Wpf.Modules.Common.Views"
+             xmlns:vm="clr-namespace:BgCommon.Prism.Wpf.Modules.Common.ViewModels"
+             xmlns:markup="clr-namespace:BgCommon.Prism.Wpf.Localization.Markup"
+             prism:ViewModelLocator.AutoWireViewModel="True"
+             mc:Ignorable="d" 
+             d:DesignHeight="768" d:DesignWidth="1024"
+             d:DataContext="{d:DesignInstance Type=vm:PluginManagerViewModel}">
+    <Grid Margin="10">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="250"/>
+            <ColumnDefinition Width="10"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+
+        <!-- 左侧: 程序集列表 -->
+        <Grid Grid.Column="0">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+            <GroupBox Header="{markup:StringResource 程序集列表}">
+                <ListBox ItemsSource="{Binding Assemblies}" 
+                         SelectionMode="Extended"
+                         DisplayMemberPath="Name">
+                    <bg:Interaction.Triggers>
+                        <bg:EventTrigger EventName="SelectionChanged">
+                            <bg:InvokeCommandAction Command="{Binding AssemblySelectionChangedCommand}"
+                                                    CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=ListBox}, Path=SelectedItems}"/>
+                        </bg:EventTrigger>
+                    </bg:Interaction.Triggers>
+                </ListBox>
+            </GroupBox>
+            <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,10,0,0">
+                <Button Width="120" Height="40" Content="{markup:StringResource 从文件加载}" Command="{Binding LoadFromFileCommand}" Margin="5"/>
+                <Button Width="120" Height="40" Content="{markup:StringResource 从文件夹加载}" Command="{Binding LoadFromDirectoryCommand}" Margin="5"/>
+            </StackPanel>
+        </Grid>
+
+        <GridSplitter Grid.Column="1" Width="5" HorizontalAlignment="Center" VerticalAlignment="Stretch"/>
+
+        <!-- 右侧: 插件列表 -->
+        <Grid Grid.Column="2">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+            <GroupBox Header="{markup:StringResource 找到的插件}">
+                <DataGrid ItemsSource="{Binding Plugins}" AutoGenerateColumns="False" CanUserDeleteRows="False" CanUserAddRows="False">
+                    <DataGrid.Columns>
+                        <DataGridCheckBoxColumn Header="{markup:StringResource 启用}" Binding="{Binding IsEnabled, UpdateSourceTrigger=PropertyChanged}" Width="Auto"/>
+                        <DataGridTextColumn Header="{markup:StringResource 插件名称}" Binding="{Binding Name}" IsReadOnly="True" Width="*"/>
+                        <DataGridTextColumn Header="{markup:StringResource 完整类名}" Binding="{Binding FullName}" IsReadOnly="True" Width="2*"/>
+                        <DataGridTextColumn Header="{markup:StringResource 所在程序集}" Binding="{Binding AssemblyName}" IsReadOnly="True" Width="*"/>
+                    </DataGrid.Columns>
+                </DataGrid>
+            </GroupBox>
+            <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,10,0,0">
+                <Button Width="120" Height="40" Content="{markup:StringResource 确认}" Command="{Binding OkCommand}" IsDefault="True" Margin="5"/>
+                <Button Width="120" Height="40" Content="{markup:StringResource 取消}" Command="{Binding CancelCommand}" IsCancel="True" Margin="5"/>
+            </StackPanel>
+        </Grid>
+    </Grid>
+</UserControl>
