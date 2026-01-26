@@ -1,0 +1,1 @@
+using BgCommon.DbService.Models.Entities;namespace BgCommon.DbService.Models.Dtos;/// <summary>/// 切换用户事件/// </summary>public class UserSwitchedEvent : PubSubEvent<UserInfo?>{}

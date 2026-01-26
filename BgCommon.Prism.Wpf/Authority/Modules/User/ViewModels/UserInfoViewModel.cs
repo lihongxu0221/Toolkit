@@ -1,5 +1,6 @@
 using BgCommon.Collections;
 using BgCommon.Prism.Wpf.Authority.Entities;
+using BgCommon.Prism.Wpf.Authority.Services;
 using BgCommon.Prism.Wpf.MVVM;
 
 namespace BgCommon.Prism.Wpf.Authority.Modules.User.ViewModels;
@@ -9,6 +10,7 @@ namespace BgCommon.Prism.Wpf.Authority.Modules.User.ViewModels;
 /// </summary>
 public partial class UserInfoViewModel : DialogViewModelBase
 {
+    private IRoleService roleService;
     private UserInfo? curLoginUser = null;
 
     [ObservableProperty]
@@ -16,6 +18,12 @@ public partial class UserInfoViewModel : DialogViewModelBase
 
     [ObservableProperty]
     private UserInfo user = new();
+
+    /// <summary>
+    /// 选中的角色.
+    /// </summary>
+    [ObservableProperty]
+    private int? selectedRole = null;
 
     /// <summary>
     /// 可用的角色列表.
@@ -32,38 +40,39 @@ public partial class UserInfoViewModel : DialogViewModelBase
     [ObservableProperty]
     private string confirmPassword = string.Empty;
 
-    public UserInfoViewModel(IContainerExtension container)
+    public UserInfoViewModel(IContainerExtension container, IRoleService roleService)
         : base(container)
     {
+        this.roleService = roleService;
     }
 
     public override void OnDialogOpened(IDialogParameters parameters)
     {
         ArgumentNullException.ThrowIfNull(parameters, nameof(parameters));
 
-        if (parameters.TryGetValue<UserInfo>(EditUser, out UserInfo? parameter2))
+        if (parameters.TryGetValue<UserInfo>(Constraints.Parameter, out UserInfo? parameter2))
         {
             this.User = parameter2;
         }
 
-        if (parameters.TryGetValue<string>(EditMode, out string? parameter1))
+        if (parameters.TryGetValue<string>(Constraints.EditMode, out string? parameter1))
         {
             this.Mode = parameter1;
         }
 
-        if (this.Mode == EditModeNew)
+        if (this.Mode == Constraints.EditModeNew)
         {
             this.Title = GetString("新建用户");
             this.IsCreateNew = true;
         }
 
-        if (this.Mode == EditModeUpdate)
+        if (this.Mode == Constraints.EditModeUpdate)
         {
             this.Title = GetString("更新用户信息");
             this.IsCreateNew = false;
         }
 
-        if (parameters.TryGetValue<UserInfo>(LoginedUser, out UserInfo? user))
+        if (parameters.TryGetValue<UserInfo>(Constraints.OperatorUser, out UserInfo? user))
         {
             this.curLoginUser = user;
         }
@@ -93,12 +102,6 @@ public partial class UserInfoViewModel : DialogViewModelBase
                 errorMessage = GetString("俩次输入的密码不一致");
             }
         }
-
-        // if (curLoginUser != null && curLoginUser.Authority < this.User.Authority)
-        // {
-        //     result = false;
-        //     errorMessage = GetString("当前用户权限无法创建或修改高于自身权限的账号的权限等级");
-        // }
 
         if (result == false)
         {
