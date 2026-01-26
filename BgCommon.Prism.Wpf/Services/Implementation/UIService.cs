@@ -16,7 +16,7 @@ internal class WpfUIService : IUIService
         // 在构造时捕获UI线程的Dispatcher
         // 确保这个服务是在UI线程上创建的（通常通过Prism的DI容器在应用启动时注册为单例）
         dispatcher = Application.Current?.Dispatcher
-             ?? throw new InvalidOperationException("Cannot create WpfUIService outside of a WPF application with a valid dispatcher.");
+                     ?? throw new InvalidOperationException("Cannot create WpfUIService outside of a WPF application with a valid dispatcher.");
     }
 
     public void RunOnUIThread(Action action, DispatcherPriority priority)
