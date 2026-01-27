@@ -1,1 +1,0 @@
-namespace BgCommon.Prism.Wpf;/// <summary>/// 实现此接口的视图（View）将被 ModuleHostViewModel 缓存，/// 在导航离开后不会被销毁，以便快速再次导航回来。/// 注意：其关联的 ViewModel 也应能处理被重用的情况。/// </summary>public interface ICachedView { }

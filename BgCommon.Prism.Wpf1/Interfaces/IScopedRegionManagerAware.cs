@@ -1,1 +1,0 @@
-namespace BgCommon.Prism.Wpf;/// <summary>/// 实现该接口的类可感知作用域区域管理器，用于依赖注入区域管理器实例./// </summary>public interface IScopedRegionManagerAware{    /// <summary>    /// 设置作用域区域管理器实例.    /// </summary>    /// <param name="scopedRegionManager">要注入的作用域区域管理器实例.</param>    void SetScopedRegionManager(IRegionManager? scopedRegionManager);}

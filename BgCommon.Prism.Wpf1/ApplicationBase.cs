@@ -1,1 +1,0 @@
-namespace BgCommon.Prism.Wpf;/// <summary>/// 暂未实现./// </summary>[Obsolete("暂未实现")]public abstract class ApplicationBase : PrismApplication{}

@@ -1,0 +1,28 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+    
+    <PropertyGroup>
+        <TargetFramework>net8.0-windows</TargetFramework>
+        <Nullable>enable</Nullable>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <UseWindowsForms>true</UseWindowsForms>        
+        <Platforms>AnyCPU;x64</Platforms>
+        <OutputType>WinExe</OutputType>
+        <AssemblyVersion>0.0.1</AssemblyVersion>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="CommunityToolkit.Mvvm" />
+        <PackageReference Include="Microsoft.Data.Sqlite" />
+        <PackageReference Include="Microsoft-WindowsAPICodePack-Shell" />
+        <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" />
+        <PackageReference Include="Microsoft.Extensions.Hosting" />
+        <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" />
+        <PackageReference Include="Microsoft.Extensions.Localization.Abstractions" />
+        <PackageReference Include="Newtonsoft.Json" />
+        <PackageReference Include="NLog" />
+        <PackageReference Include="NLog.Database" />
+        <PackageReference Include="NLog.Extensions.Logging" />
+        <PackageReference Include="NLog.Windows.Forms" />
+        <PackageReference Include="NLog.Schema" />
+    </ItemGroup>
+</Project>

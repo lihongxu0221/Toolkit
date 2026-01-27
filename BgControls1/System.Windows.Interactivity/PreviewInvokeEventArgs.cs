@@ -1,1 +1,0 @@
-using System;namespace BgControls.Interactivity;public class PreviewInvokeEventArgs : EventArgs{    public bool Cancelling { get; set; }}

@@ -1,0 +1,16 @@
+﻿<Weavers xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="FodyWeavers.xsd">
+  <Costura DisableCompression="false">
+    <IncludeAssemblies>
+      CommunityToolkit.Mvvm
+      Costura
+      Microsoft.Data.Sqlite
+      SQLitePCLRaw.core
+      SQLitePCLRaw.batteries_v2
+      SQLitePCLRaw.provider.e_sqlite3
+      System.Memory
+      SqlSugar
+    </IncludeAssemblies>
+    <ExcludeAssemblies>
+    </ExcludeAssemblies>
+  </Costura>
+</Weavers>
