@@ -1,9 +1,4 @@
-using System.ComponentModel;
-using System.Composition;
-using System.IO;
 using System.Runtime.CompilerServices;
-using System.Windows;
-using System.Windows.Controls;
 using System.Windows.Input;
 using Avalon.Windows.Controls;
 using RoslynPad.UI;
@@ -11,26 +6,27 @@ using RoslynPad.UI;
 namespace BgCommon.Script.Views;
 
 /// <summary>
-/// Interaction logic for SaveDocumentDialog.xaml
+/// Interaction logic for SaveDocumentDialog.xaml.
 /// </summary>
 [Export(typeof(ISaveDocumentDialog))]
-internal partial class SaveDocumentDialog : ISaveDocumentDialog, INotifyPropertyChanged
+internal partial class SaveDocumentDialog : UserControl, ISaveDocumentDialog, INotifyPropertyChanged
 {
-    private string? _documentName;
-    private bool _showDoNotSave;
-    private InlineModalDialog _dialog;
-    private bool _allowNameEdit;
-    private string _filePath;
-    private SaveResult _result;
+    private bool showDoNotSave;
+    private bool allowNameEdit;
+    private SaveResult result;
+    private string documentName = string.Empty;
+    private string filePath = string.Empty;
+    private InlineModalDialog? dialog;
 
-#pragma warning disable CS8618 // Non-nullable field is uninitialized.
+    /// <summary>
+    /// Initializes a new instance of the <see cref="SaveDocumentDialog"/> class.
+    /// </summary>
     public SaveDocumentDialog()
-#pragma warning restore CS8618 // Non-nullable field is uninitialized.
     {
-        DataContext = this;
-        InitializeComponent();
-        DocumentName = null;
-        Loaded += OnLoaded;
+        this.DataContext = this;
+        this.InitializeComponent();
+        this.DocumentName = null;
+        this.Loaded += OnLoaded;
     }
 
     private void OnLoaded(object? sender, RoutedEventArgs routedEventArgs)
@@ -48,29 +44,46 @@ internal partial class SaveDocumentDialog : ISaveDocumentDialog, INotifyProperty
 
     private void DocumentName_TextChanged(object? sender, TextChangedEventArgs e)
     {
-        if (sender is not TextBox textBox) return;
+        if (sender is not TextBox textBox)
+        {
+            return;
+        }
 
         var invalidChars = Path.GetInvalidFileNameChars();
         foreach (var c in e.Changes)
         {
-            if (c.AddedLength == 0) continue;
+            if (c.AddedLength == 0)
+            {
+                continue;
+            }
+
             textBox.Select(c.Offset, c.AddedLength);
-            var filteredText = invalidChars.Aggregate(textBox.SelectedText,
+            var filteredText = invalidChars.Aggregate(
+                textBox.SelectedText,
                 (current, invalidChar) => current.Replace(invalidChar.ToString(), string.Empty));
             if (textBox.SelectedText != filteredText)
             {
                 textBox.SelectedText = filteredText;
             }
+
             textBox.Select(c.Offset + c.AddedLength, 0);
         }
     }
 
-    public string? DocumentName
+    /// <summary>
+    /// Gets or sets the name of the document.
+    /// </summary>
+    /// <remarks>Setting this property updates the status of the save button to reflect whether there are unsaved changes.</remarks>
+    public string DocumentName
     {
-        get => _documentName;
+        get
+        {
+            return this.documentName;
+        }
+
         set
         {
-            _ = SetProperty(ref _documentName, value);
+            _ = SetProperty(ref this.documentName, value);
             SetSaveButtonStatus();
         }
     }
@@ -82,25 +95,25 @@ internal partial class SaveDocumentDialog : ISaveDocumentDialog, INotifyProperty
 
     public SaveResult Result
     {
-        get => _result; private set => SetProperty(ref _result, value);
+        get => result; private set => SetProperty(ref result, value);
     }
 
     public bool AllowNameEdit
     {
-        get => _allowNameEdit;
-        set => SetProperty(ref _allowNameEdit, value);
+        get => allowNameEdit;
+        set => SetProperty(ref allowNameEdit, value);
     }
 
     public bool ShowDoNotSave
     {
-        get => _showDoNotSave;
-        set => SetProperty(ref _showDoNotSave, value);
+        get => showDoNotSave;
+        set => SetProperty(ref showDoNotSave, value);
     }
 
     public string FilePath
     {
-        get => _filePath;
-        private set => SetProperty(ref _filePath, value);
+        get => filePath;
+        private set => SetProperty(ref filePath, value);
     }
 
     public Func<string, string>? FilePathFactory { get; set; }
@@ -126,18 +139,18 @@ internal partial class SaveDocumentDialog : ISaveDocumentDialog, INotifyProperty
 
     public Task ShowAsync()
     {
-        _dialog = new InlineModalDialog
+        dialog = new InlineModalDialog
         {
             Owner = Application.Current.MainWindow,
             Content = this
         };
-        _dialog.Show();
+        dialog.Show();
         return Task.CompletedTask;
     }
 
     public void Close()
     {
-        _dialog?.Close();
+        dialog?.Close();
     }
 
     private void PerformSave()
