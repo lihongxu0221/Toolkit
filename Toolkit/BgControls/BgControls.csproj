@@ -53,6 +53,7 @@
 	  <Compile Include="Windows\Attach\BorderElement.cs" />
 	  <Compile Include="Windows\Attach\CommandProvider.cs" />
 	  <Compile Include="Windows\Attach\DropDownElement.cs" />
+	  <Compile Include="Windows\Attach\ExpanderAssist.cs" />
 	  <Compile Include="Windows\Attach\IconElement.cs" />
 	  <Compile Include="Windows\Attach\MenuAttach.cs" />
 	  <Compile Include="Windows\Attach\MenuTopLineAttach.cs" />
@@ -67,6 +68,7 @@
 	  <Compile Include="Windows\Attach\TitleElement.cs" />
 	  <Compile Include="Windows\Attach\ToggleButtonAttach.cs" />
 	  <Compile Include="Windows\Attach\TransitionAssist.cs" />
+	  <Compile Include="Windows\Attach\ValidationAssist.cs" />
 	  <Compile Include="Windows\Attach\VisualElement.cs" />
 	  <Compile Include="Windows\Attach\WindowAttach.cs" />
 	  <Compile Include="Windows\Automation\Peers\AutomationManager.cs" />
@@ -89,6 +91,13 @@
 	  <Compile Include="Windows\Controls\ColorPicker\ColorSortingMode.cs" />
 	  <Compile Include="Windows\Controls\ColorPicker\ColorSpectrumSlider.cs" />
 	  <Compile Include="Windows\Controls\DashedBorder.cs" />
+	  <Compile Include="Windows\Controls\DialogHost\DialogClosedEventArgs.cs" />
+	  <Compile Include="Windows\Controls\DialogHost\DialogClosingEventArgs.cs" />
+	  <Compile Include="Windows\Controls\DialogHost\DialogHost.cs" />
+	  <Compile Include="Windows\Controls\DialogHost\DialogHostEx.cs" />
+	  <Compile Include="Windows\Controls\DialogHost\DialogHostOpenDialogCommandDataContextSource.cs" />
+	  <Compile Include="Windows\Controls\DialogHost\DialogOpenedEventArgs.cs" />
+	  <Compile Include="Windows\Controls\DialogHost\DialogSession.cs" />
 	  <Compile Include="Windows\Controls\EmptyContentControl.cs" />
 	  <Compile Include="Windows\Controls\FastStarrySky.cs" />
 	  <Compile Include="Windows\Controls\FileExplorer.cs" />
@@ -102,6 +111,14 @@
 	  <Compile Include="Windows\Controls\PropertyGrid\Editors\PositionEditor.cs" />
 	  <Compile Include="Windows\Controls\SelectionAdorner.cs" />
 	  <Compile Include="Windows\Controls\Selectors\ButtonGroupItemStyleSelector.cs" />
+	  <Compile Include="Windows\Controls\Snackbar\ISnackbarMessageQueue.cs" />
+	  <Compile Include="Windows\Controls\Snackbar\Snackbar.cs" />
+	  <Compile Include="Windows\Controls\Snackbar\SnackbarActionButtonPlacementMode.cs" />
+	  <Compile Include="Windows\Controls\Snackbar\SnackbarMessage.cs" />
+	  <Compile Include="Windows\Controls\Snackbar\SnackbarMessageEventArgs.cs" />
+	  <Compile Include="Windows\Controls\Snackbar\SnackbarMessageQueue.cs" />
+	  <Compile Include="Windows\Controls\Snackbar\SnackbarMessageQueueItem.cs" />
+	  <Compile Include="Windows\Controls\Snackbar\SnackbarMessageTypeConverter.cs" />
 	  <Compile Include="Windows\Controls\Windows\BGWindow.cs" />
 	  <Compile Include="Windows\Controls\ControlCommands.cs" />
 	  <Compile Include="Windows\Controls\Loading\LoadingBase.cs" />

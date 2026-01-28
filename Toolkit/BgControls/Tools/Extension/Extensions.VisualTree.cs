@@ -363,6 +363,32 @@ public static partial class Extensions
     }
 
     /// <summary>
+    /// 判断一个节点是否是另一个指定祖先节点的后代.
+    /// </summary>
+    /// <param name="leaf">待检测的子节点.</param>
+    /// <param name="ancestor">指定的祖先节点.</param>
+    /// <returns>如果是后代则返回 true；否则返回 false.</returns>
+    public static bool IsDescendantOf(this DependencyObject? leaf, DependencyObject? ancestor)
+    {
+        DependencyObject? lastTrackedNode = null;
+
+        // 首先在视觉树祖先链中进行匹配.
+        foreach (DependencyObject currentNode in GetVisualAncestry(leaf))
+        {
+            if (object.Equals(currentNode, ancestor))
+            {
+                return true;
+            }
+
+            // 记录最后一个访问到的视觉节点.
+            lastTrackedNode = currentNode;
+        }
+
+        // 如果视觉树未找到，则尝试从最后的视觉节点开始在逻辑树中查找.
+        return lastTrackedNode?.GetLogicalAncestry()?.Contains(ancestor) ?? false;
+    }
+
+    /// <summary>
     /// 获取可视化树中的父级节点（语义化别名）.
     /// </summary>
     /// <typeparam name="T">目标父级类型.</typeparam>
@@ -453,6 +479,129 @@ public static partial class Extensions
         }
 
         return parent;
+    }
+
+
+
+    /// <summary>
+    /// 对视觉树进行真正的广度优先遍历.
+    /// </summary>
+    /// <param name="node">开始遍历的起始节点. </param>
+    /// <returns>广度优先遍历的节点枚举序列. </returns>
+    public static IEnumerable<DependencyObject> VisualBreadthFirstTraversal(this DependencyObject node)
+    {
+        // 检查起始节点是否为空.
+        ArgumentNullException.ThrowIfNull(node, nameof(node));
+
+        // 使用队列存储待访问的节点，实现先入先出（层级遍历）.
+        Queue<DependencyObject> pendingNodes = new Queue<DependencyObject>();
+
+        // 将起始节点加入队列.
+        pendingNodes.Enqueue(node);
+
+        // 当队列不为空时，持续进行处理.
+        while (pendingNodes.Count > 0)
+        {
+            // 从队列中取出当前节点并返回.
+            DependencyObject currentNode = pendingNodes.Dequeue();
+            yield return currentNode;
+
+            // 获取当前节点在视觉树中的子节点数量.
+            int childrenCount = VisualTreeHelper.GetChildrenCount(currentNode);
+
+            // 遍历所有直接子节点并加入队列.
+            for (int i = 0; i < childrenCount; i++)
+            {
+                // 获取索引位置的子节点.
+                DependencyObject childNode = VisualTreeHelper.GetChild(currentNode, i);
+
+                // 将子节点入队，等待下一轮处理.
+                pendingNodes.Enqueue(childNode);
+            }
+        }
+    }
+
+    /// <summary>
+    /// 对视觉树进行非递归的深度优先遍历.
+    /// </summary>
+    /// <param name="node">开始遍历的起始节点. </param>
+    /// <returns>深度优先遍历的节点枚举序列. </returns>
+    public static IEnumerable<DependencyObject> VisualDepthFirstTraversal(this DependencyObject node)
+    {
+        // 验证起始节点是否为空.
+        ArgumentNullException.ThrowIfNull(node, nameof(node));
+
+        // 使用栈结构模拟递归调用栈，避免深层树结构导致栈溢出.
+        Stack<DependencyObject> stack = new Stack<DependencyObject>();
+
+        // 将起始节点压入栈中.
+        stack.Push(node);
+
+        // 当栈中仍有节点时持续进行迭代.
+        while (stack.Count > 0)
+        {
+            // 弹出当前待访问的节点.
+            DependencyObject currentNode = stack.Pop();
+
+            // 返回当前节点.
+            yield return currentNode;
+
+            // 获取当前节点的子节点总数.
+            int childrenCount = VisualTreeHelper.GetChildrenCount(currentNode);
+
+            // 为了保持与递归遍历相同的顺序（先访问第一个子节点），需要逆序将子节点压入栈中.
+            // 这样出栈时，索引较小的子节点会先被弹出.
+            for (int i = childrenCount - 1; i >= 0; i--)
+            {
+                // 获取指定索引位置的子节点.
+                DependencyObject childNode = VisualTreeHelper.GetChild(currentNode, i);
+
+                // 将子节点压入栈顶.
+                stack.Push(childNode);
+            }
+        }
+    }
+
+    /// <summary>
+    /// 获取完整的视觉祖先链，从叶子节点开始向上追踪.
+    /// </summary>
+    /// <remarks>
+    /// 如果元素不是 Visual 或 Visual3D 类型，则尝试使用逻辑树溯源.
+    /// </remarks>
+    /// <param name="leaf">开始溯源的叶子节点.</param>
+    /// <returns>视觉祖先节点序列.</returns>
+    public static IEnumerable<DependencyObject> GetVisualAncestry(this DependencyObject? leaf)
+    {
+        // 当节点不为空时持续向上寻找父级.
+        while (leaf != null)
+        {
+            yield return leaf;
+
+            // 判断当前节点是否属于视觉对象，若是则通过视觉树查找，否则通过逻辑树查找.
+            leaf = (leaf is Visual || leaf is Visual3D)
+                ? VisualTreeHelper.GetParent(leaf)
+                : LogicalTreeHelper.GetParent(leaf);
+        }
+    }
+
+    /// <summary>
+    /// 获取完整的逻辑祖先链.
+    /// </summary>
+    /// <param name="leaf">开始溯源的叶子节点.</param>
+    /// <returns>逻辑祖先节点序列.</returns>
+    public static IEnumerable<DependencyObject?> GetLogicalAncestry(this DependencyObject leaf)
+    {
+        // 验证起始节点是否为空.
+        ArgumentNullException.ThrowIfNull(leaf, nameof(leaf));
+
+        DependencyObject? current = leaf;
+
+        // 持续查找逻辑父级直至根节点.
+        while (current != null)
+        {
+            yield return current;
+            current = LogicalTreeHelper.GetParent(current);
+        }
     }
 
     /// <summary>
