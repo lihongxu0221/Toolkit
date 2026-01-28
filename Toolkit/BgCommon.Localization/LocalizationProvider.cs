@@ -64,7 +64,11 @@ public class LocalizationProvider : ILocalizationProvider
             {
                 if (localSet != null && localSet.ContainKey(key) && localSet.IsSame(assembleyName))
                 {
-                    return localSet[key] ?? key;
+                    string? value = localSet[key];
+                    if (!string.IsNullOrEmpty(value))
+                    {
+                        return value;
+                    }
                 }
             }
         }
@@ -86,7 +90,13 @@ public class LocalizationProvider : ILocalizationProvider
                 {
                     if (localSet != null && localSet.ContainKey(key) && localSet.IsSame(assembleyName))
                     {
-                        results.Add(localSet[key]!);
+                        string? value = localSet[key];
+                        if (string.IsNullOrEmpty(value))
+                        {
+                            value = key;
+                        }
+
+                        results.Add(value);
                     }
                 }
             }
