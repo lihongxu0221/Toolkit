@@ -20,6 +20,7 @@ namespace BgControls.Tools.Converter;
 /// 当 <c>IsBusy</c> 为 true 时，控件应被禁用 (IsEnabled = false)，此时就需要此转换器.
 /// </para>
 /// </remarks>
+[Obsolete("建议使用 BgControls.Tools.Converter.Equality2ValueConverter 替代此转换器。")]
 public class Boolean2BooleanReConverter : IValueConverter
 {
     /// <summary>

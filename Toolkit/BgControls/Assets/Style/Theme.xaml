@@ -21,8 +21,6 @@
     <!-- 转换器 -->
     <BorderGapMaskConverter x:Key="BorderGapMaskConverter" />
     <BooleanToVisibilityConverter x:Key="Boolean2VisibilityConverter" />
-    <toolConverters:Boolean2BooleanReConverter x:Key="Boolean2BooleanReConverter"/>
-    <toolConverters:Boolean2VisibilityReConverter x:Key="Boolean2VisibilityReConverter"/>
     <toolConverters:Number2FileSizeConverter x:Key="Number2FileSizeConverter"/>
     <toolConverters:IsInstanceOfTypeConverter x:Key="IsInstanceOfTypeConverter"/>
     <toolConverters:HierarchicalIndexConverter x:Key="HierarchicalIndexConverter"/>
@@ -34,6 +32,14 @@
     <toolConverters:Bit2CurrentMaxUnitStringConverter x:Key="Bit2CurrentMaxUnitStringConverter" />
     <toolConverters:BorderCircularConverter x:Key="BorderCircularConverter" />
     <toolConverters:TypeToStringConverter x:Key="TypeToStringConverter" />
+    <toolConverters:Equality2ValueConverter x:Key="Boolean2VisibilityReConverter"
+                                            CompareValue="{x:Static datas:ValueBoxes.TrueBox}"
+                                            EqualsValue="{x:Static datas:ValueBoxes.CollapsedBox}"
+                                            NotEqualsValue="{x:Static datas:ValueBoxes.VisibleBox}"/>
+    <toolConverters:Equality2ValueConverter x:Key="Boolean2BooleanReConverter"
+                                            CompareValue="{x:Static datas:ValueBoxes.TrueBox}"
+                                            EqualsValue="{x:Static datas:ValueBoxes.FalseBox}"
+                                            NotEqualsValue="{x:Static datas:ValueBoxes.TrueBox}"/>
     <toolConverters:Equality2ValueConverter x:Key="ObjectEquality2BooleanConverter"
                                             EqualsValue="{x:Static datas:ValueBoxes.TrueBox}"
                                             NotEqualsValue="{x:Static datas:ValueBoxes.FalseBox}"/>

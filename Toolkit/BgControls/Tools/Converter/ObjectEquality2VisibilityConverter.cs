@@ -12,6 +12,7 @@ namespace BgControls.Tools.Converter;
 /// 如果不相等，返回 <see cref="NotEqualsVisibility"/> (默认 Collapsed).
 /// </para>
 /// </remarks>
+[Obsolete("建议使用 BgControls.Tools.Converter.Equality2ValueConverter，以获得更好的类型安全性和性能。")]
 public class ObjectEquality2VisibilityConverter : IValueConverter
 {
     /// <summary>
