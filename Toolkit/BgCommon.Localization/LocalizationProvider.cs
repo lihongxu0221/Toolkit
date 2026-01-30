@@ -54,10 +54,10 @@ public class LocalizationProvider : ILocalizationProvider
     }
 
     /// <inheritdoc />
-    public string GetString(string key, CultureInfo culture, string? assembleyName)
+    public string GetString(string key, CultureInfo cultureInfo, string? assembleyName)
     {
 
-        IEnumerable<LocalizationSet> localSets = GetLocalizationSets(culture);
+        IEnumerable<LocalizationSet> localSets = GetLocalizationSets(cultureInfo);
         if (localSets != null)
         {
             foreach (LocalizationSet? localSet in localSets)
