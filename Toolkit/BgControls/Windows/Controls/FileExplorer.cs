@@ -351,12 +351,12 @@ public class FileExplorer : Control
         // --- 1. 首先添加特殊文件夹 ---
         var specialFolders = new List<(Guid, string)>
         {
-            (NativeMethods.FOLDERID_Desktop, "桌面"),
-            (NativeMethods.FOLDERID_Documents, "文档"),
-            (NativeMethods.FOLDERID_Downloads, "下载"),
-            (NativeMethods.FOLDERID_Music, "音乐"),
-            (NativeMethods.FOLDERID_Pictures, "图片"),
-            (NativeMethods.FOLDERID_Videos, "视频"),
+            (NativeMethods.FOLDERID_Desktop, LocalizationProviderFactory.GetString("桌面")),
+            (NativeMethods.FOLDERID_Documents, LocalizationProviderFactory.GetString("文档")),
+            (NativeMethods.FOLDERID_Downloads, LocalizationProviderFactory.GetString("下载")),
+            (NativeMethods.FOLDERID_Music, LocalizationProviderFactory.GetString("音乐")),
+            (NativeMethods.FOLDERID_Pictures, LocalizationProviderFactory.GetString("图片")),
+            (NativeMethods.FOLDERID_Videos, LocalizationProviderFactory.GetString("视频")),
         };
 
         foreach (var (id, name) in specialFolders)

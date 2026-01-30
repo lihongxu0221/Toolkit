@@ -517,7 +517,7 @@
     <value>User name</value>
   </data>
   <data name="基本信息" xml:space="preserve">
-    <value>Basic Information</value>
+    <value>Basic information</value>
   </data>
   <data name="访客" xml:space="preserve">
     <value>Guest</value>
@@ -553,7 +553,7 @@
     <value>Modify</value>
   </data>
   <data name="参数配置" xml:space="preserve">
-    <value>Parameter Configuration</value>
+    <value>Parameter configuration</value>
   </data>
   <data name="新增" xml:space="preserve">
     <value>New</value>
@@ -1486,7 +1486,7 @@
     <value>Level</value>
   </data>
   <data name="开始时间" xml:space="preserve">
-    <value>start time</value>
+    <value>Start time</value>
   </data>
   <data name="结束时间" xml:space="preserve">
     <value>End time</value>
@@ -1534,7 +1534,7 @@
     <value>Data source</value>
   </data>
   <data name="历史日志" xml:space="preserve">
-    <value>historical log</value>
+    <value>Historical log</value>
   </data>
   <data name="测试" xml:space="preserve">
     <value>Test</value>
@@ -1606,7 +1606,7 @@
     <value>Increment</value>
   </data>
   <data name="小数位数" xml:space="preserve">
-    <value>decimal places</value>
+    <value>DecimalPlaces</value>
   </data>
   <data name="参数当前值" xml:space="preserve">
     <value>Current value of parameter</value>
@@ -1660,22 +1660,22 @@
     <value>The maximum length of a string</value>
   </data>
   <data name="小数点位数" xml:space="preserve">
-    <value>number of decimal places</value>
+    <value>Number of decimal places</value>
   </data>
   <data name="字符串" xml:space="preserve">
-    <value>string</value>
+    <value>String</value>
   </data>
   <data name="长整数" xml:space="preserve">
     <value>Long integer</value>
   </data>
   <data name="整数" xml:space="preserve">
-    <value>integer</value>
+    <value>Integer</value>
   </data>
   <data name="短整数" xml:space="preserve">
     <value>Short integer</value>
   </data>
   <data name="字节" xml:space="preserve">
-    <value>byte</value>
+    <value>Byte</value>
   </data>
   <data name="双精度浮点数" xml:space="preserve">
     <value>Double precision floating-point number</value>
@@ -1690,52 +1690,52 @@
     <value>Boolean value</value>
   </data>
   <data name="时间日期" xml:space="preserve">
-    <value>date and time</value>
+    <value>Date</value>
   </data>
   <data name="坐标点位" xml:space="preserve">
-    <value>coordinate point</value>
+    <value>Coordinate point</value>
   </data>
   <data name="数组" xml:space="preserve">
-    <value>array</value>
+    <value>Array</value>
   </data>
   <data name="集合" xml:space="preserve">
     <value>Collection</value>
   </data>
   <data name="模块" xml:space="preserve">
-    <value>module</value>
+    <value>Module</value>
   </data>
   <data name="功能" xml:space="preserve">
-    <value>function</value>
+    <value>Function</value>
   </data>
   <data name="查询" xml:space="preserve">
-    <value>query</value>
+    <value>Query</value>
   </data>
   <data name="创建" xml:space="preserve">
-    <value>create</value>
+    <value>Create</value>
   </data>
   <data name="更新" xml:space="preserve">
-    <value>update</value>
+    <value>Update</value>
   </data>
   <data name="新建" xml:space="preserve">
     <value>New</value>
   </data>
   <data name="复制" xml:space="preserve">
-    <value>copy</value>
+    <value>Copy</value>
   </data>
   <data name="重命名" xml:space="preserve">
     <value>Rename</value>
   </data>
   <data name="导入" xml:space="preserve">
-    <value>import</value>
+    <value>Import</value>
   </data>
   <data name="导出" xml:space="preserve">
-    <value>export</value>
+    <value>Export</value>
   </data>
   <data name="打印" xml:space="preserve">
-    <value>print</value>
+    <value>Print</value>
   </data>
   <data name="从不" xml:space="preserve">
-    <value>never</value>
+    <value>Never</value>
   </data>
   <data name="获得焦点时" xml:space="preserve">
     <value>When gaining focus</value>
@@ -1750,22 +1750,22 @@
     <value>Title hidden</value>
   </data>
   <data name="标题折叠" xml:space="preserve">
-    <value>Title Folding</value>
+    <value>Title folding</value>
   </data>
   <data name="左" xml:space="preserve">
-    <value>left</value>
+    <value>Left</value>
   </data>
   <data name="居中" xml:space="preserve">
-    <value>center</value>
+    <value>Center</value>
   </data>
   <data name="右" xml:space="preserve">
-    <value>right</value>
+    <value>Right</value>
   </data>
   <data name="水平方向" xml:space="preserve">
     <value>horizontal direction</value>
   </data>
   <data name="垂直方向" xml:space="preserve">
-    <value>vertical direction</value>
+    <value>VerticalDirection</value>
   </data>
   <data name="纯文本" xml:space="preserve">
     <value>Plain text</value>
@@ -1789,13 +1789,13 @@
     <value>horizontal alignment</value>
   </data>
   <data name="垂直对齐" xml:space="preserve">
-    <value>vertical alignment</value>
+    <value>VerticalAlignment</value>
   </data>
   <data name="图像源" xml:space="preserve">
-    <value>image source</value>
+    <value>Image source</value>
   </data>
   <data name="列表" xml:space="preserve">
-    <value>list</value>
+    <value>List</value>
   </data>
   <data name="获得焦点时生效" xml:space="preserve">
     <value>Effective upon gaining focus</value>
@@ -1819,7 +1819,7 @@
     <value>Running</value>
   </data>
   <data name="弹窗日志" xml:space="preserve">
-    <value>pop-up log</value>
+    <value>Popup log</value>
   </data>
   <data name="视觉日志" xml:space="preserve">
     <value>Vision log</value>
@@ -1840,7 +1840,7 @@
     <value>Database logs</value>
   </data>
   <data name="未定义" xml:space="preserve">
-    <value>undefined</value>
+    <value>Undefined</value>
   </data>
   <data name="无监控对象" xml:space="preserve">
     <value>No monitoring object</value>
@@ -1856,5 +1856,35 @@
   </data>
   <data name="监控所有" xml:space="preserve">
     <value>All</value>
+  </data>
+  <data name="名称" xml:space="preserve">
+    <value>Name</value>
+  </data>
+  <data name="修改时间" xml:space="preserve">
+    <value>modification time</value>
+  </data>
+  <data name="修改日期" xml:space="preserve">
+    <value>modified date</value>
+  </data>
+  <data name="桌面" xml:space="preserve">
+    <value>Desktop</value>
+  </data>
+  <data name="文档" xml:space="preserve">
+    <value>Document</value>
+  </data>
+  <data name="下载" xml:space="preserve">
+    <value>Download</value>
+  </data>
+  <data name="音乐" xml:space="preserve">
+    <value>Music</value>
+  </data>
+  <data name="图片" xml:space="preserve">
+    <value>Picture</value>
+  </data>
+  <data name="视频" xml:space="preserve">
+    <value>Video</value>
+  </data>
+  <data name="大小" xml:space="preserve">
+    <value>Size</value>
   </data>
 </root>
