@@ -30,7 +30,7 @@
             <!-- 1. 定义数据模板 -->
             <!-- 通用文本输入模板 -->
             <DataTemplate x:Key="CommonTemplate">
-                <TextBox bg:TitleElement.Title="{Binding Key}"
+                <TextBox bg:TitleElement.Title="{Binding Key,Converter={StaticResource LocalizationConverter}}"
                          bg:TitleElement.Placeholder="{markup:StringResource 请输入}"
                          bg:TitleElement.Necessary="True"
                          Text="{Binding Value, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
@@ -40,7 +40,7 @@
 
             <!-- 数字输入模板 -->
             <DataTemplate x:Key="NumericTemplate">
-                <hc:NumericUpDown hc:InfoElement.Title="{Binding Key}"
+                <hc:NumericUpDown hc:InfoElement.Title="{Binding Key,Converter={StaticResource LocalizationConverter}}"
                                   hc:InfoElement.Necessary="True"
                                   hc:InfoElement.Placeholder="请输入数字..."
                                   Value="{Binding Value, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
@@ -51,7 +51,7 @@
 
             <!-- 日期时间选择模板 -->
             <DataTemplate x:Key="DateTimeTemplate">
-                <hc:DateTimePicker hc:InfoElement.Title="{Binding Key}"
+                <hc:DateTimePicker hc:InfoElement.Title="{Binding Key,Converter={StaticResource LocalizationConverter}}"
                                    hc:InfoElement.Necessary="True"
                                    SelectedDateTime="{Binding Value, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                                    Style="{DynamicResource DateTimePickerExtend}" 
@@ -61,7 +61,7 @@
             <!-- 布尔选择模板 -->
             <DataTemplate x:Key="BooleanTemplate">
                 <!-- CheckBox的标题通常用Content属性 -->
-                <CheckBox Content="{Binding Key}"
+                <CheckBox Content="{Binding Key,Converter={StaticResource LocalizationConverter}}"
                           IsChecked="{Binding Value, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                           Style="{DynamicResource CheckBoxExtend}" 
                           VerticalAlignment="Center"
@@ -93,6 +93,7 @@
                      Margin="0 10"
                      Style="{x:Null}"
                      Background="Transparent"
+                       Foreground="{DynamicResource PrimaryTextBrush}"
                      BorderThickness="0"
                      ItemsSource="{Binding Contents}"
                      ItemTemplateSelector="{StaticResource MyTemplateSelector}"

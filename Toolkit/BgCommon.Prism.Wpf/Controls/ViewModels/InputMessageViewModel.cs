@@ -82,9 +82,9 @@ public partial class InputMessageViewModel : DialogViewModelBase
         string okButtonText = parameters.GetValue<string>(Constraints.OkButtonText) ?? "确定";
         string cancelButtonText = parameters.GetValue<string>(Constraints.CancelButtonText) ?? "取消";
 
-        Title = GetString(title);
-        OkButtonText = GetString(okButtonText);
-        CancelButtonText = GetString(cancelButtonText);
+        Title = Ioc.GetString(title);
+        OkButtonText = Ioc.GetString(okButtonText);
+        CancelButtonText = Ioc.GetString(cancelButtonText);
 
         if (parameters.TryGetValue(Constraints.Parameters, out InputContent[]? inputItems) && inputItems != null)
         {
@@ -96,7 +96,7 @@ public partial class InputMessageViewModel : DialogViewModelBase
         else
         {
             // 如果没有参数传入，创建一个默认的输入项
-            Contents.Add(new InputContent(1, $"{GetString("参数")} 1", TextType.Common, string.Empty));
+            Contents.Add(new InputContent(1, $"{Ioc.GetString("参数")} 1", TextType.Common, string.Empty));
         }
 
         // 触发 HasItems 属性的变更通知
