@@ -1,6 +1,7 @@
 <ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                    xmlns:local="clr-namespace:BgControls.Windows.Controls">
+                    xmlns:local="clr-namespace:BgControls.Windows.Controls"
+                    xmlns:markup="clr-namespace:BgControls.Windows.Markup">
     <Style TargetType="{x:Type local:FileExplorer}" BasedOn="{StaticResource BaseStyle}">
         <Setter Property="FocusVisualStyle" Value="{DynamicResource FocusVisual}" />
         <Setter Property="FileFilter" Value="*.*" />
@@ -38,10 +39,10 @@
                                                 </DataTemplate>
                                             </GridViewColumn.CellTemplate>
                                         </GridViewColumn>
-                                        <GridViewColumn Header="名称" DisplayMemberBinding="{Binding Name}" Width="300"/>
-                                        <GridViewColumn Header="修改日期" DisplayMemberBinding="{Binding LastModified, StringFormat='yyyy/MM/dd HH:mm'}" Width="150"/>
-                                        <GridViewColumn Header="类型" DisplayMemberBinding="{Binding Type}" Width="120"/>
-                                        <GridViewColumn Header="大小" Width="100">
+                                        <GridViewColumn Header="{markup:StringResource 名称}" DisplayMemberBinding="{Binding Name}" Width="300"/>
+                                        <GridViewColumn Header="{markup:StringResource 修改日期}" DisplayMemberBinding="{Binding LastModified, StringFormat='yyyy/MM/dd HH:mm'}" Width="150"/>
+                                        <GridViewColumn Header="{markup:StringResource 类型}" DisplayMemberBinding="{Binding Type}" Width="120"/>
+                                        <GridViewColumn Header="{markup:StringResource 大小}" Width="100">
                                             <GridViewColumn.CellTemplate>
                                                 <DataTemplate>
                                                     <TextBlock Text="{Binding Size}" HorizontalAlignment="Right"/>
