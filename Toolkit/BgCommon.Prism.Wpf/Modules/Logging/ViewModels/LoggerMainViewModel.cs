@@ -193,7 +193,7 @@ public partial class LoggerMainViewModel : DialogViewModelBase, INavigationAware
         }
 
         // 通过源名称获取NLog日志记录器
-        Logger logger = LogManager.GetLogger(source.Name);
+        var logger = LogManager.GetLogger(source.Name);
         var random = new Random();
         cancelLogTestToken = new CancellationTokenSource();
         await Task.Run(async () =>

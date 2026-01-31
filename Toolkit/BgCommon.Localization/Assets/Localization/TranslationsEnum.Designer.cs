@@ -19,7 +19,7 @@ namespace BgCommon.Localization.Assets.Localization {
     // 类通过类似于 ResGen 或 Visual Studio 的工具自动生成的。
     // 若要添加或移除成员，请编辑 .ResX 文件，然后重新运行 ResGen
     // (以 /str 作为命令选项)，或重新生成 VS 项目。
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "17.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "18.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     internal class TranslationsEnum {
@@ -39,7 +39,7 @@ namespace BgCommon.Localization.Assets.Localization {
         internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("BgCommon.Assets.Localization.TranslationsEnum", typeof(TranslationsEnum).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("BgCommon.Localization.Assets.Localization.TranslationsEnum", typeof(TranslationsEnum).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
@@ -63,72 +63,72 @@ namespace BgCommon.Localization.Assets.Localization {
         /// <summary>
         ///   查找类似 English (en-US) 的本地化字符串。
         /// </summary>
-        internal static string en_US {
+        internal static string English {
             get {
-                return ResourceManager.GetString("en_US", resourceCulture);
+                return ResourceManager.GetString("English", resourceCulture);
             }
         }
         
         /// <summary>
         ///   查找类似 English (en-US) 的本地化字符串。
         /// </summary>
-        internal static string en_US_Remark {
+        internal static string EnglishRemark {
             get {
-                return ResourceManager.GetString("en_US_Remark", resourceCulture);
+                return ResourceManager.GetString("EnglishRemark", resourceCulture);
             }
         }
         
         /// <summary>
         ///   查找类似 Việt Nam 的本地化字符串。
         /// </summary>
-        internal static string vi {
+        internal static string Việt_Nam {
             get {
-                return ResourceManager.GetString("vi", resourceCulture);
+                return ResourceManager.GetString("Việt Nam", resourceCulture);
             }
         }
         
         /// <summary>
         ///   查找类似 Việt Nam 的本地化字符串。
         /// </summary>
-        internal static string vi_Remark {
+        internal static string Việt_Nam_Remark {
             get {
-                return ResourceManager.GetString("vi_Remark", resourceCulture);
+                return ResourceManager.GetString("Việt Nam_Remark", resourceCulture);
             }
         }
         
         /// <summary>
         ///   查找类似 简体中文(zh-CN) 的本地化字符串。
         /// </summary>
-        internal static string zh_CN {
+        internal static string 简体中文 {
             get {
-                return ResourceManager.GetString("zh_CN", resourceCulture);
+                return ResourceManager.GetString("简体中文", resourceCulture);
             }
         }
         
         /// <summary>
         ///   查找类似 简体中文(zh-CN) 的本地化字符串。
         /// </summary>
-        internal static string zh_CN_Remark {
+        internal static string 简体中文备注 {
             get {
-                return ResourceManager.GetString("zh_CN_Remark", resourceCulture);
+                return ResourceManager.GetString("简体中文备注", resourceCulture);
             }
         }
         
         /// <summary>
         ///   查找类似 繁體中文（zh-TW） 的本地化字符串。
         /// </summary>
-        internal static string zh_TW {
+        internal static string 繁體中文 {
             get {
-                return ResourceManager.GetString("zh_TW", resourceCulture);
+                return ResourceManager.GetString("繁體中文", resourceCulture);
             }
         }
         
         /// <summary>
         ///   查找类似 繁體中文（zh-TW） 的本地化字符串。
         /// </summary>
-        internal static string zh_TW_Remark {
+        internal static string 繁體中文备注 {
             get {
-                return ResourceManager.GetString("zh_TW_Remark", resourceCulture);
+                return ResourceManager.GetString("繁體中文备注", resourceCulture);
             }
         }
     }

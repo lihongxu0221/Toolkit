@@ -1,9 +1,9 @@
 namespace BgCommon.Localization.Converters;
 
 /// <summary>
-/// 多语言转换器。<br/>
-/// 不支持实时更新。<br/>
-/// ConvertParameter 为程序集名称。<br/>
+/// 多语言转换器.<br/>
+/// 不支持实时更新.<br/>
+/// ConvertParameter 为程序集名称.<br/>
 /// </summary>
 public class LocalizationConverter : IValueConverter
 {

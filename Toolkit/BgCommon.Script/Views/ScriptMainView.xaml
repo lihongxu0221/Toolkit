@@ -18,7 +18,7 @@
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800"
              d:DataContext="{d:DesignInstance Type=vm:ScriptMainViewModel}"
-             Name="This">
+             x:Name="This">
     <UserControl.InputBindings>
         <KeyBinding Gesture="Ctrl+N" Command="{Binding NewDocumentCommand, Mode=OneTime}" CommandParameter="{x:Static roslyn:SourceCodeKind.Regular}" />
         <KeyBinding Gesture="Ctrl+Shift+N" Command="{Binding NewDocumentCommand, Mode=OneTime}" CommandParameter="{x:Static roslyn:SourceCodeKind.Script}" />
@@ -36,61 +36,60 @@
             </DataTemplate>
         </ResourceDictionary>
     </UserControl.Resources>
-    <av:InlineModalDecorator Target="{Binding ElementName=This, Mode=OneTime}">
-        <DockPanel>
-            <Border Padding="3"
+    <DockPanel>
+        <Border Padding="3"
                     Margin="1"
                     Background="{DynamicResource {x:Static rp:ThemeDictionary.StatusBarItemErrorBackground}}"
                     TextBlock.Foreground="{DynamicResource {x:Static rp:ThemeDictionary.StatusBarItemErrorForeground}}"
                     DockPanel.Dock="Bottom"
                     Visibility="{Binding HasError, Converter={StaticResource Boolean2VisibilityConverter}}">
-                <DockPanel LastChildFill="False">
-                    <Button Margin="3"
+            <DockPanel LastChildFill="False">
+                <Button Margin="3"
                             Content="View details"
                             DockPanel.Dock="Right"
                             Background="Transparent"
                             Click="ViewErrorDetails_OnClick" />
-                    <Button Background="Transparent"
+                <Button Background="Transparent"
                             Content=""
                             FontFamily="Segoe UI Symbol"
                             Command="{Binding ClearErrorCommand, Mode=OneTime}"
                             Margin="3" />
-                    <TextBlock VerticalAlignment="Center"
+                <TextBlock VerticalAlignment="Center"
                                TextTrimming="CharacterEllipsis"
                                Text="{Binding LastError.Message}" />
-                </DockPanel>
-            </Border>
-            <Grid IsEnabled="{Binding IsInitialized}">
-                <dock:DockingManager Name="DockingManager"
+            </DockPanel>
+        </Border>
+        <Grid IsEnabled="{Binding IsInitialized}">
+            <dock:DockingManager Name="DockingManager"
                                      DocumentsSource="{Binding OpenDocuments, Mode=OneTime}"
                                      ActiveContent="{Binding ActiveContent, Mode=TwoWay}"
                                      ActiveContentChanged="DockingManager_ActiveContentChanged"
                                      DocumentClosing="DockingManager_OnDocumentClosing"
                                      AnchorableContextMenu="{x:Null}">
-                    <dock:DockingManager.DocumentHeaderTemplate>
-                        <DataTemplate>
-                            <TextBlock>
+                <dock:DockingManager.DocumentHeaderTemplate>
+                    <DataTemplate>
+                        <TextBlock>
                                 <Run Text="{Binding Content.Title, Mode=OneWay}" />
                                 <Run Name="DirtyIndicator" Text="" />
-                            </TextBlock>
-                            <DataTemplate.Triggers>
-                                <DataTrigger Binding="{Binding Content.IsDirty}" Value="True">
-                                    <Setter TargetName="DirtyIndicator" Property="Text" Value="*" />
-                                </DataTrigger>
-                            </DataTemplate.Triggers>
-                        </DataTemplate>
-                    </dock:DockingManager.DocumentHeaderTemplate>
-                    <dock:DockingManager.DocumentPaneMenuItemHeaderTemplate>
-                        <DataTemplate>
-                            <TextBlock Text="{Binding Content.Title}" />
-                        </DataTemplate>
-                    </dock:DockingManager.DocumentPaneMenuItemHeaderTemplate>
-                    <dock:DockingManager.LayoutItemContainerStyle>
-                        <Style TargetType="{x:Type dock:LayoutItem}">
-                            <Setter Property="Title" Value="{Binding Model.Title}"/>
-                        </Style>
-                    </dock:DockingManager.LayoutItemContainerStyle>
-                    <!--<dock:DockingManager.DocumentPaneControlStyle>
+                        </TextBlock>
+                        <DataTemplate.Triggers>
+                            <DataTrigger Binding="{Binding Content.IsDirty}" Value="True">
+                                <Setter TargetName="DirtyIndicator" Property="Text" Value="*" />
+                            </DataTrigger>
+                        </DataTemplate.Triggers>
+                    </DataTemplate>
+                </dock:DockingManager.DocumentHeaderTemplate>
+                <dock:DockingManager.DocumentPaneMenuItemHeaderTemplate>
+                    <DataTemplate>
+                        <TextBlock Text="{Binding Content.Title}" />
+                    </DataTemplate>
+                </dock:DockingManager.DocumentPaneMenuItemHeaderTemplate>
+                <dock:DockingManager.LayoutItemContainerStyle>
+                    <Style TargetType="{x:Type dock:LayoutItem}">
+                        <Setter Property="Title" Value="{Binding Model.Title}"/>
+                    </Style>
+                </dock:DockingManager.LayoutItemContainerStyle>
+                <!--<dock:DockingManager.DocumentPaneControlStyle>
                         <Style TargetType="dock:LayoutDocumentPaneControl">
                             <Setter Property="ItemContainerStyle">
                                 <Setter.Value>
@@ -139,96 +138,96 @@
                             </Setter>
                         </Style>
                     </dock:DockingManager.DocumentPaneControlStyle>-->
-                    <dock:LayoutRoot>
-                        <dock:LayoutPanel Orientation="Horizontal">
-                            <dock:LayoutAnchorablePane Name="Documents" DockWidth="200">
-                                <dock:LayoutAnchorable x:Name="DocumentsPane" CanHide="False" CanClose="False" CanFloat="False"  CanAutoHide="True" AutoHideWidth="200" 
+                <dock:LayoutRoot>
+                    <dock:LayoutPanel Orientation="Horizontal">
+                        <dock:LayoutAnchorablePane Name="Documents" DockWidth="200">
+                            <dock:LayoutAnchorable x:Name="DocumentsPane" CanHide="False" CanClose="False" CanFloat="False"  CanAutoHide="True" AutoHideWidth="200" 
                                                        CanShowOnHover="True"
                                                        Title="Documents">
-                                    <DockPanel x:Name="DocumentTree">
-                                        <AdornerDecorator>
-                                            <ContentControl prism:RegionManager.RegionName="{x:Static local:RegionNames.DocumentTreeRegion}" />
+                                <DockPanel x:Name="DocumentTree">
+                                    <AdornerDecorator>
+                                        <ContentControl prism:RegionManager.RegionName="{x:Static local:RegionNames.DocumentTreeRegion}" />
+                                    </AdornerDecorator>
+                                </DockPanel>
+                            </dock:LayoutAnchorable>
+                        </dock:LayoutAnchorablePane>
+                        <dock:LayoutPanel Orientation="Vertical">
+                            <dock:LayoutDocumentPane />
+                            <dock:LayoutAnchorablePane Name="ResultsPane" DockHeight="250">
+                                <dock:LayoutAnchorable x:Name="Results" CanClose="False" CanHide="False" CanAutoHide="True" 
+                                                           Title="Results">
+                                    <DockPanel x:Name="ResultsView">
+                                        <AdornerDecorator DataContext="{Binding CurrentOpenDocument}">
+                                            <v:ScriptResultView />
+                                            <!--<ContentControl prism:RegionManager.RegionName="{x:Static local:RegionNames.ResultsRegion}" />-->
                                         </AdornerDecorator>
                                     </DockPanel>
                                 </dock:LayoutAnchorable>
                             </dock:LayoutAnchorablePane>
-                            <dock:LayoutPanel Orientation="Vertical">
-                                <dock:LayoutDocumentPane />
-                                <dock:LayoutAnchorablePane Name="ResultsPane" DockHeight="250">
-                                    <dock:LayoutAnchorable x:Name="Results" CanClose="False" CanHide="False" CanAutoHide="True" 
-                                                           Title="Results">
-                                        <DockPanel x:Name="ResultsView">
-                                            <AdornerDecorator DataContext="{Binding CurrentOpenDocument}">
-                                                <v:ScriptResultView />
-                                                <!--<ContentControl prism:RegionManager.RegionName="{x:Static local:RegionNames.ResultsRegion}" />-->
-                                            </AdornerDecorator>
-                                        </DockPanel>
-                                    </dock:LayoutAnchorable>
-                                </dock:LayoutAnchorablePane>
-                            </dock:LayoutPanel>
                         </dock:LayoutPanel>
-                    </dock:LayoutRoot>
-                </dock:DockingManager>
+                    </dock:LayoutPanel>
+                </dock:LayoutRoot>
+            </dock:DockingManager>
 
-                <UniformGrid HorizontalAlignment="Center"
+            <UniformGrid HorizontalAlignment="Center"
                              VerticalAlignment="Top"
                              Margin="0,100,0,0"
                              Rows="1"
                              Visibility="{Binding HasNoOpenDocuments, Converter={StaticResource Boolean2VisibilityConverter}}">
 
-                    <Button Padding="5"
+                <Button Padding="5"
                             Margin="20 0 0 0"
                             Background="Transparent"
                             Command="{Binding NewDocumentCommand}"
                             CommandParameter="{x:Static roslyn:SourceCodeKind.Regular}">
-                        <StackPanel>
-                            <Image Source="{StaticResource CsFile}" Width="64" Height="64" />
-                            <TextBlock Text="New&#xA;(Ctrl+N)" TextAlignment="Center" HorizontalAlignment="Center" />
-                        </StackPanel>
-                    </Button>
+                    <StackPanel>
+                        <Image Source="{StaticResource CsFile}" Width="64" Height="64" />
+                        <TextBlock Text="New&#xA;(Ctrl+N)" TextAlignment="Center" HorizontalAlignment="Center" />
+                    </StackPanel>
+                </Button>
 
-                    <Button Padding="5"
+                <Button Padding="5"
                             Margin="20 0 0 0"
                             Background="Transparent"
                             Command="{Binding NewDocumentCommand}"
                             CommandParameter="{x:Static roslyn:SourceCodeKind.Script}">
-                        <StackPanel>
-                            <Image Source="{StaticResource CsFile}" Width="64" Height="64" />
-                            <TextBlock Text="New Script&#xA;(Ctrl+Shift+N)" TextAlignment="Center" HorizontalAlignment="Center" />
-                        </StackPanel>
-                    </Button>
+                    <StackPanel>
+                        <Image Source="{StaticResource CsFile}" Width="64" Height="64" />
+                        <TextBlock Text="New Script&#xA;(Ctrl+Shift+N)" TextAlignment="Center" HorizontalAlignment="Center" />
+                    </StackPanel>
+                </Button>
 
-                </UniformGrid>
+            </UniformGrid>
 
-                <StackPanel Orientation="Horizontal"
+            <StackPanel Orientation="Horizontal"
                             HorizontalAlignment="Right"
                             VerticalAlignment="Bottom"
                             TextBlock.Foreground="{DynamicResource {x:Static rp:ThemeDictionary.StatusBarForeground}}"
                             Margin="5">
 
-                    <ToggleButton Margin="20 0 0 0"
+                <ToggleButton Margin="20 0 0 0"
                                   BorderThickness="0"
                                   Background="Transparent"
                                   IsChecked="{Binding Settings.OptimizeCompilation}"
                                   ToolTipService.Placement="Top">
-                        <ToggleButton.Style>
-                            <Style TargetType="ToggleButton">
-                                <Setter Property="ToolTip" Value="Optimization: Off (Ctrl+Shift+O)" />
-                                <Style.Triggers>
-                                    <Trigger Property="IsChecked" Value="True">
-                                        <Setter Property="ToolTip" Value="Optimization: On (Ctrl+Shift+O)" />
-                                    </Trigger>
-                                </Style.Triggers>
-                            </Style>
-                        </ToggleButton.Style>
-                        <Image Source="{StaticResource Time}" Width="16" Height="16" />
-                    </ToggleButton>
+                    <ToggleButton.Style>
+                        <Style TargetType="ToggleButton">
+                            <Setter Property="ToolTip" Value="Optimization: Off (Ctrl+Shift+O)" />
+                            <Style.Triggers>
+                                <Trigger Property="IsChecked" Value="True">
+                                    <Setter Property="ToolTip" Value="Optimization: On (Ctrl+Shift+O)" />
+                                </Trigger>
+                            </Style.Triggers>
+                        </Style>
+                    </ToggleButton.Style>
+                    <Image Source="{StaticResource Time}" Width="16" Height="16" />
+                </ToggleButton>
 
-                    <Image Margin="20 0 0 0"
+                <Image Margin="20 0 0 0"
                            Source="{StaticResource FontSize}"
                            Height="16"
                            Width="16" />
-                    <Slider Width="100"
+                <Slider Width="100"
                             ToolTip="Font Size"
                             ToolTipService.Placement="Top"
                             Margin="5 0 0 0"
@@ -239,9 +238,8 @@
                             IsSnapToTickEnabled="True"
                             TickFrequency="1"
                             Value="{Binding EditorFontSize}" />
-                    <TextBlock Text="{Binding EditorFontSize}" Margin="5 0 0 0" />
-                </StackPanel>
-            </Grid>
-        </DockPanel>
-    </av:InlineModalDecorator>
+                <TextBlock Text="{Binding EditorFontSize}" Margin="5 0 0 0" />
+            </StackPanel>
+        </Grid>
+    </DockPanel>
 </UserControl>

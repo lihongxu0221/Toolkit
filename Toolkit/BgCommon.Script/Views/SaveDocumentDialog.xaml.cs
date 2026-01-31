@@ -142,8 +142,9 @@ internal partial class SaveDocumentDialog : UserControl, ISaveDocumentDialog, IN
         dialog = new InlineModalDialog
         {
             Owner = Application.Current.MainWindow,
-            Content = this
+            Content = this,
         };
+
         dialog.Show();
         return Task.CompletedTask;
     }

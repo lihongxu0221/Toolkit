@@ -56,7 +56,6 @@ public class LocalizationProvider : ILocalizationProvider
     /// <inheritdoc />
     public string GetString(string key, CultureInfo cultureInfo, string? assembleyName)
     {
-
         IEnumerable<LocalizationSet> localSets = GetLocalizationSets(cultureInfo);
         if (localSets != null)
         {

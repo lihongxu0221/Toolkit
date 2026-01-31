@@ -5,6 +5,8 @@
                     xmlns:toolConverters="clr-namespace:BgControls.Tools.Converter"
                     xmlns:tool="clr-namespace:BgControls.Tools">
 
+    <toolConverters:CornerRadiusToUnderlineMarginConverter x:Key="CornerRadiusToUnderlineMarginConverter" />
+    
     <DataTemplate x:Key="DefaultWatermarkTemplate">
         <ContentControl Content="{Binding}" Foreground="{DynamicResource DarkMaskBrush}" Focusable="False" />
     </DataTemplate>

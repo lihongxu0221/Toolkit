@@ -216,7 +216,7 @@ public partial class HistoricalLogViewModel : DialogViewModelBase
             Console.WriteLine($"Error searching logs: {ex.Message}");
 
             // 在实际应用中，应将此错误显示给用户或通过 NLog 记录
-            Logger generalLogger = NLog.LogManager.GetLogger(BgLoggerSource.General.ToString());
+            var generalLogger = NLog.LogManager.GetLogger(BgLoggerSource.General.ToString());
             generalLogger.Error(ex, "Failed to search historical logs.");
         }
         finally
