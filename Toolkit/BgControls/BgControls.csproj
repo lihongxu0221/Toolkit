@@ -102,7 +102,6 @@
 		<Compile Include="Windows\Controls\FastStarrySky.cs" />
 		<Compile Include="Windows\Controls\FileExplorer.cs" />
 		<Compile Include="Windows\Controls\PackIconKind.cs" />
-		<Compile Include="Windows\Controls\PopupEx.cs" />
 		<Compile Include="Windows\Controls\ProgressBar\CircleProgressBar.cs" />
 		<Compile Include="Windows\Controls\ProgressBar\WaveProgressBar.cs" />
 		<Compile Include="Windows\Controls\PropertyGrid\Attributes\NumberPropertyConstraint.cs" />

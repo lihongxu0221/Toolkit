@@ -61,7 +61,7 @@ public class LocalizationProvider : ILocalizationProvider
         {
             foreach (LocalizationSet? localSet in localSets)
             {
-                if (localSet != null && localSet.ContainKey(key) && localSet.IsSame(assembleyName))
+                if (localSet != null && localSet.ContainKey(key) && localSet.IsApplicableTo(assembleyName))
                 {
                     string? value = localSet[key];
                     if (!string.IsNullOrEmpty(value))
@@ -87,7 +87,7 @@ public class LocalizationProvider : ILocalizationProvider
             {
                 foreach (LocalizationSet? localSet in localSets)
                 {
-                    if (localSet != null && localSet.ContainKey(key) && localSet.IsSame(assembleyName))
+                    if (localSet != null && localSet.ContainKey(key) && localSet.IsApplicableTo(assembleyName))
                     {
                         string? value = localSet[key];
                         if (string.IsNullOrEmpty(value))
