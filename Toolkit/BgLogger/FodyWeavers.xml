@@ -5,7 +5,6 @@
       BgCommon
       BgCommon.Localization
       BgCommon.Localization.Resources
-      BgLogger
     </ExcludeAssemblies>
   </Costura>
 </Weavers>

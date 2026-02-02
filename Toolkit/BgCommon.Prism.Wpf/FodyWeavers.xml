@@ -4,7 +4,8 @@
       CommunityToolkit.Mvvm
       BgCommon
       BgCommon.Localization
-      BgCommon.Localization.Resources
+      BgCommon.Localization.resources
+      BgControls
       BgLogger
     </ExcludeAssemblies>
   </Costura>

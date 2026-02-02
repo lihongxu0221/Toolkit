@@ -19,6 +19,8 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="Costura.Fody" PrivateAssets="All"/>
+    <PackageReference Include="CommunityToolkit.Mvvm" PrivateAssets="All"/>
     <PackageReference Include="Prism.Wpf" />
   </ItemGroup>
 </Project>

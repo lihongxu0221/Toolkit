@@ -5,53 +5,53 @@
 		<OutputType>Library</OutputType>
 		<VersionPrefix>1.0.1</VersionPrefix>
 		<VersionSuffix>beta1</VersionSuffix>
-		<!-- 强制不复制所有 NuGet 依赖到输出目录 -->
-		<CopyLocalLockFileAssemblies>false</CopyLocalLockFileAssemblies>
+    <!-- 强制不复制所有 NuGet 依赖到输出目录 -->
+    <!--<CopyLocalLockFileAssemblies>false</CopyLocalLockFileAssemblies>-->
 	</PropertyGroup>
 	<ItemGroup>
-		<Compile Remove="LocalizationProxy.cs" />
+	  <Compile Remove="LocalizationProxy.cs" />
 	</ItemGroup>
 	<ItemGroup>
-		<None Remove="LocalizationKeys.tt" />
-	</ItemGroup>
-
-	<ItemGroup>
-
-		<PackageReference Include="CommunityToolkit.Mvvm" />
-		<PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" />
-		<PackageReference Include="Microsoft.Extensions.Hosting" />
-		<PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" />
-		<PackageReference Include="NLog"/>
-		<PackageReference Include="NLog.Database"/>
-		<PackageReference Include="NLog.Extensions.Logging"/>
-		<PackageReference Include="NLog.Schema" />
-
-		<!-- 1. T4 模板引擎的核心库 (汽车的引擎) -->
-		<!--<PackageReference Include="Microsoft.VisualStudio.TextTemplating">
-          <PrivateAssets>all</PrivateAssets>
-          <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-        </PackageReference>-->
-		<!-- 2. T4 的 MSBuild 构建任务 (将引擎装配到底盘上，实现自动化) -->
-		<!--<PackageReference Include="Microsoft.VisualStudio.TextTemplating.VSHost">
-          <PrivateAssets>all</PrivateAssets>
-          <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-        </PackageReference>-->
-		<!-- 3. VS SDK，为 hostspecific="true" 提供 EnvDTE 环境 -->
-		<!--<PackageReference Include="Microsoft.VisualStudio.SDK">
-          <PrivateAssets>all</PrivateAssets>
-          <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-        </PackageReference>-->
+	  <None Remove="LocalizationKeys.tt" />
 	</ItemGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="..\BgCommon\BgCommon.csproj" />
+    <PackageReference Include="Costura.Fody" PrivateAssets="All"/>
+    <PackageReference Include="CommunityToolkit.Mvvm" PrivateAssets="All"/>
+		<PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" PrivateAssets="All"/>
+    <PackageReference Include="Microsoft.Extensions.Hosting" PrivateAssets="All"/>
+		<PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" PrivateAssets="All"/>
+    <PackageReference Include="NLog" PrivateAssets="All"/>
+    <PackageReference Include="NLog.Database" PrivateAssets="All"/>
+    <PackageReference Include="NLog.Extensions.Logging" PrivateAssets="All"/>
+    <PackageReference Include="NLog.Schema" PrivateAssets="All"/>
+
+    <!-- 1. T4 模板引擎的核心库 (汽车的引擎) -->
+    <!--<PackageReference Include="Microsoft.VisualStudio.TextTemplating">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>-->
+    <!-- 2. T4 的 MSBuild 构建任务 (将引擎装配到底盘上，实现自动化) -->
+    <!--<PackageReference Include="Microsoft.VisualStudio.TextTemplating.VSHost">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>-->
+    <!-- 3. VS SDK，为 hostspecific="true" 提供 EnvDTE 环境 -->
+    <!--<PackageReference Include="Microsoft.VisualStudio.SDK">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>-->
+	</ItemGroup>
+
+	<ItemGroup>
+	  <ProjectReference Include="..\BgCommon\BgCommon.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>
 		<Compile Update="Assets\Localization\Translations.Designer.cs">
-			<DesignTime>True</DesignTime>
-			<AutoGen>True</AutoGen>
-			<DependentUpon>Translations.resx</DependentUpon>
+		  <DesignTime>True</DesignTime>
+		  <AutoGen>True</AutoGen>
+		  <DependentUpon>Translations.resx</DependentUpon>
 		</Compile>
 		<Compile Update="Assets\Localization\TranslationsEnum.Designer.cs">
 			<DesignTime>True</DesignTime>
@@ -72,6 +72,6 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<Service Include="{508349b6-6b84-4df5-91f0-309beebad82d}" />
+	  <Service Include="{508349b6-6b84-4df5-91f0-309beebad82d}" />
 	</ItemGroup>
 </Project>
