@@ -5,7 +5,7 @@ namespace BgLogger;
 /// </summary>
 public static class BgLogger
 {
-    private static readonly ConcurrentDictionary<string, Logger> Loggers = new ();
+    private static readonly ConcurrentDictionary<string, Logger> Loggers = new();
 
     /// <summary>
     /// 获取特定源的 NLog Logger 实例.

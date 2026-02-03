@@ -7,55 +7,57 @@
 		<OutputType>Library</OutputType>
 		<VersionPrefix>2.2.0</VersionPrefix>
 		<VersionSuffix>beta1</VersionSuffix>
-    <!-- 强制不复制所有 NuGet 依赖到输出目录 -->
-    <!--<CopyLocalLockFileAssemblies>false</CopyLocalLockFileAssemblies>-->
+		<!-- 强制不复制所有 NuGet 依赖到输出目录 -->
+		<CopyLocalLockFileAssemblies>false</CopyLocalLockFileAssemblies>
 	</PropertyGroup>
 	<ItemGroup>
-	  <None Remove="Assets\Images\icon.ico" />
-	  <None Remove="Assets\Images\logo.png" />
-	  <None Remove="Assets\Images\Splash.png" />
+		<None Remove="Assets\Images\icon.ico" />
+		<None Remove="Assets\Images\logo.png" />
+		<None Remove="Assets\Images\Splash.png" />
 	</ItemGroup>
 
 	<ItemGroup>
-    <PackageReference Include="Costura.Fody" PrivateAssets="All"/>
-    <PackageReference Include="CommunityToolkit.Mvvm" PrivateAssets="All"/>
-		<PackageReference Include="CommunityToolkit.Mvvm" PrivateAssets="All"/>
-		<PackageReference Include="Microsoft-WindowsAPICodePack-Shell" PrivateAssets="All"/>
-		<PackageReference Include="Microsoft.Data.Sqlite" PrivateAssets="All"/>
-		<PackageReference Include="Microsoft.EntityFrameworkCore" PrivateAssets="All"/>
-		<PackageReference Include="Microsoft.EntityFrameworkCore.Design" PrivateAssets="All"/>
-		<PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" PrivateAssets="All"/>
-		<PackageReference Include="Microsoft.EntityFrameworkCore.Tools" PrivateAssets="All"/>
-		<PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" PrivateAssets="All"/>
-		<PackageReference Include="Microsoft.Extensions.Hosting" PrivateAssets="All"/>
-		<PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" PrivateAssets="All"/>
-		<PackageReference Include="Microsoft.Extensions.Localization.Abstractions" PrivateAssets="All"/>
-		<PackageReference Include="Newtonsoft.Json" PrivateAssets="All"/>
-		<PackageReference Include="NLog" PrivateAssets="All"/>
-		<PackageReference Include="NLog.Database" PrivateAssets="All"/>
-		<PackageReference Include="NLog.Extensions.Logging" PrivateAssets="All"/>
-		<PackageReference Include="NLog.Schema" PrivateAssets="All"/>
-		<PackageReference Include="Prism.DryIoc" PrivateAssets="All"/>
-		<PackageReference Include="Prism.Wpf" PrivateAssets="All"/>
+		<PackageReference Include="CommunityToolkit.Mvvm" />
+		<PackageReference Include="Microsoft-WindowsAPICodePack-Shell" />
+		<PackageReference Include="Microsoft.Data.Sqlite" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Design" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Tools" />
+		<PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" />
+		<PackageReference Include="Microsoft.Extensions.Hosting" />
+		<PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" />
+		<PackageReference Include="Microsoft.Extensions.Localization.Abstractions" />
+		<PackageReference Include="Newtonsoft.Json" />
+		<PackageReference Include="NLog" />
+		<PackageReference Include="NLog.Database" />
+		<PackageReference Include="NLog.Extensions.Logging" />
+		<PackageReference Include="Prism.DryIoc" />
+		<PackageReference Include="Prism.Wpf" />
 	</ItemGroup>
 
 	<ItemGroup>
-    <ProjectReference Include="..\BgCommon.Localization\BgCommon.Localization.csproj"/>
-	  <ProjectReference Include="..\BgCommon\BgCommon.csproj" />
-	  <ProjectReference Include="..\BgControls\BgControls.csproj" />
-	  <ProjectReference Include="..\BgLogger\BgLogger.csproj" />
+		<ProjectReference Include="..\BgCommon.Localization\BgCommon.Localization.csproj" />
+		<ProjectReference Include="..\BgCommon\BgCommon.csproj" />
+		<ProjectReference Include="..\BgControls\BgControls.csproj" />
+		<ProjectReference Include="..\BgLogger\BgLogger.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>
-	  <Resource Include="Assets\Images\icon.ico">
-	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-	  </Resource>
-	  <Resource Include="Assets\Images\logo.png">
-	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-	  </Resource>
-	  <Resource Include="Assets\Images\Splash.png">
-	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-	  </Resource>
+		<Resource Include="Assets\Images\icon.ico">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Resource>
+		<Resource Include="Assets\Images\logo.png">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Resource>
+		<Resource Include="Assets\Images\Splash.png">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Resource>
+	</ItemGroup>
+
+	<ItemGroup>
+		<None Update="BgCommon.Prism.Wpf.targets">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
 	</ItemGroup>
 </Project>
-<!---->

@@ -280,14 +280,39 @@ internal abstract class ObjectContainerHelperBase : ContainerHelperBase
             propertyItem.PropertyChanged -= this.OnChildrenPropertyChanged;
         }
 
+        PropertyGrid? propertyGrid = null;
+        if (this.PropertyContainer is PropertyGrid containerPropertyGrid)
+        {
+            propertyGrid = containerPropertyGrid;
+        }
+        else if (this.PropertyContainer is PropertyItemBase containerPropertyItem)
+        {
+            // 类中类
+            PropertyGrid? parentElement = null;
+            while (containerPropertyItem.ParentElement != null)
+            {
+                if (containerPropertyItem.ParentElement is PropertyItemBase propertyItemBase)
+                {
+                    containerPropertyItem = propertyItemBase;
+                    continue;
+                }
+
+                parentElement = containerPropertyItem.ParentElement as PropertyGrid;
+                if (parentElement != null)
+                {
+                    break;
+                }
+            }
+            propertyGrid = parentElement;
+        }
+
         // TO DO,权限校验和过滤
-        var propertyGrid = this.PropertyContainer as PropertyGrid;
-        if (this.FilterAdvance != null && propertyGrid != null)
+        if (propertyGrid != null && propertyGrid.FilterAdvance != null)
         {
             List<PropertyItem> propertyItems = new List<PropertyItem>();
             foreach (var propertyItem in subProperties)
             {
-                if (this.FilterAdvance.Invoke(propertyGrid.SelectedObjectName, propertyItem))
+                if (propertyGrid.FilterAdvance.Invoke(propertyGrid.SelectedObjectName, propertyItem))
                 {
                     propertyItems.Add(propertyItem);
                 }

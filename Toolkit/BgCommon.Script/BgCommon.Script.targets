@@ -1,0 +1,106 @@
+<Project>
+  <PropertyGroup>
+    <BgDotNetExtensionsVersion>9.0.5</BgDotNetExtensionsVersion>
+    <BgEntityFrameworkVersion>9.0.0</BgEntityFrameworkVersion>
+    <BgNLogVersion>5.4.0</BgNLogVersion>
+    <BgPrismVersion>9.0.537</BgPrismVersion>
+    <BgRoslynVersion>4.14.0</BgRoslynVersion>
+    <BgRoslynPrivateVersion>4.14.0-3.25275.7</BgRoslynPrivateVersion>
+    <BgReactiveVersion>6.1.0</BgReactiveVersion>
+    <BgNuGetVersion>6.14.0</BgNuGetVersion>
+  </PropertyGroup>
+  <ItemGroup>
+    <ReferenceCopyLocalPaths Include="$(MSBuildThisFileDirectory)BgCommon.dll" />
+    <ReferenceCopyLocalPaths Include="$(MSBuildThisFileDirectory)BgCommon.Localization.dll" />
+    <ReferenceCopyLocalPaths Include="$(MSBuildThisFileDirectory)BgCommon.Prism.Wpf.dll" />
+    <ReferenceCopyLocalPaths Include="$(MSBuildThisFileDirectory)BgControls.dll" />
+    <ReferenceCopyLocalPaths Include="$(MSBuildThisFileDirectory)BgLogger.dll" />
+    <ReferenceCopyLocalPaths Include="$(MSBuildThisFileDirectory)RoslynPad\ICSharpCode.AvalonEdit.dll" />
+    <ReferenceCopyLocalPaths Include="$(MSBuildThisFileDirectory)RoslynPad\Microsoft.CodeAnalysis.LanguageServer.Protocol.dll" />
+    <ReferenceCopyLocalPaths Include="$(MSBuildThisFileDirectory)RoslynPad\RoslynPad.Editor.Windows.dll" />
+    <ReferenceCopyLocalPaths Include="$(MSBuildThisFileDirectory)RoslynPad\RoslynPad.Roslyn.dll" />
+    <ReferenceCopyLocalPaths Include="$(MSBuildThisFileDirectory)RoslynPad\RoslynPad.Roslyn.Windows.dll" />
+    <ReferenceCopyLocalPaths Include="$(MSBuildThisFileDirectory)RoslynPad\RoslynPad.Runtime.dll" />
+    <ReferenceCopyLocalPaths Include="$(MSBuildThisFileDirectory)RoslynPad\RoslynPad.Themes.dll" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="CommunityToolkit.Mvvm">
+      <Version Condition="'$(ManagePackageVersionsCentrally)' != 'true'">8.4.0</Version>
+    </PackageReference>
+    <PackageReference Include="Newtonsoft.Json">
+      <Version Condition="'$(ManagePackageVersionsCentrally)' != 'true'">13.0.3</Version>
+    </PackageReference>
+    <PackageReference Include="Microsoft.VisualStudio.Threading" >
+      <Version Condition="'$(ManagePackageVersionsCentrally)' != 'true'">17.14.15</Version>
+    </PackageReference>
+    <PackageReference Include="System.Linq.AsyncEnumerable">
+      <Version Condition="'$(ManagePackageVersionsCentrally)' != 'true'">10.0.0</Version>
+    </PackageReference>
+    <PackageReference Include="Mono.Cecil">
+      <Version Condition="'$(ManagePackageVersionsCentrally)' != 'true'">0.11.6</Version>
+    </PackageReference>
+    <PackageReference Include="Nerdbank.Streams" >
+      <Version Condition="'$(ManagePackageVersionsCentrally)' != 'true'">2.13.16</Version>
+    </PackageReference>
+    <PackageReference Include="Dirkster.AvalonDock">
+      <Version Condition="'$(ManagePackageVersionsCentrally)' != 'true'">4.72.1</Version>
+    </PackageReference>
+    <PackageReference Include="Dirkster.AvalonDock.Themes.VS2013">
+      <Version Condition="'$(ManagePackageVersionsCentrally)' != 'true'">4.72.1</Version>
+    </PackageReference>
+    <PackageReference Include="NuGet.Versioning" >
+      <Version Condition="'$(ManagePackageVersionsCentrally)' != 'true'">$(BgNuGetVersion)</Version>
+    </PackageReference>
+    <PackageReference Include="Prism.DryIoc">
+      <Version Condition="'$(ManagePackageVersionsCentrally)' != 'true'">$(BgPrismVersion)</Version>
+    </PackageReference>
+    <PackageReference Include="Prism.Wpf">
+      <Version Condition="'$(ManagePackageVersionsCentrally)' != 'true'">$(BgPrismVersion)</Version>
+    </PackageReference>
+    <PackageReference Include="Microsoft.CodeAnalysis.Common">
+      <Version Condition="'$(ManagePackageVersionsCentrally)' != 'true'">$(BgRoslynVersion)</Version>
+    </PackageReference>
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp" >
+      <Version Condition="'$(ManagePackageVersionsCentrally)' != 'true'">$(BgRoslynVersion)</Version>
+    </PackageReference>
+    <PackageReference Include="Microsoft.CodeAnalysis.Workspaces.Common">
+      <Version Condition="'$(ManagePackageVersionsCentrally)' != 'true'">$(BgRoslynVersion)</Version>
+    </PackageReference>
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Features">
+      <Version Condition="'$(ManagePackageVersionsCentrally)' != 'true'">$(BgRoslynVersion)</Version>
+    </PackageReference>
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Scripting" >
+      <Version Condition="'$(ManagePackageVersionsCentrally)' != 'true'">$(BgRoslynVersion)</Version>
+    </PackageReference>
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Workspaces">
+      <Version Condition="'$(ManagePackageVersionsCentrally)' != 'true'">$(BgRoslynVersion)</Version>
+    </PackageReference>
+    <PackageReference Include="System.Collections.Immutable" >
+      <Version Condition="'$(ManagePackageVersionsCentrally)' != 'true'">$(BgDotNetExtensionsVersion)</Version>
+    </PackageReference>
+    <PackageReference Include="System.Composition">
+      <Version Condition="'$(ManagePackageVersionsCentrally)' != 'true'">$(BgDotNetExtensionsVersion)</Version>
+    </PackageReference>
+    <PackageReference Include="System.Drawing.Common">
+      <Version Condition="'$(ManagePackageVersionsCentrally)' != 'true'">$(BgDotNetExtensionsVersion)</Version>
+    </PackageReference>
+    <PackageReference Include="System.Reflection.Metadata">
+      <Version Condition="'$(ManagePackageVersionsCentrally)' != 'true'">$(BgDotNetExtensionsVersion)</Version>
+    </PackageReference>
+    <PackageReference Include="System.Reflection.MetadataLoadContext">
+      <Version Condition="'$(ManagePackageVersionsCentrally)' != 'true'">$(BgDotNetExtensionsVersion)</Version>
+    </PackageReference>
+    <PackageReference Include="Microsoft.Win32.SystemEvents">
+      <Version Condition="'$(ManagePackageVersionsCentrally)' != 'true'">$(BgDotNetExtensionsVersion)</Version>
+    </PackageReference>
+    <PackageReference Include="System.Reactive" >
+      <Version Condition="'$(ManagePackageVersionsCentrally)' != 'true'">$(BgReactiveVersion)</Version>
+    </PackageReference>
+    <PackageReference Include="System.Reactive.Core" >
+      <Version Condition="'$(ManagePackageVersionsCentrally)' != 'true'">$(BgReactiveVersion)</Version>
+    </PackageReference>
+    <PackageReference Include="System.Reactive.Linq" >
+      <Version Condition="'$(ManagePackageVersionsCentrally)' != 'true'">$(BgReactiveVersion)</Version>
+    </PackageReference>   
+  </ItemGroup>
+</Project>

@@ -81,11 +81,6 @@ internal abstract class ContainerHelperBase
     internal bool IsCleaning { get; private set; }
 
     /// <summary>
-    /// Gets or sets 自定义过滤和属性赋值的回调函数.
-    /// </summary>
-    protected internal PropertyItemFilterCallback? FilterAdvance { get; set; }
-
-    /// <summary>
     /// 清理辅助类资源.
     /// </summary>
     /// <remarks>
@@ -97,11 +92,6 @@ internal abstract class ContainerHelperBase
         if (this.PropertyContainer is INotifyPropertyChanged notifyPropertyChanged)
         {
             notifyPropertyChanged.PropertyChanged -= OnPropertyContainerPropertyChanged;
-        }
-
-        if (this.FilterAdvance != null)
-        {
-            this.FilterAdvance = null;
         }
 
         if (this.ChildrenItemsControl != null)

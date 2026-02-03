@@ -9,6 +9,11 @@
     <CopyLocalLockFileAssemblies>false</CopyLocalLockFileAssemblies>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="CommunityToolkit.Mvvm" PrivateAssets="All"/>
+    <PackageReference Include="CommunityToolkit.Mvvm" PrivateAssets="All" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Update="BgCommon.targets">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 </Project>
