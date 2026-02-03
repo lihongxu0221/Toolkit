@@ -87,9 +87,9 @@
         <Setter Property="Foreground" Value="{DynamicResource {x:Static rp:ThemeDictionary.EditorForeground}}" />
     </Style>
 
-    <Style TargetType="av:TaskDialog">
+    <!--<Style TargetType="av:TaskDialog">
         <Setter Property="Background" Value="{DynamicResource {x:Static rp:ThemeDictionary.TitleBarActiveBackground}}" />
-    </Style>
+    </Style>-->
 
     <!--<Style TargetType="ToolTip">
         <Setter Property="Background" Value="{DynamicResource {x:Static rp:ThemeDictionary.PanelBackground}}" />

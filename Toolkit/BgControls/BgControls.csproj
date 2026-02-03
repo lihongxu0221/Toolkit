@@ -53,6 +53,7 @@
 		<Compile Include="Windows\Attach\BorderElement.cs" />
 		<Compile Include="Windows\Attach\CommandProvider.cs" />
 		<Compile Include="Windows\Attach\DropDownElement.cs" />
+		<Compile Include="Windows\Attach\ElevationAssist.cs" />
 		<Compile Include="Windows\Attach\ExpanderAssist.cs" />
 		<Compile Include="Windows\Attach\IconElement.cs" />
 		<Compile Include="Windows\Attach\MenuAttach.cs" />
@@ -134,6 +135,7 @@
 		<Compile Include="Windows\Controls\ToggleBlock.cs" />
 		<Compile Include="Windows\Datas\Enums\BadgeStatus.cs" />
 		<Compile Include="Windows\Datas\Enums\DisplayStyle.cs" />
+		<Compile Include="Windows\Datas\Enums\Elevation.cs" />
 		<Compile Include="Windows\Datas\FileSystemItemInfo.cs" />
 		<Compile Include="Windows\Datas\Enums\TitlePlacementType.cs" />
 		<Compile Include="Windows\Datas\Enums\TransitionMode.cs" />

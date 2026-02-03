@@ -1,6 +1,5 @@
 using System.Runtime.CompilerServices;
 using System.Windows.Input;
-using Avalon.Windows.Controls;
 using RoslynPad.UI;
 
 namespace BgCommon.Script.Views;
