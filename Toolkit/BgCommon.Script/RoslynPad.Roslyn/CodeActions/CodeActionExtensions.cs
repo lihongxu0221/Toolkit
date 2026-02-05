@@ -1,4 +1,4 @@
-using System.Collections.Immutable;
+﻿using System.Collections.Immutable;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeActions;
 using Microsoft.CodeAnalysis.Tags;
@@ -47,41 +47,41 @@ public static class CodeActionExtensions
                 case WellKnownTags.Class:
                     return GetAccessibility(tags) switch
                     {
-                        Microsoft.CodeAnalysis.Accessibility.Protected => Glyph.ClassProtected,
-                        Microsoft.CodeAnalysis.Accessibility.Private => Glyph.ClassPrivate,
-                        Microsoft.CodeAnalysis.Accessibility.Internal => Glyph.ClassInternal,
+                        Accessibility.Protected => Glyph.ClassProtected,
+                        Accessibility.Private => Glyph.ClassPrivate,
+                        Accessibility.Internal => Glyph.ClassInternal,
                         _ => Glyph.ClassPublic,
                     };
                 case WellKnownTags.Constant:
                     return GetAccessibility(tags) switch
                     {
-                        Microsoft.CodeAnalysis.Accessibility.Protected => Glyph.ConstantProtected,
-                        Microsoft.CodeAnalysis.Accessibility.Private => Glyph.ConstantPrivate,
-                        Microsoft.CodeAnalysis.Accessibility.Internal => Glyph.ConstantInternal,
+                        Accessibility.Protected => Glyph.ConstantProtected,
+                        Accessibility.Private => Glyph.ConstantPrivate,
+                        Accessibility.Internal => Glyph.ConstantInternal,
                         _ => Glyph.ConstantPublic,
                     };
                 case WellKnownTags.Delegate:
                     return GetAccessibility(tags) switch
                     {
-                        Microsoft.CodeAnalysis.Accessibility.Protected => Glyph.DelegateProtected,
-                        Microsoft.CodeAnalysis.Accessibility.Private => Glyph.DelegatePrivate,
-                        Microsoft.CodeAnalysis.Accessibility.Internal => Glyph.DelegateInternal,
+                        Accessibility.Protected => Glyph.DelegateProtected,
+                        Accessibility.Private => Glyph.DelegatePrivate,
+                        Accessibility.Internal => Glyph.DelegateInternal,
                         _ => Glyph.DelegatePublic,
                     };
                 case WellKnownTags.Enum:
                     return GetAccessibility(tags) switch
                     {
-                        Microsoft.CodeAnalysis.Accessibility.Protected => Glyph.EnumProtected,
-                        Microsoft.CodeAnalysis.Accessibility.Private => Glyph.EnumPrivate,
-                        Microsoft.CodeAnalysis.Accessibility.Internal => Glyph.EnumInternal,
+                        Accessibility.Protected => Glyph.EnumProtected,
+                        Accessibility.Private => Glyph.EnumPrivate,
+                        Accessibility.Internal => Glyph.EnumInternal,
                         _ => Glyph.EnumPublic,
                     };
                 case WellKnownTags.EnumMember:
                     return GetAccessibility(tags) switch
                     {
-                        Microsoft.CodeAnalysis.Accessibility.Protected => Glyph.EnumMemberProtected,
-                        Microsoft.CodeAnalysis.Accessibility.Private => Glyph.EnumMemberPrivate,
-                        Microsoft.CodeAnalysis.Accessibility.Internal => Glyph.EnumMemberInternal,
+                        Accessibility.Protected => Glyph.EnumMemberProtected,
+                        Accessibility.Private => Glyph.EnumMemberPrivate,
+                        Accessibility.Internal => Glyph.EnumMemberInternal,
                         _ => Glyph.EnumMemberPublic,
                     };
                 case WellKnownTags.Error:
@@ -90,33 +90,33 @@ public static class CodeActionExtensions
                 case WellKnownTags.Event:
                     return GetAccessibility(tags) switch
                     {
-                        Microsoft.CodeAnalysis.Accessibility.Protected => Glyph.EventProtected,
-                        Microsoft.CodeAnalysis.Accessibility.Private => Glyph.EventPrivate,
-                        Microsoft.CodeAnalysis.Accessibility.Internal => Glyph.EventInternal,
+                        Accessibility.Protected => Glyph.EventProtected,
+                        Accessibility.Private => Glyph.EventPrivate,
+                        Accessibility.Internal => Glyph.EventInternal,
                         _ => Glyph.EventPublic,
                     };
                 case WellKnownTags.ExtensionMethod:
                     return GetAccessibility(tags) switch
                     {
-                        Microsoft.CodeAnalysis.Accessibility.Protected => Glyph.ExtensionMethodProtected,
-                        Microsoft.CodeAnalysis.Accessibility.Private => Glyph.ExtensionMethodPrivate,
-                        Microsoft.CodeAnalysis.Accessibility.Internal => Glyph.ExtensionMethodInternal,
+                        Accessibility.Protected => Glyph.ExtensionMethodProtected,
+                        Accessibility.Private => Glyph.ExtensionMethodPrivate,
+                        Accessibility.Internal => Glyph.ExtensionMethodInternal,
                         _ => Glyph.ExtensionMethodPublic,
                     };
                 case WellKnownTags.Field:
                     return GetAccessibility(tags) switch
                     {
-                        Microsoft.CodeAnalysis.Accessibility.Protected => Glyph.FieldProtected,
-                        Microsoft.CodeAnalysis.Accessibility.Private => Glyph.FieldPrivate,
-                        Microsoft.CodeAnalysis.Accessibility.Internal => Glyph.FieldInternal,
+                        Accessibility.Protected => Glyph.FieldProtected,
+                        Accessibility.Private => Glyph.FieldPrivate,
+                        Accessibility.Internal => Glyph.FieldInternal,
                         _ => Glyph.FieldPublic,
                     };
                 case WellKnownTags.Interface:
                     return GetAccessibility(tags) switch
                     {
-                        Microsoft.CodeAnalysis.Accessibility.Protected => Glyph.InterfaceProtected,
-                        Microsoft.CodeAnalysis.Accessibility.Private => Glyph.InterfacePrivate,
-                        Microsoft.CodeAnalysis.Accessibility.Internal => Glyph.InterfaceInternal,
+                        Accessibility.Protected => Glyph.InterfaceProtected,
+                        Accessibility.Private => Glyph.InterfacePrivate,
+                        Accessibility.Internal => Glyph.InterfaceInternal,
                         _ => Glyph.InterfacePublic,
                     };
                 case WellKnownTags.Intrinsic:
@@ -137,17 +137,17 @@ public static class CodeActionExtensions
                 case WellKnownTags.Method:
                     return GetAccessibility(tags) switch
                     {
-                        Microsoft.CodeAnalysis.Accessibility.Protected => Glyph.MethodProtected,
-                        Microsoft.CodeAnalysis.Accessibility.Private => Glyph.MethodPrivate,
-                        Microsoft.CodeAnalysis.Accessibility.Internal => Glyph.MethodInternal,
+                        Accessibility.Protected => Glyph.MethodProtected,
+                        Accessibility.Private => Glyph.MethodPrivate,
+                        Accessibility.Internal => Glyph.MethodInternal,
                         _ => Glyph.MethodPublic,
                     };
                 case WellKnownTags.Module:
                     return GetAccessibility(tags) switch
                     {
-                        Microsoft.CodeAnalysis.Accessibility.Protected => Glyph.ModulePublic,
-                        Microsoft.CodeAnalysis.Accessibility.Private => Glyph.ModulePrivate,
-                        Microsoft.CodeAnalysis.Accessibility.Internal => Glyph.ModuleInternal,
+                        Accessibility.Protected => Glyph.ModulePublic,
+                        Accessibility.Private => Glyph.ModulePrivate,
+                        Accessibility.Internal => Glyph.ModuleInternal,
                         _ => Glyph.ModulePublic,
                     };
                 case WellKnownTags.Folder:
@@ -162,9 +162,9 @@ public static class CodeActionExtensions
                 case WellKnownTags.Property:
                     return GetAccessibility(tags) switch
                     {
-                        Microsoft.CodeAnalysis.Accessibility.Protected => Glyph.PropertyProtected,
-                        Microsoft.CodeAnalysis.Accessibility.Private => Glyph.PropertyPrivate,
-                        Microsoft.CodeAnalysis.Accessibility.Internal => Glyph.PropertyInternal,
+                        Accessibility.Protected => Glyph.PropertyProtected,
+                        Accessibility.Private => Glyph.PropertyPrivate,
+                        Accessibility.Internal => Glyph.PropertyInternal,
                         _ => Glyph.PropertyPublic,
                     };
                 case WellKnownTags.RangeVariable:
@@ -179,9 +179,9 @@ public static class CodeActionExtensions
                 case WellKnownTags.Structure:
                     return GetAccessibility(tags) switch
                     {
-                        Microsoft.CodeAnalysis.Accessibility.Protected => Glyph.StructureProtected,
-                        Microsoft.CodeAnalysis.Accessibility.Private => Glyph.StructurePrivate,
-                        Microsoft.CodeAnalysis.Accessibility.Internal => Glyph.StructureInternal,
+                        Accessibility.Protected => Glyph.StructureProtected,
+                        Accessibility.Private => Glyph.StructurePrivate,
+                        Accessibility.Internal => Glyph.StructureInternal,
                         _ => Glyph.StructurePublic,
                     };
                 case WellKnownTags.TypeParameter:
@@ -201,28 +201,24 @@ public static class CodeActionExtensions
         return Glyph.None;
     }
 
-    private static Microsoft.CodeAnalysis.Accessibility GetAccessibility(ImmutableArray<string> tags)
+    private static Accessibility GetAccessibility(ImmutableArray<string> tags)
     {
         if (tags.Contains(WellKnownTags.Public))
         {
-            return Microsoft.CodeAnalysis.Accessibility.Public;
+            return Accessibility.Public;
         }
-
         if (tags.Contains(WellKnownTags.Protected))
         {
-            return Microsoft.CodeAnalysis.Accessibility.Protected;
+            return Accessibility.Protected;
         }
-
         if (tags.Contains(WellKnownTags.Internal))
         {
-            return Microsoft.CodeAnalysis.Accessibility.Internal;
+            return Accessibility.Internal;
         }
-
         if (tags.Contains(WellKnownTags.Private))
         {
-            return Microsoft.CodeAnalysis.Accessibility.Private;
+            return Accessibility.Private;
         }
-
-        return Microsoft.CodeAnalysis.Accessibility.NotApplicable;
+        return Accessibility.NotApplicable;
     }
 }

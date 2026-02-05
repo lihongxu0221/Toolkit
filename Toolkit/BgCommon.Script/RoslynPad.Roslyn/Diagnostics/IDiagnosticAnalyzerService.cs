@@ -6,5 +6,5 @@ namespace RoslynPad.Roslyn.Diagnostics;
 
 public interface IDiagnosticAnalyzerService
 {
-    Task<ImmutableArray<DiagnosticData>> GetDiagnosticsForSpanAsync(Microsoft.CodeAnalysis.TextDocument document, TextSpan? range, CancellationToken cancellationToken);
+    Task<ImmutableArray<DiagnosticData>> GetDiagnosticsForSpanAsync(TextDocument document, TextSpan? range, CancellationToken cancellationToken);
 }
