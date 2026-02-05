@@ -62,6 +62,7 @@
 		<Compile Include="Windows\Attach\PressEffectHelper.cs" />
 		<Compile Include="Windows\Attach\SelectionElement.cs" />
 		<Compile Include="Windows\Attach\SelectorElement.cs" />
+		<Compile Include="Windows\Attach\ShadowAssist.cs" />
 		<Compile Include="Windows\Attach\StatusSwitchElement.cs" />
 		<Compile Include="Windows\Attach\TextBlockAttach.cs" />
 		<Compile Include="Windows\Attach\TextFieldAssist.cs" />
@@ -83,6 +84,7 @@
 		<Compile Include="Windows\Controls\Badge.cs" />
 		<Compile Include="Windows\Controls\Banner.cs" />
 		<Compile Include="Windows\Controls\ButtonGroup.cs" />
+		<Compile Include="Windows\Controls\Card.cs" />
 		<Compile Include="Windows\Controls\ColorPicker\ColorCanvas.cs" />
 		<Compile Include="Windows\Controls\ColorPicker\ColorItem.cs" />
 		<Compile Include="Windows\Controls\ColorPicker\ColorMode.cs" />

@@ -1,3 +1,5 @@
+using BgControls.Windows.Datas;
+
 namespace BgControls.Windows.Attach;
 
 /// <summary>
@@ -34,11 +36,7 @@ public static class ElevationAssist
     /// <param name="element">要获取属性的依赖对象.</param>
     /// <returns>当前的阴影深度枚举值.</returns>
     public static Elevation GetElevation(DependencyObject element)
-    {
-        // 验证参数是否为空
-        ArgumentNullException.ThrowIfNull(element, nameof(element));
-
-        // 获取并转换属性值
+    {        // 获取并转换属性值
         return (Elevation)element.GetValue(ElevationProperty);
     }
 
