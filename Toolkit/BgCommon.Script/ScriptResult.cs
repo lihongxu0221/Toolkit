@@ -44,10 +44,24 @@ public class ScriptResult
     /// <summary>
     /// Gets 执行结果的描述消息.
     /// </summary>
-    public string Message { get; }
+    public string Message { get; } = string.Empty;
 
     /// <summary>
     /// Gets 脚本执行返回的结果对象.
     /// </summary>
     public object? Result { get; }
+
+    /// <summary>
+    /// 方便在 UI 上显示格式化后的错误.
+    /// </summary>
+    /// <returns>返回 格式化异常信息.</returns>
+    public string GetFormattedError()
+    {
+        if (this.Exception is ScriptCompilationException compileEx)
+        {
+            return compileEx.Message; // 已经包含了格式化的行号和错误码
+        }
+
+        return this.Exception?.Message ?? this.Message;
+    }
 }

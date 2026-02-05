@@ -1,3 +1,6 @@
+using BgLogger;
+using Microsoft.CodeAnalysis;
+using Microsoft.Extensions.FileSystemGlobbing;
 using System.Collections.Specialized;
 
 namespace BgCommon.Script;
@@ -11,6 +14,8 @@ public sealed class ScriptManager : IDisposable
     /// 脚本配置信息.
     /// </summary>
     private readonly ScriptConfig config;
+    private readonly SynchronizationContext? syncContext = SynchronizationContext.Current;
+    private FileSystemWatcher? watcher;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="ScriptManager"/> class.
@@ -40,6 +45,261 @@ public sealed class ScriptManager : IDisposable
     public ObservableCollection<ScripteContext> Contexts { get; private set; }
 
     /// <summary>
+    /// 模糊搜索脚本（按名称或摘要）.
+    /// </summary>
+    /// <param name="keyword">名称或摘要.</param>
+    /// <returns>返回满足条件的脚本上下文列表.</returns>
+    public IEnumerable<ScripteContext> Search(string keyword)
+    {
+        if (string.IsNullOrWhiteSpace(keyword))
+        {
+            return this.Contexts;
+        }
+
+        return this.Contexts.Where(c =>
+            c.ScriptName.Contains(keyword, StringComparison.OrdinalIgnoreCase) ||
+            c.Summary.Contains(keyword, StringComparison.OrdinalIgnoreCase));
+    }
+
+    /// <summary>
+    /// 尝试获取指定名称的脚本上下文.
+    /// </summary>
+    /// <param name="scriptName">脚本名称.</param>
+    /// <returns>返回找到的脚本上下文，未找到则返回 null.</returns>
+    public ScripteContext? GetContext(string scriptName) =>
+        this.Contexts.FirstOrDefault(c => c.ScriptName.Equals(scriptName, StringComparison.OrdinalIgnoreCase));
+
+    /// <summary>
+    /// 检查是否存在重名脚本.
+    /// </summary>
+    /// <param name="scriptName">脚本名称.</param>
+    /// <returns>返回是否存在同名脚本的布尔值.</returns>
+    public bool Exists(string scriptName) =>
+        this.Contexts.Any(c => c.ScriptName.Equals(scriptName, StringComparison.OrdinalIgnoreCase));
+
+    /// <summary>
+    /// 启用文件系统监听，当脚本文件夹中的文件被外部修改、删除或新增时自动同步.
+    /// </summary>
+    public void EnableFileWatcher()
+    {
+        if (watcher == null)
+        {
+            watcher = new FileSystemWatcher(this.config.ScriptPath, $"*.{this.config.ScriptFileExtension}")
+            {
+                EnableRaisingEvents = true,
+                NotifyFilter = NotifyFilters.LastWrite | NotifyFilters.FileName | NotifyFilters.CreationTime,
+            };
+
+            watcher.Changed += this.OnFileChanged;
+            watcher.Created += this.OnFileCreated;
+            watcher.Deleted += this.OnFileDeleted;
+            watcher.Renamed += this.OnFileRenamed;
+        }
+    }
+
+    #region 文件监听回调逻辑
+
+    private async void OnFileCreated(object? sender, FileSystemEventArgs e)
+    {
+        var name = Path.GetFileNameWithoutExtension(e.Name);
+        if (string.IsNullOrEmpty(name) || this.Exists(name))
+        {
+            return;
+        }
+
+        // 需要切回 UI 线程，这里假设使用了合适的同步机制或 ObservableCollection 处理了跨线程
+        var context = new ScripteContext(name, this.config, false);
+        await context.LoadAsync();
+
+        RunOnUIThread(() => this.Contexts.Add(context));
+    }
+
+    private async void OnFileChanged(object? sender, FileSystemEventArgs e)
+    {
+        var name = Path.GetFileNameWithoutExtension(e.Name);
+        if (string.IsNullOrEmpty(name))
+        {
+            return;
+        }
+
+        var context = GetContext(name);
+
+        // 只有当内存中未修改时，才允许被外部覆盖，防止丢失正在编辑的内容
+        if (context != null && !context.IsDirty)
+        {
+            await context.LoadAsync();
+        }
+    }
+
+    private void OnFileDeleted(object? sender, FileSystemEventArgs e)
+    {
+        var name = Path.GetFileNameWithoutExtension(e.Name);
+        if (string.IsNullOrEmpty(name))
+        {
+            return;
+        }
+
+        var context = GetContext(name);
+        if (context != null)
+        {
+            RunOnUIThread(() => this.Contexts.Remove(context));
+        }
+    }
+
+    private void OnFileRenamed(object? sender, RenamedEventArgs e)
+    {
+        var oldName = Path.GetFileNameWithoutExtension(e.OldName);
+        var newName = Path.GetFileNameWithoutExtension(e.Name);
+        if (string.IsNullOrEmpty(oldName) || string.IsNullOrEmpty(newName))
+        {
+            return;
+        }
+
+        // 在 UI 线程中执行集合和属性变更
+        RunOnUIThread(() =>
+        {
+            var context = GetContext(oldName);
+            if (context != null)
+            {
+                // 同步更新内部名称
+                context.UpdateNameInternal(newName);
+
+                // 触发事件通知 UI 或日志系统路径已变
+                LogRun.Info($"检测到脚本更名: {oldName} -> {newName}");
+            }
+        });
+    }
+
+    #endregion
+
+    /// <summary>
+    /// 从配置的脚本路径加载所有现有的 .cs 脚本文件.
+    /// </summary>
+    /// <returns>返回加载的结果.</returns>
+    public async Task LoadAllScriptsAsync()
+    {
+        if (!Directory.Exists(this.config.ScriptPath))
+        {
+            Directory.CreateDirectory(this.config.ScriptPath);
+            return;
+        }
+
+        var files = Directory.GetFiles(this.config.ScriptPath, $"*.{config.ScriptFileExtension}");
+        foreach (var file in files)
+        {
+            // 避免重复加载
+            string fileName = Path.GetFileNameWithoutExtension(file);
+            if (this.Contexts.Any(c => c.ScriptName.Equals(fileName, StringComparison.OrdinalIgnoreCase)))
+            {
+                continue;
+            }
+
+            var context = new ScripteContext(fileName, this.config, false);
+            await context.LoadAsync();
+            this.Contexts.Add(context);
+        }
+    }
+
+    /// <summary>
+    /// 异步保存所有已修改且未保存的脚本.
+    /// </summary>
+    /// <returns>返回保存的结果.</returns>
+    public async Task SaveAllDirtyScriptsAsync()
+    {
+        var dirtyContexts = this.Contexts.Where(c => c.IsDirty && !string.IsNullOrEmpty(c.ScriptName)).ToList();
+        foreach (var context in dirtyContexts)
+        {
+            await context.SaveAsync();
+        }
+    }
+
+    /// <summary>
+    /// 根据模板创建一个新的脚本上下文（尚未保存到磁盘）.
+    /// </summary>
+    /// <param name="templateName">模板名称.</param>
+    /// <returns>返回初始化的脚本上下文.</returns>
+    public async Task<ScripteContext?> CreateFromTemplateAsync(string templateName)
+    {
+        var context = new ScripteContext(templateName, this.config, true);
+        await context.LoadAsync();
+
+        // 模板创建后添加到集合，此时 ScriptName 为空，直到 SaveAsync(newName)
+        this.Contexts.Add(context);
+        return context;
+    }
+
+    /// <summary>
+    /// 删除脚本：从内存移除并物理删除文件.
+    /// </summary>
+    /// <param name="scriptName">脚本名称.</param>
+    /// <returns>返回删除的结果.</returns>
+    public async Task<bool> DeleteScriptAsync(string scriptName)
+    {
+        var context = this.Contexts.FirstOrDefault(c => c.ScriptName.Equals(scriptName, StringComparison.OrdinalIgnoreCase));
+        if (context == null)
+        {
+            return false;
+        }
+
+        string path = context.ScriptFilePath;
+        this.Contexts.Remove(context);
+        context.Dispose();
+
+        if (File.Exists(path))
+        {
+            await Task.Run(() => File.Delete(path));
+        }
+
+        return true;
+    }
+
+    /// <summary>
+    /// 异步执行指定的脚本.
+    /// </summary>
+    /// <param name="scriptName">脚本名称.</param>
+    /// <param name="globals">传递给脚本的上下文对象（建议使用 ScriptGlobals 子类）.</param>
+    /// <param name="ct">取消令牌.</param>
+    /// <returns>返回脚本执行的结果.</returns>
+    public async Task<ScriptResult> ExecuteAsync(string scriptName, ScriptGlobals? globals = null, CancellationToken ct = default)
+    {
+        var ctx = this.Contexts.FirstOrDefault(c => c.ScriptName.Equals(scriptName, StringComparison.OrdinalIgnoreCase));
+        if (ctx == null)
+        {
+            return new ScriptResult(false, $"找不到名为 '{scriptName}' 的脚本.");
+        }
+
+        // 如果没有传 globals，创建一个默认的，并对接日志系统
+        globals ??= new ScriptGlobals
+        {
+            Log = (msg) => LogRun.Info($"[Script:{scriptName}] {msg}"),
+            CancellationToken = ct,
+        };
+
+        try
+        {
+            var resultValue = await ctx.RunAsync(globals, ct);
+
+            // 如果运行结果为 null 且 ctx 发生了错误，说明可能是编译失败
+            if (resultValue == null && !string.IsNullOrEmpty(ctx.ScriptName))
+            {
+                // 这里的具体逻辑可以根据 RunAsync 是否抛出异常来细化
+            }
+
+            return new ScriptResult(true, "执行完成", resultValue);
+        }
+        catch (ScriptCompilationException cex)
+        {
+            LogRun.Error($"脚本 {scriptName} 编译失败: {cex.Message}");
+            return new ScriptResult(false, cex.Message, null, cex);
+        }
+        catch (Exception ex)
+        {
+            LogRun.Error($"脚本 {scriptName} 执行异常: {ex.Message}");
+            return new ScriptResult(false, $"执行异常: {ex.Message}", null, ex);
+        }
+    }
+
+    /// <summary>
     /// 显示脚本编辑器.
     /// </summary>
     public void ShowEditor()
@@ -58,28 +318,27 @@ public sealed class ScriptManager : IDisposable
     }
 
     /// <summary>
-    /// 执行指定的脚本.
-    /// </summary>
-    /// <param name="scriptName">脚本名称.</param>
-    /// <returns>执行结果对象.</returns>
-    public ScriptResult Execute(string scriptName)
-    {
-        // 验证脚本名称.
-        ArgumentNullException.ThrowIfNull(scriptName, nameof(scriptName));
-        return new ScriptResult(true, "执行完成.");
-    }
-
-    /// <summary>
     /// 释放管理器占用的资源，并注销所有上下文事件.
     /// </summary>
     public void Dispose()
     {
+        if (this.watcher != null)
+        {
+            this.watcher.Changed -= this.OnFileChanged;
+            this.watcher.Created -= this.OnFileCreated;
+            this.watcher.Deleted -= this.OnFileDeleted;
+            this.watcher.Renamed -= this.OnFileRenamed;
+            this.watcher.EnableRaisingEvents = false;
+            this.watcher.Dispose();
+        }
+
         if (this.Contexts != null)
         {
             // 循环注销所有上下文的事件处理程序.
             for (int i = 0; i < this.Contexts.Count; i++)
             {
                 this.HanlderEvent(this.Contexts[i], false);
+                this.Contexts[i].Dispose();
             }
 
             // 注销集合变更事件.
@@ -164,8 +423,8 @@ public sealed class ScriptManager : IDisposable
     /// 上下文初始化完成时的回调.
     /// </summary>
     /// <param name="sender">事件源.</param>
-    /// <param name="eventArgs">事件参数.</param>
-    private void Context_OnInitialized(object? sender, EventArgs eventArgs)
+    /// <param name="e">事件参数.</param>
+    private void Context_OnInitialized(object? sender, ScriptFileEventArgs e)
     {
     }
 
@@ -176,10 +435,11 @@ public sealed class ScriptManager : IDisposable
     /// <param name="eventArgs">事件参数.</param>
     private void Context_OnDispose(object? sender, EventArgs eventArgs)
     {
-        if (sender is ScripteContext disposedContext)
+        if (sender is ScripteContext ctx)
         {
             // 当上下文释放时，注销其在该管理器中的事件订阅.
-            this.HanlderEvent(disposedContext, false);
+            this.Contexts.Remove(ctx);
+            this.HanlderEvent(ctx, false);
         }
     }
 
@@ -187,8 +447,8 @@ public sealed class ScriptManager : IDisposable
     /// 脚本保存后的回调.
     /// </summary>
     /// <param name="sender">事件源.</param>
-    /// <param name="eventArgs">事件参数.</param>
-    private void Context_OnSaved(object? sender, EventArgs eventArgs)
+    /// <param name="e">事件参数.</param>
+    private void Context_OnSaved(object? sender, ScriptFileEventArgs e)
     {
     }
 
@@ -196,8 +456,8 @@ public sealed class ScriptManager : IDisposable
     /// 脚本发生错误时的回调.
     /// </summary>
     /// <param name="sender">事件源.</param>
-    /// <param name="eventArgs">事件参数.</param>
-    private void Context_OnError(object? sender, EventArgs eventArgs)
+    /// <param name="e">事件参数.</param>
+    private void Context_OnError(object? sender, ScriptErrorEventArgs e)
     {
     }
 
@@ -214,9 +474,16 @@ public sealed class ScriptManager : IDisposable
     /// 脚本编译完成时的回调.
     /// </summary>
     /// <param name="sender">事件源.</param>
-    /// <param name="eventArgs">事件参数.</param>
-    private void Context_OnCompiled(object? sender, EventArgs eventArgs)
+    /// <param name="e">事件参数.</param>
+    private void Context_OnCompiled(object? sender, ScriptCompilationEventArgs e)
     {
+        if (!e.IsSuccess)
+        {
+            foreach (var diag in e.Diagnostics.Where(d => d.Severity == DiagnosticSeverity.Error))
+            {
+                LogRun.Error($"编译错误: {diag.GetMessage()} ({e.CompilationDuration.TotalMilliseconds}ms)");
+            }
+        }
     }
 
     /// <summary>
@@ -232,8 +499,28 @@ public sealed class ScriptManager : IDisposable
     /// 脚本运行结束后的回调.
     /// </summary>
     /// <param name="sender">事件源.</param>
-    /// <param name="eventArgs">事件参数.</param>
-    private void Context_OnRuned(object? sender, EventArgs eventArgs)
+    /// <param name="e">事件参数.</param>
+    private void Context_OnRuned(object? sender, ScriptExecutionEventArgs e)
     {
+        if (e.HasError)
+        {
+            LogRun.Error($"运行失败: {e.Exception?.Message}");
+        }
+        else
+        {
+            LogRun.Info($"运行成功，返回结果: {e.Result} (耗时: {e.ExecutionDuration.TotalMilliseconds}ms)");
+        }
+    }
+
+    private void RunOnUIThread(Action action)
+    {
+        if (syncContext != null)
+        {
+            syncContext.Post(_ => action(), null);
+        }
+        else
+        {
+            action();
+        }
     }
 }

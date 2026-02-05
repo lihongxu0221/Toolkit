@@ -70,14 +70,16 @@ public static class ScriptConfigBuilder
     {
         // 验证参数非空.
         ArgumentNullException.ThrowIfNull(config, nameof(config));
-        ArgumentNullException.ThrowIfNull(templateName, nameof(templateName));
-        ArgumentNullException.ThrowIfNull(templatePath, nameof(templatePath));
-        ArgumentNullException.ThrowIfNull(referLibsPath, nameof(referLibsPath));
-        ArgumentNullException.ThrowIfNull(referLibs, nameof(referLibs));
 
-        // 创建新的模板配置并添加到集合中.
-        config.Templates.Add(new ScriptTemplate(templateName, templatePath, referLibsPath, referLibs));
+        // 允许模板有自己的扩展名，如果未指定则遵循全局配置
+        var template = new ScriptTemplate(
+            templateName,
+            config.TemplateFileExtension,
+            templatePath,
+            referLibsPath,
+            referLibs);
 
+        config.Templates.Add(template);
         return config;
     }
 }
