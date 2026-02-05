@@ -69,7 +69,6 @@
 		<PackageVersion Include="Nerdbank.Streams" Version="2.13.16" />
 		<PackageVersion Include="NuGet.Commands" Version="$(NuGetVersion)" />
 		<PackageVersion Include="NuGet.Versioning" Version="$(NuGetVersion)" />
-		<PackageVersion Include="System.Linq.AsyncEnumerable" Version="10.0.0" />
 		<PackageVersion Include="System.Reactive" Version="6.1.0" />
 		<PackageVersion Include="System.Reactive.Core" Version="6.1.0" />
 		<PackageVersion Include="System.Reactive.Linq" Version="6.1.0" />
@@ -78,5 +77,8 @@
 		<PackageVersion Include="System.Text.Json" Version="$(DotNetExtensionsVersion)" />
 		<PackageVersion Include="System.Composition" Version="$(DotNetExtensionsVersion)" />
 		<PackageVersion Include="SqlSugar" Version="5.1.4.207" />
+		<PackageVersion Include="IgnoresAccessChecksToGenerator" Version="0.8.0" />
+		<PackageVersion Include="System.Linq.Async" Version="6.0.1" />
+		<PackageVersion Include="AvalonEdit" Version="6.3.1.120" />
 	</ItemGroup>
 </Project>

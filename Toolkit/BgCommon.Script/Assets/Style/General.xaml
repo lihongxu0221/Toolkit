@@ -7,13 +7,12 @@
                     xmlns:converters="clr-namespace:BgCommon.Script.Converters"
                     xmlns:formatting="clr-namespace:BgCommon.Script.Converters.Formatting"
                     xmlns:controls="clr-namespace:BgCommon.Script.Controls"
-                    xmlns:av="https://github.com/aelij/wpfcontrib"
+                    xmlns:codeFixes="clr-namespace:RoslynPad.Roslyn.CodeFixes"
+                    xmlns:editor="clr-namespace:RoslynPad.Editor"
                     xmlns:codeAnalysis="clr-namespace:Microsoft.CodeAnalysis;assembly=Microsoft.CodeAnalysis"
                     xmlns:codeActions="clr-namespace:Microsoft.CodeAnalysis.CodeActions;assembly=Microsoft.CodeAnalysis.Workspaces"
-                    xmlns:codeFixes="clr-namespace:RoslynPad.Roslyn.CodeFixes;assembly=RoslynPad.Roslyn"
                     xmlns:cc="clr-namespace:ICSharpCode.AvalonEdit.CodeCompletion;assembly=ICSharpCode.AvalonEdit"
-                    xmlns:rp="clr-namespace:RoslynPad"
-                    xmlns:editor="clr-namespace:RoslynPad.Editor;assembly=RoslynPad.Editor.Windows">
+                    xmlns:rp="clr-namespace:RoslynPad">
 
     <ResourceDictionary.MergedDictionaries>
         <ResourceDictionary Source="/BgControls;component/Assets/Style/Theme.xaml"/>
@@ -36,8 +35,7 @@
         </Border>
     </ControlTemplate>
 
-    <HierarchicalDataTemplate DataType="{x:Type codeFixes:CodeFixCollection}"
-                           ItemsSource="{Binding Fixes, Mode=OneTime}">
+    <HierarchicalDataTemplate DataType="{x:Type codeFixes:CodeFixCollection}" ItemsSource="{Binding Fixes, Mode=OneTime}">
         <TextBlock Text="{Binding Provider, Mode=OneTime}" />
     </HierarchicalDataTemplate>
 

@@ -15,7 +15,7 @@ internal partial class SaveDocumentDialog : UserControl, ISaveDocumentDialog, IN
     private SaveResult result;
     private string documentName = string.Empty;
     private string filePath = string.Empty;
-    private InlineModalDialog? dialog;
+    // private InlineModalDialog? dialog;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="SaveDocumentDialog"/> class.
@@ -138,19 +138,19 @@ internal partial class SaveDocumentDialog : UserControl, ISaveDocumentDialog, IN
 
     public Task ShowAsync()
     {
-        dialog = new InlineModalDialog
-        {
-            Owner = Application.Current.MainWindow,
-            Content = this,
-        };
-
-        dialog.Show();
+        // dialog = new InlineModalDialog
+        // {
+        //     Owner = Application.Current.MainWindow,
+        //     Content = this,
+        // };
+        // 
+        // dialog.Show();
         return Task.CompletedTask;
     }
 
     public void Close()
     {
-        dialog?.Close();
+        // dialog?.Close();
     }
 
     private void PerformSave()

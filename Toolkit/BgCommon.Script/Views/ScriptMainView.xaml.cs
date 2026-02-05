@@ -1,4 +1,3 @@
-using Avalon.Windows.Controls;
 using AvalonDock;
 using AvalonDock.Controls;
 using AvalonDock.Layout.Serialization;
@@ -232,18 +231,18 @@ public partial class ScriptMainView : UserControl
             return;
         }
 
-        var taskDialog = new TaskDialog
-        {
-            Header = "Unhandled Exception",
-            Content = viewModel.LastError.ToString(),
-            Buttons =
-            {
-                TaskDialogButtonData.FromStandardButtons(TaskDialogButtons.Close).First()
-            }
-        };
-
-        taskDialog.SetResourceReference(BackgroundProperty, SystemColors.WindowBrushKey);
-        taskDialog.ShowInline(this);
+        // var taskDialog = new TaskDialog
+        // {
+        //     Header = "Unhandled Exception",
+        //     Content = viewModel.LastError.ToString(),
+        //     Buttons =
+        //     {
+        //         TaskDialogButtonData.FromStandardButtons(TaskDialogButtons.Close).First()
+        //     }
+        // };
+        //
+        // taskDialog.SetResourceReference(BackgroundProperty, SystemColors.WindowBrushKey);
+        // taskDialog.ShowInline(this);
     }
 
     private void ViewUpdateClick(object? sender, RoutedEventArgs e)

@@ -17,39 +17,53 @@
         </RestoreSources>
     </PropertyGroup>
 
+    <PropertyGroup>
+        <NoWarn>$(NoWarn);VSTHRD011;</NoWarn>
+    </PropertyGroup>
+
     <ItemGroup>
-        <PackageReference Include="Costura.Fody" PrivateAssets="all" />
-        <PackageReference Include="CommunityToolkit.Mvvm" PrivateAssets="All" />
-        <PackageReference Include="Newtonsoft.Json" PrivateAssets="all" />
-        <PackageReference Include="Prism.DryIoc" PrivateAssets="all" />
-        <PackageReference Include="Prism.Wpf" PrivateAssets="all" />
-        <PackageReference Include="Microsoft.CodeAnalysis.Common" PrivateAssets="all" />
-        <PackageReference Include="Microsoft.CodeAnalysis.CSharp" PrivateAssets="all" />
-        <PackageReference Include="Microsoft.CodeAnalysis.Workspaces.Common" PrivateAssets="all" />
-        <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Features" PrivateAssets="all" />
-        <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Scripting" PrivateAssets="all" />
-        <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Workspaces" PrivateAssets="all" />
-        <PackageReference Include="Microsoft.VisualStudio.Threading" PrivateAssets="all" />
-        <PackageReference Include="System.Collections.Immutable" PrivateAssets="all" />
-        <PackageReference Include="System.Composition" PrivateAssets="all" />
-        <PackageReference Include="System.Drawing.Common" PrivateAssets="all" />
-        <PackageReference Include="System.Linq.AsyncEnumerable" PrivateAssets="all" />
-        <PackageReference Include="System.Reflection.Metadata" PrivateAssets="all" />
-        <PackageReference Include="System.Reflection.MetadataLoadContext" PrivateAssets="all" />
-        <PackageReference Include="Dirkster.AvalonDock" PrivateAssets="all" />
-        <PackageReference Include="Dirkster.AvalonDock.Themes.VS2013" PrivateAssets="all" />
-        <PackageReference Include="NuGet.Versioning" PrivateAssets="all" />
-        <PackageReference Include="Mono.Cecil" PrivateAssets="all" />
-        <PackageReference Include="Nerdbank.Streams" PrivateAssets="all" />
-        <PackageReference Include="System.Reactive" PrivateAssets="all" />
-        <PackageReference Include="System.Reactive.Core" PrivateAssets="all" />
-        <PackageReference Include="System.Reactive.Linq" PrivateAssets="all" />
+        <!--<PackageReference Include="Costura.Fody" PrivateAssets="all" />-->
+        <PackageReference Include="CommunityToolkit.Mvvm" />
+        <PackageReference Include="Newtonsoft.Json" />
+        <PackageReference Include="Prism.DryIoc" />
+        <PackageReference Include="Prism.Wpf" />
+        <PackageReference Include="System.Collections.Immutable" />
+        <PackageReference Include="System.Drawing.Common" />
         <PackageReference Include="Microsoft.Win32.SystemEvents" />
-        <!--<PackageReference Include="Microsoft.Extensions.Localization.Abstractions" />-->
-        <!--<PackageReference Include="NLog" />-->
-        <!--<PackageReference Include="NLog.Database" />-->
-        <!--<PackageReference Include="NLog.Extensions.Logging" />-->
-        <!--<PackageReference Include="NLog.Schema" />-->
+
+        <!--RoslynPad.Build-->
+        <PackageReference Include="Mono.Cecil" />
+        <PackageReference Include="NuGet.Versioning" />
+        <PackageReference Include="Nerdbank.Streams" />
+        <!--<PackageReference Include="Microsoft.Extensions.Logging" />-->
+
+        <!--RoslynPad.Common.UI-->
+        <PackageReference Include="NuGet.Commands" />
+        <PackageReference Include="System.Reactive.Core" />
+
+        <!--RoslynPad.Editor.Windows-->
+        <PackageReference Include="AvalonEdit" />
+        <PackageReference Include="System.Reactive.Linq" />
+
+        <!--RoslynPad.Roslyn-->
+        <PackageReference Include="IgnoresAccessChecksToGenerator" PrivateAssets="All" />
+        <PackageReference Include="Microsoft.CodeAnalysis.CSharp" />
+        <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Features" />
+        <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Scripting" />
+        <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Workspaces" />
+        <PackageReference Include="Microsoft.VisualStudio.Threading" />
+        <PackageReference Include="System.Reflection.Metadata" />
+        <PackageReference Include="System.Composition" />
+        <PackageReference Include="System.Linq.Async" />
+        <PackageReference Include="System.Reflection.MetadataLoadContext" />
+
+        <!--RoslynPad-->
+        <PackageReference Include="Dirkster.AvalonDock" />
+        <PackageReference Include="Dirkster.AvalonDock.Themes.VS2013" />
+        <!--<PackageReference Include="Mono.Cecil" />-->
+        <!--<PackageReference Include="Microsoft.Extensions.Configuration.Json" />-->
+        <!--<PackageReference Include="Microsoft.Extensions.Logging.Console" />-->
+        <!--<PackageReference Include="Microsoft.Extensions.Logging.Debug" />-->
     </ItemGroup>
 
     <ItemGroup>
@@ -127,22 +141,26 @@
             <Private>True</Private>
         </Reference>
 
-        <Reference Include="RoslynPad.Editor.Windows">
-            <HintPath>..\..\DLL\BaiguCore\Toolkit\RoslynPad\RoslynPad.Editor.Windows.dll</HintPath>
-            <Private>True</Private>
-        </Reference>
-        <Reference Include="RoslynPad.Roslyn">
+        <!--<Reference Include="RoslynPad.Editor.Windows">
+          <HintPath>..\..\DLL\BaiguCore\Toolkit\RoslynPad\RoslynPad.Editor.Windows.dll</HintPath>
+          <Private>True</Private>
+            </Reference>-->
+
+        <!--<Reference Include="RoslynPad.Roslyn">
             <HintPath>..\..\DLL\BaiguCore\Toolkit\RoslynPad\RoslynPad.Roslyn.dll</HintPath>
             <Private>True</Private>
-        </Reference>
-        <Reference Include="RoslynPad.Roslyn.Windows">
+        </Reference>-->
+
+        <!--<Reference Include="RoslynPad.Roslyn.Windows">
             <HintPath>..\..\DLL\BaiguCore\Toolkit\RoslynPad\RoslynPad.Roslyn.Windows.dll</HintPath>
             <Private>True</Private>
-        </Reference>
+        </Reference>-->
+
         <Reference Include="RoslynPad.Runtime">
             <HintPath>..\..\DLL\BaiguCore\Toolkit\RoslynPad\RoslynPad.Runtime.dll</HintPath>
             <Private>True</Private>
         </Reference>
+
         <Reference Include="RoslynPad.Themes">
             <HintPath>..\..\DLL\BaiguCore\Toolkit\RoslynPad\RoslynPad.Themes.dll</HintPath>
             <Private>True</Private>

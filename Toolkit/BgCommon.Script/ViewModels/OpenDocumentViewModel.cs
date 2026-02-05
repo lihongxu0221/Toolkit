@@ -30,24 +30,44 @@ public partial class OpenDocumentViewModel : NavigableDialogViewModel
     private ExecutionHostParameters? executionHostParameters;
     private CancellationTokenSource? runCts;
     private ExecutionPlatform? platform;
-    private IDisposable? _viewDisposable;
-    private Func<TextSpan>? _getSelection;
-    private Timer? _liveModeTimer;
-    private IReadOnlyList<ExecutionPlatform>? _availablePlatforms;
-    private SourceCodeKind? _sourceCodeKind;
+    private IDisposable? viewDisposable;
+    private Func<TextSpan>? getSelection;
+    private Timer? liveModeTimer;
+    private IReadOnlyList<ExecutionPlatform>? availablePlatforms;
+    private SourceCodeKind? sourceCodeKind;
+
+    public OpenDocumentViewModel(
+        IContainerExtension container,
+        ITelemetryProvider telemetryProvider,
+        bool restoreSuccessful = false)
+        : base(container)
+    {
+        this.Id = Guid.NewGuid().ToString("n");
+        this.BuildPath = Path.Combine(FileNames.ScriptsBuildPath, Id);
+        _ = Directory.CreateDirectory(BuildPath);
+
+        this.results = new ObservableCollection<IResultObject>();
+        this.restoreResults = new List<RestoreResultObject>();
+        this.telemetryProvider = telemetryProvider;
+        this.platformsFactory = this.Container.Resolve<IPlatformsFactory>();
+
+        this.RestoreSuccessful = true;
+        this.InitializePlatforms();
+        this.restoreSuccessful = restoreSuccessful;
+    }
 
     public string Id { get; }
 
     public bool HasDocumentId => this.DocumentId is not null;
-
-    [ObservableProperty]
-    private DocumentViewModel? document = null;
 
     public new string Title => Document != null && !Document.IsAutoSaveOnly ? Document.Name : DefaultDocumentName + GetFileExtension();
 
     public string BuildPath { get; }
 
     public string WorkingDirectory => Document != null ? Path.GetDirectoryName(Document.Path)! : MainViewModel.DocumentRoot.Path;
+
+    [ObservableProperty]
+    private DocumentViewModel? document = null;
 
     [ObservableProperty]
     private DocumentId? documentId = null;
@@ -85,17 +105,17 @@ public partial class OpenDocumentViewModel : NavigableDialogViewModel
     {
         get
         {
-            if (_sourceCodeKind is not null)
+            if (sourceCodeKind is not null)
             {
-                return _sourceCodeKind.Value;
+                return sourceCodeKind.Value;
             }
 
             var isScript = Path.GetExtension(Document?.Name)?.Equals(ScriptFileExtension, StringComparison.OrdinalIgnoreCase);
             return isScript is null
                 ? throw new InvalidOperationException("Document not initialized")
-                : (_sourceCodeKind ??= isScript == true ? SourceCodeKind.Script : SourceCodeKind.Regular);
+                : (sourceCodeKind ??= isScript == true ? SourceCodeKind.Script : SourceCodeKind.Regular);
         }
-        set => _sourceCodeKind = value;
+        set => sourceCodeKind = value;
     }
 
     public ExecutionPlatform? Platform
@@ -130,34 +150,15 @@ public partial class OpenDocumentViewModel : NavigableDialogViewModel
 
     private string GetFileExtension() => SourceCodeKind == SourceCodeKind.Script ? ScriptFileExtension : RegularFileExtension;
 
-    private Action<ExceptionResultObject?>? _onError;
-
-    public event EventHandler? DocumentUpdated;
+    private Action<ExceptionResultObject?>? OnError;
 
     public event Action? ReadInput;
 
     public event Action? ResultsAvailable;
 
-    public OpenDocumentViewModel(
-        IContainerExtension container,
-        ITelemetryProvider telemetryProvider,
-        bool restoreSuccessful = false)
-        : base(container)
-    {
-        Id = Guid.NewGuid().ToString("n");
-        BuildPath = Path.Combine(FileNames.ScriptsBuildPath, Id);
-        _ = Directory.CreateDirectory(BuildPath);
+    public event EventHandler? DocumentUpdated;
 
-        results = new ObservableCollection<IResultObject>();
-        restoreResults = new List<RestoreResultObject>();
-        this.telemetryProvider = telemetryProvider;
-        this.platformsFactory = this.Container.Resolve<IPlatformsFactory>();
-
-        RestoreSuccessful = true;
-
-        InitializePlatforms();
-        this.restoreSuccessful = restoreSuccessful;
-    }
+    public event EventHandler? EditorFocus;
 
     [MemberNotNull(nameof(executionHost))]
     private void InitializeExecutionHost()
@@ -165,29 +166,29 @@ public partial class OpenDocumentViewModel : NavigableDialogViewModel
         var roslynHost = MainViewModel.RoslynHost;
 
         executionHostParameters = new ExecutionHostParameters(
-            BuildPath,
+            this.BuildPath,
             string.Empty, // _serviceProvider.GetRequiredService<NuGetViewModel>().ConfigPath,
             roslynHost.DefaultImports,
             roslynHost.DisabledDiagnostics,
             WorkingDirectory,
             SourceCodeKind);
 
-        executionHost = new ExecutionHost(executionHostParameters, roslynHost)
+        this.executionHost = new ExecutionHost(executionHostParameters, roslynHost)
         {
             Name = Document?.Name ?? "Untitled",
             DocumentId = DocumentId,
             Platform = Platform.NotNull(),
-            DotNetExecutable = platformsFactory.DotNetExecutable
+            DotNetExecutable = platformsFactory.DotNetExecutable,
         };
 
-        executionHost.Dumped += Host_ExecutionHostOnDump;
-        executionHost.Error += Host_ExecutionHostOnError;
-        executionHost.ReadInput += Host_ExecutionHostOnInputRequest;
-        executionHost.CompilationErrors += Host_ExecutionHostOnCompilationErrors;
-        executionHost.Disassembled += Host_ExecutionHostOnDisassembled;
-        executionHost.RestoreStarted += Host_OnRestoreStarted;
-        executionHost.RestoreCompleted += Host_OnRestoreCompleted;
-        executionHost.ProgressChanged += p => ReportedProgress = p.Progress;
+        this.executionHost.Dumped += Host_ExecutionHostOnDump;
+        this.executionHost.Error += Host_ExecutionHostOnError;
+        this.executionHost.ReadInput += Host_ExecutionHostOnInputRequest;
+        this.executionHost.CompilationErrors += Host_ExecutionHostOnCompilationErrors;
+        this.executionHost.Disassembled += Host_ExecutionHostOnDisassembled;
+        this.executionHost.RestoreStarted += Host_OnRestoreStarted;
+        this.executionHost.RestoreCompleted += Host_OnRestoreCompleted;
+        this.executionHost.ProgressChanged += p => ReportedProgress = p.Progress;
     }
 
     private void InitializePlatforms()
@@ -226,7 +227,7 @@ public partial class OpenDocumentViewModel : NavigableDialogViewModel
         _ = UIService.RunOnUIThreadAsync(
         () =>
         {
-            _onError?.Invoke(errorResult);
+            OnError?.Invoke(errorResult);
             if (errorResult != null)
             {
                 AddResult(errorResult);
@@ -252,7 +253,6 @@ public partial class OpenDocumentViewModel : NavigableDialogViewModel
 
     private void Host_ExecutionHostOnDisassembled(string il)
     {
-
     }
 
     private void Host_OnRestoreStarted()
@@ -337,12 +337,12 @@ public partial class OpenDocumentViewModel : NavigableDialogViewModel
             return;
         }
 
-        if (_getSelection == null)
+        if (getSelection == null)
         {
             return;
         }
 
-        var selection = _getSelection();
+        var selection = getSelection();
 
         var documentText = await document.GetTextAsync().ConfigureAwait(false);
         var changes = new List<TextChange>();
@@ -388,8 +388,8 @@ public partial class OpenDocumentViewModel : NavigableDialogViewModel
 
     public IReadOnlyList<ExecutionPlatform> AvailablePlatforms
     {
-        get => _availablePlatforms ?? throw new ArgumentNullException(nameof(_availablePlatforms));
-        private set => SetProperty(ref _availablePlatforms, value);
+        get => availablePlatforms ?? throw new ArgumentNullException(nameof(availablePlatforms));
+        private set => SetProperty(ref availablePlatforms, value);
     }
 
     private void SetIsRunning(bool value)
@@ -399,7 +399,10 @@ public partial class OpenDocumentViewModel : NavigableDialogViewModel
 
     public async Task AutoSaveAsync()
     {
-        if (!IsDirty) return;
+        if (!IsDirty)
+        {
+            return;
+        }
 
         var document = Document;
 
@@ -514,9 +517,9 @@ public partial class OpenDocumentViewModel : NavigableDialogViewModel
     {
         ArgumentNullException.ThrowIfNull(documentId, nameof(documentId));
 
-        _viewDisposable = viewDisposable;
-        _onError = onError;
-        _getSelection = getSelection;
+        this.viewDisposable = viewDisposable;
+        this.OnError = onError;
+        this.getSelection = getSelection;
         DocumentId = documentId;
 
         Platform = AvailablePlatforms.FirstOrDefault(p => p.ToString() == MainViewModel.Settings.DefaultPlatformName) ?? AvailablePlatforms.FirstOrDefault();
@@ -534,7 +537,7 @@ public partial class OpenDocumentViewModel : NavigableDialogViewModel
     {
         ClearResults();
 
-        _onError?.Invoke(null);
+        OnError?.Invoke(null);
     }
 
     private void ClearResults()
@@ -594,10 +597,8 @@ public partial class OpenDocumentViewModel : NavigableDialogViewModel
 
     public void Close()
     {
-        _viewDisposable?.Dispose();
+        this.viewDisposable?.Dispose();
     }
-
-    public event EventHandler? EditorFocus;
 
     private void OnEditorFocus()
     {
@@ -610,7 +611,7 @@ public partial class OpenDocumentViewModel : NavigableDialogViewModel
 
         if (IsLiveMode)
         {
-            _liveModeTimer?.Change(MainViewModel.Settings.LiveModeDelayMs, Timeout.Infinite);
+            liveModeTimer?.Change(MainViewModel.Settings.LiveModeDelayMs, Timeout.Infinite);
         }
 
         UpdatePackages(alwaysRestore: false);
@@ -757,12 +758,12 @@ public partial class OpenDocumentViewModel : NavigableDialogViewModel
     {
         RoslynHost? host = MainViewModel.RoslynHost;
         Document? document = host?.GetDocument(DocumentId);
-        if (document == null || _getSelection == null)
+        if (document == null || getSelection == null)
         {
             return;
         }
 
-        ISymbol? symbol = await RenameHelper.GetRenameSymbol(document, _getSelection().Start).ConfigureAwait(true);
+        ISymbol? symbol = await RenameHelper.GetRenameSymbol(document, getSelection().Start).ConfigureAwait(true);
         if (symbol == null)
         {
             return;
@@ -831,11 +832,17 @@ public partial class OpenDocumentViewModel : NavigableDialogViewModel
         {
             _ = OnRunAsync();
 
-            _liveModeTimer ??= new Timer(
+            liveModeTimer ??= new Timer(
                 o => _ = UIService.RunOnUIThreadAsync(() => _ = OnRunAsync(), DispatcherPriority.Normal),
                 state: null,
                 Timeout.Infinite,
                 Timeout.Infinite);
         }
+    }
+
+    public override bool Equals(object? obj)
+    {
+        return obj is OpenDocumentViewModel model &&
+               EqualityComparer<IDisposable?>.Default.Equals(viewDisposable, model.viewDisposable);
     }
 }
