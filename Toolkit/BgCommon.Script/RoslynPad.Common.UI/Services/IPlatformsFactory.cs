@@ -2,7 +2,7 @@ using RoslynPad.Build;
 
 namespace RoslynPad.UI;
 
-internal interface IPlatformsFactory
+public interface IPlatformsFactory
 {
     IReadOnlyList<ExecutionPlatform> GetExecutionPlatforms();
 

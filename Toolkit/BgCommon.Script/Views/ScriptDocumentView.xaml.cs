@@ -171,7 +171,7 @@ public partial class ScriptDocumentView : UserControl, IDisposable
         _ = Dispatcher.InvokeAsync(() =>
         {
             Editor.RefreshHighlighting();
-            _ = Editor.RefreshFoldings();
+            _ = Editor.RefreshFoldingsAsync();
         });
     }
 

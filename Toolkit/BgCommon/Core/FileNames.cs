@@ -18,6 +18,11 @@ public static class FileNames
     public static readonly string AppAssetsPath = Path.Combine(AppRootPath, "Assets");
 
     /// <summary>
+    /// Gets 配置文件保存根目录.
+    /// </summary>
+    public static readonly string ConfigPath = Path.Combine(AppRootPath, "Configs");
+
+    /// <summary>
     /// Gets 脚本文件根目录.
     /// </summary>
     public static readonly string ScriptsPath = Path.Combine(AppRootPath, "Scripts");

@@ -6,252 +6,359 @@ using RoslynPad.Roslyn.Structure;
 using RoslynPad.Roslyn.QuickInfo;
 using Microsoft.CodeAnalysis.Formatting;
 using System.Reactive.Linq;
+using System.Windows.Media;
+using System.Windows;
+using ICSharpCode.AvalonEdit.Folding;
+using System.Threading;
+using System.Windows.Input;
 
 namespace RoslynPad.Editor;
 
+/// <summary>
+/// 集成了 Roslyn 功能的代码编辑器控件.
+/// </summary>
 public class RoslynCodeEditor : CodeTextEditor
 {
-    private readonly TextMarkerService _textMarkerService;
-    private BraceMatcherHighlightRenderer? _braceMatcherHighlighter;
-    private ContextActionsRenderer? _contextActionsRenderer;
-    private IClassificationHighlightColors? _classificationHighlightColors;
-    private IRoslynHost? _roslynHost;
-    private DocumentId? _documentId;
-    private IQuickInfoProvider? _quickInfoProvider;
-    private IBraceMatchingService? _braceMatchingService;
-    private CancellationTokenSource? _braceMatchingCts;
-    private RoslynHighlightingColorizer? _colorizer;
-    private IBlockStructureService? _blockStructureService;
+    /// <summary>
+    /// 标识代码折叠是否启用的依赖属性.
+    /// </summary>
+    public static readonly StyledProperty IsCodeFoldingEnabledProperty =
+        CommonProperty.Register<RoslynCodeEditor, bool>(nameof(RoslynCodeEditor.IsCodeFoldingEnabled), defaultValue: true);
 
+    /// <summary>
+    /// 标识括号自动补全是否启用的依赖属性.
+    /// </summary>
+    public static readonly StyledProperty IsBraceCompletionEnabledProperty =
+        CommonProperty.Register<RoslynCodeEditor, bool>(nameof(RoslynCodeEditor.IsBraceCompletionEnabled), defaultValue: true);
+
+    /// <summary>
+    /// 标识上下文操作图标的依赖属性.
+    /// </summary>
+    public static readonly StyledProperty ContextActionsIconProperty =
+        CommonProperty.Register<RoslynCodeEditor, ImageSource>(nameof(RoslynCodeEditor.ContextActionsIcon), onChanged: OnContextActionsIconChanged);
+
+    /// <summary>
+    /// 文档创建中的路由事件.
+    /// </summary>
+    public static readonly RoutedEvent CreatingDocumentEvent =
+        CommonEvent.Register<RoslynCodeEditor, CreatingDocumentEventArgs>(nameof(RoslynCodeEditor.CreatingDocument), RoutingStrategy.Bubble);
+
+    private readonly TextMarkerService textMarkerService;
+    private BraceMatcherHighlightRenderer? braceMatcherHighlighter;
+    private ContextActionsRenderer? contextActionsRenderer;
+    private IClassificationHighlightColors? classificationHighlightColors;
+    private IRoslynHost? roslynHost;
+    private DocumentId? documentId;
+    private IQuickInfoProvider? quickInfoProvider;
+    private IBraceMatchingService? braceMatchingService;
+    private CancellationTokenSource? braceMatchingCts;
+    private RoslynHighlightingColorizer? colorizer;
+    private IBlockStructureService? blockStructureService;
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="RoslynCodeEditor"/> class.
+    /// </summary>
     public RoslynCodeEditor()
     {
-        _textMarkerService = new TextMarkerService(this);
-        TextArea.TextView.BackgroundRenderers.Add(_textMarkerService);
-        TextArea.TextView.LineTransformers.Add(_textMarkerService);
-        TextArea.Caret.PositionChanged += CaretOnPositionChanged;
+        // 初始化文本标记服务并添加到视图渲染器.
+        this.textMarkerService = new TextMarkerService(this);
+        this.TextArea.TextView.BackgroundRenderers.Add(this.textMarkerService);
+        this.TextArea.TextView.LineTransformers.Add(this.textMarkerService);
+        this.TextArea.Caret.PositionChanged += this.CaretOnPositionChanged;
 
+        // 订阅文档变更事件，使用 2 秒节流以刷新折叠状态.
         Observable.FromEventPattern<EventHandler, EventArgs>(
-            h => TextArea.TextView.Document.TextChanged += h,
-            h => TextArea.TextView.Document.TextChanged -= h)
+            h => this.TextArea.TextView.Document.TextChanged += h,
+            h => this.TextArea.TextView.Document.TextChanged -= h)
             .Throttle(TimeSpan.FromSeconds(2))
             .ObserveOn(SynchronizationContext.Current!)
-            .Subscribe(_ => RefreshFoldings().ConfigureAwait(true));
+            .Subscribe(_ => this.RefreshFoldingsAsync().ConfigureAwait(true));
     }
 
+    /// <summary>
+    /// 处理文本变更事件的异步回调.
+    /// </summary>
+    /// <param name="sender">事件源参数.</param>
+    /// <param name="e">事件参数.</param>
     private async void OnTextChanged(object? sender, EventArgs e)
     {
-        await RefreshFoldings().ConfigureAwait(true);
+        // 调用折叠刷新逻辑.
+        await this.RefreshFoldingsAsync().ConfigureAwait(true);
     }
 
+    /// <summary>
+    /// Gets 折叠管理器.
+    /// </summary>
     public FoldingManager? FoldingManager { get; private set; }
 
-
+    /// <summary>
+    /// Gets or sets a value indicating whether 代码折叠是否启用.
+    /// </summary>
     public bool IsCodeFoldingEnabled
     {
-        get { return (bool)this.GetValue(IsCodeFoldingEnabledProperty); }
-        set { this.SetValue(IsCodeFoldingEnabledProperty, value); }
+        get => (bool)this.GetValue(IsCodeFoldingEnabledProperty);
+        set => this.SetValue(IsCodeFoldingEnabledProperty, value);
     }
 
+    /// <summary>
+    /// Gets or sets a value indicating whether 括号自动补全是否启用.
+    /// </summary>
     public bool IsBraceCompletionEnabled
     {
-        get { return (bool)this.GetValue(IsBraceCompletionEnabledProperty); }
-        set { this.SetValue(IsBraceCompletionEnabledProperty, value); }
+        get => (bool)this.GetValue(IsBraceCompletionEnabledProperty);
+        set => this.SetValue(IsBraceCompletionEnabledProperty, value);
     }
 
-    public static readonly StyledProperty
-#if AVALONIA
-        <bool>
-#endif
-    IsCodeFoldingEnabledProperty =
-    CommonProperty.Register<RoslynCodeEditor, bool>(nameof(IsCodeFoldingEnabledProperty), defaultValue: true);
-
-    public static readonly StyledProperty
-#if AVALONIA
-        <bool>
-#endif
-        IsBraceCompletionEnabledProperty =
-        CommonProperty.Register<RoslynCodeEditor, bool>(nameof(IsBraceCompletionEnabled), defaultValue: true);
-
-    public static readonly StyledProperty
-#if AVALONIA
-        <ImageSource>
-#endif
-        ContextActionsIconProperty = CommonProperty.Register<RoslynCodeEditor, ImageSource>(
-        nameof(ContextActionsIcon), onChanged: OnContextActionsIconChanged);
-
+    /// <summary>
+    /// 上下文操作图标属性变更回调.
+    /// </summary>
+    /// <param name="editor">编辑器实例参数.</param>
+    /// <param name="args">属性变更参数.</param>
     private static void OnContextActionsIconChanged(RoslynCodeEditor editor, CommonPropertyChangedArgs<ImageSource> args)
     {
-        if (editor._contextActionsRenderer != null)
+        // 如果渲染器已初始化，更新其图标镜像.
+        if (editor.contextActionsRenderer != null)
         {
-            editor._contextActionsRenderer.IconImage = args.NewValue;
+            editor.contextActionsRenderer.IconImage = args.NewValue;
         }
     }
 
+    /// <summary>
+    /// Gets or sets 上下文操作图标.
+    /// </summary>
     public ImageSource ContextActionsIcon
     {
         get => (ImageSource)this.GetValue(ContextActionsIconProperty);
         set => this.SetValue(ContextActionsIconProperty, value);
     }
 
+    /// <summary>
+    /// Gets or sets 分类高亮颜色.
+    /// </summary>
     public IClassificationHighlightColors? ClassificationHighlightColors
     {
-        get => _classificationHighlightColors;
+        get => this.classificationHighlightColors;
         set
         {
-            _classificationHighlightColors = value;
-            if (_braceMatcherHighlighter is not null && value is not null)
+            this.classificationHighlightColors = value;
+
+            // 如果括号高亮器存在且新值不为空，同步更新颜色.
+            if (this.braceMatcherHighlighter is not null && value is not null)
             {
-                _braceMatcherHighlighter.ClassificationHighlightColors = value;
+                this.braceMatcherHighlighter.ClassificationHighlightColors = value;
             }
 
-            RefreshHighlighting();
+            this.RefreshHighlighting();
         }
     }
 
-    public static readonly RoutedEvent CreatingDocumentEvent = CommonEvent.Register<RoslynCodeEditor, CreatingDocumentEventArgs>(nameof(CreatingDocument), RoutingStrategy.Bubble);
-
+    /// <summary>
+    /// 正在创建文档时触发的事件.
+    /// </summary>
     public event EventHandler<CreatingDocumentEventArgs> CreatingDocument
     {
-        add => AddHandler(CreatingDocumentEvent, value);
-        remove => RemoveHandler(CreatingDocumentEvent, value);
+        add => this.AddHandler(CreatingDocumentEvent, value);
+        remove => this.RemoveHandler(CreatingDocumentEvent, value);
     }
 
+    /// <summary>
+    /// 触发正在创建文档事件的方法.
+    /// </summary>
+    /// <param name="e">创建文档参数.</param>
     protected virtual void OnCreatingDocument(CreatingDocumentEventArgs e)
     {
-        RaiseEvent(e);
+        // 引发路由事件.
+        this.RaiseEvent(e);
     }
 
-    public async ValueTask<DocumentId> InitializeAsync(IRoslynHost roslynHost, IClassificationHighlightColors highlightColors, string workingDirectory, string documentText, SourceCodeKind sourceCodeKind)
+    /// <summary>
+    /// 异步初始化编辑器，绑定 Roslyn 环境.
+    /// </summary>
+    /// <param name="roslynHost">Roslyn 宿主接口.</param>
+    /// <param name="highlightColors">分类高亮颜色.</param>
+    /// <param name="workingDirectory">当前工作目录.</param>
+    /// <param name="documentText">文档初始文本.</param>
+    /// <param name="sourceCodeKind">源代码种类接口.</param>
+    /// <returns>返回创建的文档标识符.</returns>
+    public async ValueTask<DocumentId> InitializeAsync(
+        IRoslynHost roslynHost,
+        IClassificationHighlightColors highlightColors,
+        string workingDirectory,
+        string documentText,
+        SourceCodeKind sourceCodeKind)
     {
-        _roslynHost = roslynHost ?? throw new ArgumentNullException(nameof(roslynHost));
-        _classificationHighlightColors = highlightColors ?? throw new ArgumentNullException(nameof(highlightColors));
+        // 参数非空校验.
+        ArgumentNullException.ThrowIfNull(roslynHost, nameof(roslynHost));
+        ArgumentNullException.ThrowIfNull(highlightColors, nameof(highlightColors));
 
-        _braceMatcherHighlighter = new BraceMatcherHighlightRenderer(TextArea.TextView, _classificationHighlightColors);
+        this.roslynHost = roslynHost;
+        this.classificationHighlightColors = highlightColors;
 
-        _quickInfoProvider = _roslynHost.GetService<IQuickInfoProvider>();
-        _braceMatchingService = _roslynHost.GetService<IBraceMatchingService>();
+        // 初始化括号匹配高亮器.
+        this.braceMatcherHighlighter = new BraceMatcherHighlightRenderer(this.TextArea.TextView, this.classificationHighlightColors);
 
-        var avalonEditTextContainer = new AvalonEditTextContainer(Document) { Editor = this };
+        // 获取 Roslyn 内部服务.
+        this.quickInfoProvider = this.roslynHost.GetService<IQuickInfoProvider>();
+        this.braceMatchingService = this.roslynHost.GetService<IBraceMatchingService>();
 
-        var creatingDocumentArgs = new CreatingDocumentEventArgs(avalonEditTextContainer);
-        OnCreatingDocument(creatingDocumentArgs);
+        // 构造 AvalonEdit 文本容器并触发文档创建事件.
+        var textContainer = new AvalonEditTextContainer(this.Document) { Editor = this };
+        var creatingArgs = new CreatingDocumentEventArgs(textContainer);
+        this.OnCreatingDocument(creatingArgs);
 
-        _documentId = creatingDocumentArgs.DocumentId ??
-            roslynHost.AddDocument(new DocumentCreationArgs(avalonEditTextContainer, workingDirectory, sourceCodeKind,
-                avalonEditTextContainer.UpdateText));
+        // 获取或向宿主添加文档.
+        this.documentId = creatingArgs.DocumentId ??
+            this.roslynHost.AddDocument(new DocumentCreationArgs(
+                textContainer,
+                workingDirectory,
+                sourceCodeKind,
+                textContainer.UpdateText));
 
-        roslynHost.GetWorkspaceService<IDiagnosticsUpdater>(_documentId).DiagnosticsChanged += ProcessDiagnostics;
+        // 订阅诊断变更事件.
+        this.roslynHost.GetWorkspaceService<IDiagnosticsUpdater>(this.documentId).DiagnosticsChanged += this.ProcessDiagnostics;
 
-        if (roslynHost.GetDocument(_documentId) is { } document)
+        if (this.roslynHost.GetDocument(this.documentId) is { } roslynDocument)
         {
-            var options = await document.GetOptionsAsync().ConfigureAwait(true);
-            Options.IndentationSize = options.GetOption(FormattingOptions.IndentationSize);
-            Options.ConvertTabsToSpaces = !options.GetOption(FormattingOptions.UseTabs);
+            // 同步编辑器的缩进和制表符设置.
+            var documentOptions = await roslynDocument.GetOptionsAsync().ConfigureAwait(true);
+            this.Options.IndentationSize = documentOptions.GetOption(FormattingOptions.IndentationSize);
+            this.Options.ConvertTabsToSpaces = !documentOptions.GetOption(FormattingOptions.UseTabs);
 
-            _blockStructureService = document.GetLanguageService<IBlockStructureService>();
+            this.blockStructureService = roslynDocument.GetLanguageService<IBlockStructureService>();
         }
 
-        AppendText(documentText);
-        Document.UndoStack.ClearAll();
-        AsyncToolTipRequest = OnAsyncToolTipRequest;
+        // 填充文本并清除撤销栈.
+        this.AppendText(documentText);
+        this.Document.UndoStack.ClearAll();
+        this.AsyncToolTipRequest = this.OnAsyncToolTipRequest;
 
-        _contextActionsRenderer = new ContextActionsRenderer(this, _textMarkerService) { IconImage = ContextActionsIcon };
-        _contextActionsRenderer.Providers.Add(new RoslynContextActionProvider(_documentId, _roslynHost));
+        // 初始化上下文操作渲染器.
+        this.contextActionsRenderer = new ContextActionsRenderer(this, this.textMarkerService) { IconImage = this.ContextActionsIcon };
+        this.contextActionsRenderer.Providers.Add(new RoslynContextActionProvider(this.documentId, this.roslynHost));
 
-        var completionProvider = new RoslynCodeEditorCompletionProvider(_documentId, _roslynHost);
-        completionProvider.Warmup();
+        // 预热补全提供程序.
+        var roslynCompletionProvider = new RoslynCodeEditorCompletionProvider(this.documentId, this.roslynHost);
+        roslynCompletionProvider.Warmup();
+        this.CompletionProvider = roslynCompletionProvider;
 
-        CompletionProvider = completionProvider;
+        // 刷新高亮、安装折叠管理器并更新折叠.
+        this.RefreshHighlighting();
+        this.InstallFoldingManager();
+        await this.RefreshFoldingsAsync().ConfigureAwait(true);
 
-        RefreshHighlighting();
-
-        InstallFoldingManager();
-        await RefreshFoldings().ConfigureAwait(true);
-
-        return _documentId;
+        return this.documentId;
     }
 
+    /// <summary>
+    /// 刷新语法高亮着色器.
+    /// </summary>
     public void RefreshHighlighting()
     {
-        if (_colorizer != null)
+        // 移除旧的着色器.
+        if (this.colorizer != null)
         {
-            TextArea.TextView.LineTransformers.Remove(_colorizer);
+            this.TextArea.TextView.LineTransformers.Remove(this.colorizer);
         }
 
-        if (_documentId != null && _roslynHost != null && _classificationHighlightColors != null)
+        // 如果环境就绪，应用新的着色器.
+        if (this.documentId != null && this.roslynHost != null && this.classificationHighlightColors != null)
         {
-            _colorizer = new RoslynHighlightingColorizer(_documentId, _roslynHost, _classificationHighlightColors);
-            TextArea.TextView.LineTransformers.Insert(0, _colorizer);
+            this.colorizer = new RoslynHighlightingColorizer(this.documentId, this.roslynHost, this.classificationHighlightColors);
+            this.TextArea.TextView.LineTransformers.Insert(0, this.colorizer);
         }
     }
 
+    /// <summary>
+    /// 当光标位置改变时，执行括号匹配高亮逻辑.
+    /// </summary>
+    /// <param name="sender">事件源参数.</param>
+    /// <param name="eventArgs">事件参数.</param>
     private async void CaretOnPositionChanged(object? sender, EventArgs eventArgs)
     {
-        if (_roslynHost == null || _documentId == null || _braceMatcherHighlighter == null)
+        // 状态检查.
+        if (this.roslynHost == null || this.documentId == null || this.braceMatcherHighlighter == null)
         {
             return;
         }
 
-        _braceMatchingCts?.Cancel();
+        // 取消先前的匹配任务.
+        this.braceMatchingCts?.Cancel();
 
-        if (_braceMatchingService == null)
+        if (this.braceMatchingService == null)
         {
             return;
         }
 
+        // 构造新的取消令牌.
         var cts = new CancellationTokenSource();
         var token = cts.Token;
-        _braceMatchingCts = cts;
+        this.braceMatchingCts = cts;
 
-        var document = _roslynHost.GetDocument(_documentId);
-        if (document == null)
+        var roslynDocument = this.roslynHost.GetDocument(this.documentId);
+        if (roslynDocument == null)
         {
             return;
         }
 
         try
         {
-            var text = await document.GetTextAsync(token).ConfigureAwait(true);
-            var caretOffset = CaretOffset;
-            if (caretOffset <= text.Length)
+            var sourceText = await roslynDocument.GetTextAsync(token).ConfigureAwait(true);
+            var currentOffset = this.CaretOffset;
+
+            // 获取并应用匹配结果.
+            if (currentOffset <= sourceText.Length)
             {
-                var result = await _braceMatchingService.GetAllMatchingBracesAsync(document, caretOffset, token).ConfigureAwait(true);
-                _braceMatcherHighlighter.SetHighlight(result.leftOfPosition, result.rightOfPosition);
+                var matchingResult = await this.braceMatchingService.GetAllMatchingBracesAsync(roslynDocument, currentOffset, token).ConfigureAwait(true);
+                this.braceMatcherHighlighter.SetHighlight(matchingResult.leftOfPosition, matchingResult.rightOfPosition);
             }
         }
         catch (OperationCanceledException)
         {
-            // Caret moved again, we do nothing because execution stopped before propagating stale data
-            // while fresh data is being applied in a different `CaretOnPositionChanged` handler which runs in parallel.
+            // 任务取消，忽略过时数据.
         }
     }
 
+    /// <summary>
+    /// 尝试将光标跳转到匹配的括号处.
+    /// </summary>
     private void TryJumpToBrace()
     {
-        if (_braceMatcherHighlighter == null) return;
-
-        var caret = CaretOffset;
-
-        if (TryJumpToPosition(_braceMatcherHighlighter.LeftOfPosition, caret) ||
-            TryJumpToPosition(_braceMatcherHighlighter.RightOfPosition, caret))
+        if (this.braceMatcherHighlighter == null)
         {
-            ScrollToLine(TextArea.Caret.Line);
+            return;
+        }
+
+        var currentCaretOffset = this.CaretOffset;
+
+        // 依次尝试左右两侧的跨度跳转.
+        if (this.TryJumpToPosition(this.braceMatcherHighlighter.LeftOfPosition, currentCaretOffset) ||
+            this.TryJumpToPosition(this.braceMatcherHighlighter.RightOfPosition, currentCaretOffset))
+        {
+            this.ScrollToLine(this.TextArea.Caret.Line);
         }
     }
 
-    private bool TryJumpToPosition(BraceMatchingResult? position, int caret)
+    /// <summary>
+    /// 内部执行位置跳转逻辑.
+    /// </summary>
+    /// <param name="matchingResult">匹配结果数据.</param>
+    /// <param name="caretOffset">当前光标位置.</param>
+    /// <returns>如果执行了跳转则返回 true.</returns>
+    private bool TryJumpToPosition(BraceMatchingResult? matchingResult, int caretOffset)
     {
-        if (position != null)
+        if (matchingResult != null)
         {
-            if (position.Value.LeftSpan.Contains(caret))
+            // 如果光标在左跨度，跳到右端.
+            if (matchingResult.Value.LeftSpan.Contains(caretOffset))
             {
-                CaretOffset = position.Value.RightSpan.End;
+                this.CaretOffset = matchingResult.Value.RightSpan.End;
                 return true;
             }
 
-            if (position.Value.RightSpan.Contains(caret) || position.Value.RightSpan.End == caret)
+            // 如果光标在右跨度，跳到左端.
+            if (matchingResult.Value.RightSpan.Contains(caretOffset) || matchingResult.Value.RightSpan.End == caretOffset)
             {
-                CaretOffset = position.Value.LeftSpan.Start;
+                this.CaretOffset = matchingResult.Value.LeftSpan.Start;
                 return true;
             }
         }
@@ -259,72 +366,91 @@ public class RoslynCodeEditor : CodeTextEditor
         return false;
     }
 
+    /// <summary>
+    /// 处理异步工具提示请求，展示快速修复建议或信息.
+    /// </summary>
+    /// <param name="arg">工具提示请求参数.</param>
+    /// <returns>异步任务.</returns>
     private async Task OnAsyncToolTipRequest(ToolTipRequestEventArgs arg)
     {
-        if (_roslynHost == null || _documentId == null || _quickInfoProvider == null)
+        // 状态验证.
+        if (this.roslynHost == null || this.documentId == null || this.quickInfoProvider == null)
         {
             return;
         }
 
-        // TODO: consider invoking this with a delay, then showing the tool-tip without one
-        var document = _roslynHost.GetDocument(_documentId);
-        if (document == null)
+        var roslynDocument = this.roslynHost.GetDocument(this.documentId);
+        if (roslynDocument == null)
         {
             return;
         }
 
-        var info = await _quickInfoProvider.GetItemAsync(document, arg.Position).ConfigureAwait(true);
-        if (info != null)
+        // 获取 QuickInfo 并在参数中设置提示内容.
+        var quickInfoItem = await this.quickInfoProvider.GetItemAsync(roslynDocument, arg.Position).ConfigureAwait(true);
+        if (quickInfoItem != null)
         {
-            arg.SetToolTip(info.Create());
+            arg.SetToolTip(quickInfoItem.Create());
         }
     }
 
+    /// <summary>
+    /// 处理诊断变更事件，更新编辑器内的波浪线标记.
+    /// </summary>
+    /// <param name="args">诊断变更事件参数.</param>
     protected async void ProcessDiagnostics(DiagnosticsChangedArgs args)
     {
-        if (args.DocumentId != _documentId)
+        // 过滤非本文件的诊断.
+        if (args.DocumentId != this.documentId)
         {
             return;
         }
 
+        // 切换到 UI 调度器执行.
         await this.GetDispatcher();
 
-        _textMarkerService.RemoveAll(d => d.Tag is DiagnosticData diagnosticData && args.RemovedDiagnostics.Contains(diagnosticData));
+        // 移除已失效的诊断标记.
+        this.textMarkerService.RemoveAll(marker => marker.Tag is DiagnosticData diagnosticData && args.RemovedDiagnostics.Contains(diagnosticData));
 
-        if (_roslynHost == null || _documentId == null)
+        if (this.roslynHost == null || this.documentId == null)
         {
             return;
         }
 
-        var document = _roslynHost.GetDocument(_documentId);
-        if (document == null || !document.TryGetText(out var sourceText))
+        var roslynDocument = this.roslynHost.GetDocument(this.documentId);
+        if (roslynDocument == null || !roslynDocument.TryGetText(out var sourceText))
         {
             return;
         }
 
-        foreach (var diagnosticData in args.AddedDiagnostics)
+        // 添加新的诊断标记.
+        foreach (var newDiagnostic in args.AddedDiagnostics)
         {
-            if (diagnosticData.Severity == DiagnosticSeverity.Hidden || diagnosticData.IsSuppressed)
+            if (newDiagnostic.Severity == DiagnosticSeverity.Hidden || newDiagnostic.IsSuppressed)
             {
                 continue;
             }
 
-            var span = diagnosticData.GetTextSpan(sourceText);
-            if (span == null)
+            var textSpan = newDiagnostic.GetTextSpan(sourceText);
+            if (textSpan == null)
             {
                 continue;
             }
 
-            var marker = _textMarkerService.TryCreate(span.Value.Start, span.Value.Length);
-            if (marker != null)
+            var diagnosticMarker = this.textMarkerService.TryCreate(textSpan.Value.Start, textSpan.Value.Length);
+            if (diagnosticMarker != null)
             {
-                marker.Tag = diagnosticData;
-                marker.MarkerColor = GetDiagnosticsColor(diagnosticData);
-                marker.ToolTip = diagnosticData.Message;
+                diagnosticMarker.Tag = newDiagnostic;
+                diagnosticMarker.MarkerColor = RoslynCodeEditor.GetDiagnosticsColor(newDiagnostic);
+                diagnosticMarker.ToolTip = newDiagnostic.Message;
             }
         }
     }
 
+    /// <summary>
+    /// 根据诊断严重程度获取对应的显示颜色.
+    /// </summary>
+    /// <param name="diagnosticData">诊断数据参数.</param>
+    /// <returns>返回对应的颜色.</returns>
     private static Color GetDiagnosticsColor(DiagnosticData diagnosticData)
     {
         return diagnosticData.Severity switch
@@ -336,145 +462,193 @@ public class RoslynCodeEditor : CodeTextEditor
         };
     }
 
+    /// <summary>
+    /// 处理按键按下事件.
+    /// </summary>
+    /// <param name="e">按键参数.</param>
     protected override void OnKeyDown(KeyEventArgs e)
     {
         base.OnKeyDown(e);
 
+        // 如果按下 Ctrl 键.
         if (e.HasModifiers(ModifierKeys.Control))
         {
             switch (e.Key)
             {
                 case Key.OemCloseBrackets:
-                    TryJumpToBrace();
+                    // Ctrl + ] 执行括号跳转.
+                    this.TryJumpToBrace();
                     break;
             }
         }
     }
 
-    public async Task RefreshFoldings()
+    /// <summary>
+    /// 异步刷新代码折叠块的状态.
+    /// </summary>
+    /// <returns>异步任务.</returns>
+    public async Task RefreshFoldingsAsync()
     {
-        if (FoldingManager == null || !IsCodeFoldingEnabled)
+        // 如果管理器未安装或功能已禁用，直接返回.
+        if (this.FoldingManager == null || !this.IsCodeFoldingEnabled)
         {
             return;
         }
 
-        if (_documentId == null || _roslynHost == null || _blockStructureService == null)
+        if (this.documentId == null || this.roslynHost == null || this.blockStructureService == null)
         {
             return;
         }
 
-        var document = _roslynHost.GetDocument(_documentId);
-        if (document == null)
+        var roslynDocument = this.roslynHost.GetDocument(this.documentId);
+        if (roslynDocument == null)
         {
             return;
         }
 
         try
         {
-            var elements = await _blockStructureService.GetBlockStructureAsync(document).ConfigureAwait(true);
+            // 获取块结构信息.
+            var blockStructure = await this.blockStructureService.GetBlockStructureAsync(roslynDocument).ConfigureAwait(true);
 
-            var foldings = elements.Spans
-                .Select(s => new NewFolding { Name = s.BannerText, StartOffset = s.TextSpan.Start, EndOffset = s.TextSpan.End })
+            // 构造折叠信息序列.
+            var foldingElements = blockStructure.Spans
+                .Select(span => new NewFolding { Name = span.BannerText, StartOffset = span.TextSpan.Start, EndOffset = span.TextSpan.End })
                 .OrderBy(item => item.StartOffset);
 
-            FoldingManager?.UpdateFoldings(foldings, firstErrorOffset: 0);
+            // 更新折叠管理器数据.
+            this.FoldingManager?.UpdateFoldings(foldingElements, firstErrorOffset: 0);
         }
         catch
         {
+            // 忽略计算折叠时的异常.
         }
     }
 
+    /// <summary>
+    /// 为当前编辑器安装折叠管理器.
+    /// </summary>
     private void InstallFoldingManager()
     {
-        if (!IsCodeFoldingEnabled)
+        if (!this.IsCodeFoldingEnabled)
         {
             return;
         }
 
-        FoldingManager = FoldingManager.Install(TextArea);
+        // 在文本区域安装折叠功能.
+        this.FoldingManager = FoldingManager.Install(this.TextArea);
     }
 
+    /// <summary>
+    /// 全部折叠当前文档中的所有块.
+    /// </summary>
     public void FoldAllFoldings()
     {
-        if (FoldingManager == null || !IsCodeFoldingEnabled)
+        if (this.FoldingManager == null || !this.IsCodeFoldingEnabled)
         {
             return;
         }
 
-        foreach (var foldingSection in FoldingManager.AllFoldings)
+        // 遍历设置所有折叠段的状态.
+        foreach (var foldingSection in this.FoldingManager.AllFoldings)
         {
             foldingSection.IsFolded = true;
         }
     }
 
+    /// <summary>
+    /// 全部展开当前文档中的所有块.
+    /// </summary>
     public void UnfoldAllFoldings()
     {
-        if (FoldingManager == null || !IsCodeFoldingEnabled)
+        if (this.FoldingManager == null || !this.IsCodeFoldingEnabled)
         {
             return;
         }
 
-        foreach (var foldingSection in FoldingManager.AllFoldings)
+        foreach (var foldingSection in this.FoldingManager.AllFoldings)
+        {
             foldingSection.IsFolded = false;
+        }
     }
 
+    /// <summary>
+    /// 切换所有块的折叠状态（若有未折叠的则全部折叠）.
+    /// </summary>
     public void ToggleAllFoldings()
     {
-        if (FoldingManager == null || !IsCodeFoldingEnabled)
+        if (this.FoldingManager == null || !this.IsCodeFoldingEnabled)
         {
             return;
         }
 
-        var fold = FoldingManager.AllFoldings.All(folding => !folding.IsFolded);
+        // 判断是否需要全部折叠.
+        var shouldFoldAll = this.FoldingManager.AllFoldings.All(folding => !folding.IsFolded);
 
-        foreach (var foldingSection in FoldingManager.AllFoldings)
-            foldingSection.IsFolded = fold;
+        foreach (var foldingSection in this.FoldingManager.AllFoldings)
+        {
+            foldingSection.IsFolded = shouldFoldAll;
+        }
     }
 
+    /// <summary>
+    /// 切换当前光标所在位置块的折叠状态.
+    /// </summary>
     public void ToggleCurrentFolding()
     {
-        if (FoldingManager == null || !IsCodeFoldingEnabled)
+        if (this.FoldingManager == null || !this.IsCodeFoldingEnabled)
         {
             return;
         }
 
-        var folding = FoldingManager.GetNextFolding(TextArea.Caret.Offset);
-        if (folding == null || TextArea.Document.GetLocation(folding.StartOffset).Line !=      TextArea.Document.GetLocation(TextArea.Caret.Offset).Line)
+        // 查找最适合切换的折叠段.
+        var targetFolding = this.FoldingManager.GetNextFolding(this.TextArea.Caret.Offset);
+        if (targetFolding == null || this.TextArea.Document.GetLocation(targetFolding.StartOffset).Line != this.TextArea.Document.GetLocation(this.TextArea.Caret.Offset).Line)
         {
-            folding = FoldingManager.GetFoldingsContaining(TextArea.Caret.Offset).LastOrDefault();
+            targetFolding = this.FoldingManager.GetFoldingsContaining(this.TextArea.Caret.Offset).LastOrDefault();
         }
 
-        if (folding != null)
-            folding.IsFolded = !folding.IsFolded;
+        if (targetFolding != null)
+        {
+            targetFolding.IsFolded = !targetFolding.IsFolded;
+        }
     }
 
+    /// <summary>
+    /// 获取当前编辑器所有的折叠快照.
+    /// </summary>
+    /// <returns>返回折叠数据集合.</returns>
     public IEnumerable<NewFolding> SaveFoldings()
     {
-        if (FoldingManager == null || !IsCodeFoldingEnabled)
+        if (this.FoldingManager == null || !this.IsCodeFoldingEnabled)
         {
-            return [];
+            return Enumerable.Empty<NewFolding>();
         }
 
-        return FoldingManager?.AllFoldings
+        return this.FoldingManager?.AllFoldings
             .Select(folding => new NewFolding
             {
                 StartOffset = folding.StartOffset,
                 EndOffset = folding.EndOffset,
                 Name = folding.Title,
-                DefaultClosed = folding.IsFolded
+                DefaultClosed = folding.IsFolded,
             })
-            .ToList() ?? [];
+            .ToList() ?? Enumerable.Empty<NewFolding>();
     }
 
+    /// <summary>
+    /// 还原给定的折叠状态到当前文档.
+    /// </summary>
+    /// <param name="foldings">要恢复的折叠集合接口.</param>
     public void RestoreFoldings(IEnumerable<NewFolding> foldings)
     {
-        if (FoldingManager == null || !IsCodeFoldingEnabled)
+        if (this.FoldingManager == null || !this.IsCodeFoldingEnabled)
         {
             return;
         }
 
-
-        FoldingManager.Clear();
-        FoldingManager.UpdateFoldings(foldings, -1);
+        // 重新同步折叠数据.
+        this.FoldingManager.Clear();
+        this.FoldingManager.UpdateFoldings(foldings, -1);
     }
 }

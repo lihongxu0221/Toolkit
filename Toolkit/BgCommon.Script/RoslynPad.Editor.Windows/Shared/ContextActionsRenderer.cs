@@ -155,7 +155,7 @@ public sealed class ContextActionsRenderer
                 offset = marker.StartOffset;
                 length = marker.Length;
             }
-            var actions = await provider.GetActions(offset, length, cancellationToken).ConfigureAwait(true);
+            var actions = await provider.GetActionsAsync(offset, length, cancellationToken).ConfigureAwait(true);
             allActions.AddRange(actions);
         }
         return allActions;

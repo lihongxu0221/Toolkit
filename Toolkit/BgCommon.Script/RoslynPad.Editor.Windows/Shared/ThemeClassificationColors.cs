@@ -64,7 +64,7 @@ public class ThemeClassificationColors : IClassificationHighlightColors
 
     private static T DeserializeResource<T>(string name)
     {
-        using var stream = typeof(ThemeClassificationColors).Assembly.GetManifestResourceStream($"RoslynPad.Editor.Shared.Resources.{name}.json")
+        using var stream = typeof(ThemeClassificationColors).Assembly.GetManifestResourceStream($"BgCommon.Script.Assets.Shared.Resources.{name}.json")
             ?? throw new InvalidOperationException("Stream not found");
         return JsonSerializer.Deserialize<T>(stream, s_serializerOptions)
             ?? throw new InvalidOperationException($"Empty {name}.json");

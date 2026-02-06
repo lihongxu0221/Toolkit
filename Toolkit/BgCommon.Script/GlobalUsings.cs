@@ -26,4 +26,3 @@ global using BgCommon.Prism.Wpf.MVVM;
 global using BgCommon.Prism.Wpf.Services;
 global using CommunityToolkit.Mvvm.ComponentModel;
 global using CommunityToolkit.Mvvm.Input;
-global using static BgCommon.Script.Constants;

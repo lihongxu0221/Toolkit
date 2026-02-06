@@ -19,11 +19,15 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 
 namespace BgCommon.Script.Views;
+
 /// <summary>
-/// ScriptExplorerView.xaml 的交互逻辑
+/// ScriptExplorerView.xaml 的交互逻辑.
 /// </summary>
 public partial class ScriptExplorerView : UserControl
 {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ScriptExplorerView"/> class.
+    /// </summary>
     public ScriptExplorerView()
     {
         InitializeComponent();

@@ -39,6 +39,7 @@ public partial class OpenDocumentViewModel : NavigableDialogViewModel
     public OpenDocumentViewModel(
         IContainerExtension container,
         ITelemetryProvider telemetryProvider,
+        IPlatformsFactory platformsFactory,
         bool restoreSuccessful = false)
         : base(container)
     {
@@ -46,10 +47,10 @@ public partial class OpenDocumentViewModel : NavigableDialogViewModel
         this.BuildPath = Path.Combine(FileNames.ScriptsBuildPath, Id);
         _ = Directory.CreateDirectory(BuildPath);
 
+        this.telemetryProvider = telemetryProvider;
+        this.platformsFactory = platformsFactory;
         this.results = new ObservableCollection<IResultObject>();
         this.restoreResults = new List<RestoreResultObject>();
-        this.telemetryProvider = telemetryProvider;
-        this.platformsFactory = this.Container.Resolve<IPlatformsFactory>();
 
         this.RestoreSuccessful = true;
         this.InitializePlatforms();

@@ -169,28 +169,27 @@
                 </dock:LayoutRoot>
             </dock:DockingManager>
 
-            <UniformGrid HorizontalAlignment="Center"
-                             VerticalAlignment="Top"
-                             Margin="0,100,0,0"
-                             Rows="1"
-                             Visibility="{Binding HasNoOpenDocuments, Converter={StaticResource Boolean2VisibilityConverter}}">
-
+            <UniformGrid HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,100,0,0" Rows="1"
+                         Visibility="{Binding HasNoOpenDocuments, Converter={StaticResource Boolean2VisibilityConverter}}">
                 <Button Padding="5"
-                            Margin="20 0 0 0"
-                            Background="Transparent"
-                            Command="{Binding NewDocumentCommand}"
-                            CommandParameter="{x:Static roslyn:SourceCodeKind.Regular}">
-                    <StackPanel>
+                        Margin="20 0 0 0"
+                        Background="Transparent"
+                        Command="{Binding NewDocumentCommand}"
+                        CommandParameter="{x:Static roslyn:SourceCodeKind.Regular}"
+                        VerticalAlignment="Stretch"
+                        Height="Auto">
+                    <StackPanel >
                         <Image Source="{StaticResource CsFile}" Width="64" Height="64" />
                         <TextBlock Text="New&#xA;(Ctrl+N)" TextAlignment="Center" HorizontalAlignment="Center" />
                     </StackPanel>
                 </Button>
 
                 <Button Padding="5"
-                            Margin="20 0 0 0"
-                            Background="Transparent"
-                            Command="{Binding NewDocumentCommand}"
-                            CommandParameter="{x:Static roslyn:SourceCodeKind.Script}">
+                        Margin="20 0 0 0"
+                        Background="Transparent"
+                        Command="{Binding NewDocumentCommand}"
+                        CommandParameter="{x:Static roslyn:SourceCodeKind.Script}"
+                        Height="Auto">
                     <StackPanel>
                         <Image Source="{StaticResource CsFile}" Width="64" Height="64" />
                         <TextBlock Text="New Script&#xA;(Ctrl+Shift+N)" TextAlignment="Center" HorizontalAlignment="Center" />

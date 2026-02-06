@@ -32,125 +32,133 @@ namespace RoslynPad.Build;
 /// </summary>
 internal partial class ExecutionHost : IExecutionHost, IDisposable
 {
-    private static readonly string Version = typeof(ExecutionContext).Assembly.GetName().Version?.ToString() ?? string.Empty;
-
     private static readonly JsonSerializerOptions SerializerOptions = new()
     {
         Converters =
         {
-            // needed since JsonReaderWriterFactory writes those types as strings
             new BooleanConverter(),
         },
-        NumberHandling = JsonNumberHandling.AllowReadingFromString
+        NumberHandling = JsonNumberHandling.AllowReadingFromString,
     };
 
-    private static readonly ImmutableArray<string> BinFilesToRename = [
+    private static readonly ImmutableArray<string> BinFilesToRename = new ImmutableArray<string>()
+    {
         "{0}.deps.json",
         "{0}.runtimeconfig.json",
-        "{0}.exe.config"
-    ];
+        "{0}.exe.config",
+    };
 
     private static readonly ImmutableArray<byte> NewLine = [.. Encoding.UTF8.GetBytes(Environment.NewLine)];
 
-    private readonly ExecutionHostParameters _parameters;
-    private readonly IRoslynHost _roslynHost;
-    private readonly IAnalyzerAssemblyLoader _analyzerAssemblyLoader;
-    private readonly SortedSet<LibraryRef> _libraries;
-    private readonly ImmutableArray<string> _imports;
-    private readonly SemaphoreSlim _lock;
-    private readonly SyntaxTree _scriptInitSyntax;
-    private readonly SyntaxTree _moduleInitAttributeSyntax;
-    private readonly SyntaxTree _moduleInitSyntax;
-    private readonly SyntaxTree _importsSyntax;
-    private readonly LibraryRef _runtimeAssemblyLibraryRef;
-    private readonly LibraryRef _runtimeNetFxAssemblyLibraryRef;
-    private readonly string _restoreCachePath;
-    private readonly object _ctsLock;
-    private CancellationTokenSource? _executeCts;
-    private Task? _restoreTask;
-    private CancellationTokenSource? _restoreCts;
-    private ExecutionPlatform? _platform;
-    private string? _restorePath;
-    private string? _assemblyPath;
-    private string _name;
-    private bool _running;
-    private bool _initializeBuildPathAfterRun;
-    private TextWriter? _processInputStream;
-    private string? _dotNetExecutable;
+    private readonly string version;
+    private readonly ExecutionHostParameters parameters;
+    private readonly IRoslynHost roslynHost;
+    private readonly IAnalyzerAssemblyLoader analyzerAssemblyLoader;
+    private readonly SortedSet<LibraryRef> libraries;
+    private readonly ImmutableArray<string> imports;
+    private readonly SemaphoreSlim lockSlim;
+    private readonly SyntaxTree scriptInitSyntax;
+    private readonly SyntaxTree moduleInitAttributeSyntax;
+    private readonly SyntaxTree moduleInitSyntax;
+    private readonly SyntaxTree importsSyntax;
+    private readonly LibraryRef runtimeAssemblyLibraryRef;
+    private readonly LibraryRef runtimeNetFxAssemblyLibraryRef;
+    private readonly string restoreCachePath;
+    private readonly object ctsLock;
+    private CancellationTokenSource? executeCts;
+    private Task? restoreTask;
+    private CancellationTokenSource? restoreCts;
+    private ExecutionPlatform? platform;
+    private string? restorePath;
+    private string? assemblyPath;
+    private string name;
+    private bool running;
+    private bool initializeBuildPathAfterRun;
+    private TextWriter? processInputStream;
+    private string? dotNetExecutable;
+
+    public ExecutionHost(ExecutionHostParameters parameters, IRoslynHost roslynHost)
+    {
+        this.version = typeof(ExecutionContext).Assembly.GetName().Version?.ToString() ?? string.Empty;
+        this.name = string.Empty;
+        this.parameters = parameters;
+        this.roslynHost = roslynHost;
+        this.analyzerAssemblyLoader = this.roslynHost.GetService<IAnalyzerAssemblyLoader>();
+        this.libraries = [];
+        this.imports = parameters.Imports;
+        this.ctsLock = new object();
+        this.lockSlim = new SemaphoreSlim(1, 1);
+
+        this.scriptInitSyntax = SyntaxFactory.ParseSyntaxTree(BuildCode.ScriptInit, roslynHost.ParseOptions.WithKind(SourceCodeKind.Script));
+
+        var regularParseOptions = roslynHost.ParseOptions.WithKind(SourceCodeKind.Regular);
+        this.moduleInitAttributeSyntax = SyntaxFactory.ParseSyntaxTree(BuildCode.ModuleInitAttribute, regularParseOptions);
+        this.moduleInitSyntax = SyntaxFactory.ParseSyntaxTree(BuildCode.ModuleInit, regularParseOptions);
+        this.importsSyntax = SyntaxFactory.ParseSyntaxTree(GetGlobalUsings(), regularParseOptions);
+
+        this.MetadataReferences = [];
+
+        // _runtimeAssemblyLibraryRef = LibraryRef.Reference(Path.Combine(AppContext.BaseDirectory, "runtimes", "net", "RoslynPad.Runtime.dll"));
+        // _runtimeNetFxAssemblyLibraryRef = LibraryRef.Reference(Path.Combine(AppContext.BaseDirectory, "runtimes", "netfx", "RoslynPad.Runtime.dll"));
+        this.runtimeAssemblyLibraryRef = LibraryRef.Reference(Path.Combine(AppContext.BaseDirectory, "RoslynPad.Runtime.dll"));
+        this.runtimeNetFxAssemblyLibraryRef = LibraryRef.Reference(Path.Combine(AppContext.BaseDirectory, "RoslynPad.Runtime.dll"));
+        this.restoreCachePath = FileNames.ScriptsRestorePath;
+    }
 
     public ExecutionPlatform Platform
     {
-        get => _platform ?? throw new InvalidOperationException("No platform selected");
+        get
+        {
+            if (platform == null)
+            {
+                throw new InvalidOperationException("No platform selected");
+            }
+
+            return platform;
+        }
         set
         {
-            _platform = value;
+            platform = value;
             InitializeBuildPath(stopProcess: true);
         }
     }
 
-    private bool IsScript => _parameters.SourceCodeKind == SourceCodeKind.Script;
+    private bool IsScript => parameters.SourceCodeKind == SourceCodeKind.Script;
 
     public bool UseCache => Platform.FrameworkVersion?.Major >= 6;
 
-    public bool HasPlatform => _platform != null;
+    public bool HasPlatform => platform != null;
 
     public string DotNetExecutable
     {
-        get => HasDotNetExecutable ? _dotNetExecutable : throw new InvalidOperationException("Missing dotnet");
-        set => _dotNetExecutable = value;
+        get => HasDotNetExecutable ? dotNetExecutable : throw new InvalidOperationException("Missing dotnet");
+        set => dotNetExecutable = value;
     }
 
-    [MemberNotNullWhen(true, nameof(_dotNetExecutable))]
-    private bool HasDotNetExecutable => !string.IsNullOrEmpty(_dotNetExecutable);
+    [MemberNotNullWhen(true, nameof(dotNetExecutable))]
+    private bool HasDotNetExecutable => !string.IsNullOrEmpty(dotNetExecutable);
 
     public string Name
     {
-        get => _name;
+        get => name;
         set
         {
-            if (!string.Equals(_name, value, StringComparison.Ordinal))
+            if (!string.Equals(name, value, StringComparison.Ordinal))
             {
-                _name = value;
+                name = value;
                 InitializeBuildPath(stopProcess: false);
                 _ = RestoreAsync();
             }
         }
     }
 
-    private string BuildPath => _parameters.BuildPath;
+    private string BuildPath => parameters.BuildPath;
 
     private string ExecutableExtension => Platform.IsDotNet ? "dll" : "exe";
 
     public ImmutableArray<MetadataReference> MetadataReferences { get; private set; } = [];
 
     public ImmutableArray<AnalyzerFileReference> Analyzers { get; private set; } = [];
-
-    public ExecutionHost(ExecutionHostParameters parameters, IRoslynHost roslynHost)
-    {
-        _name = string.Empty;
-        _parameters = parameters;
-        _roslynHost = roslynHost;
-        _analyzerAssemblyLoader = _roslynHost.GetService<IAnalyzerAssemblyLoader>();
-        _libraries = [];
-        _imports = parameters.Imports;
-
-        _ctsLock = new object();
-        _lock = new SemaphoreSlim(1, 1);
-
-        var regularParseOptions = roslynHost.ParseOptions.WithKind(SourceCodeKind.Regular);
-        _scriptInitSyntax = SyntaxFactory.ParseSyntaxTree(BuildCode.ScriptInit, roslynHost.ParseOptions.WithKind(SourceCodeKind.Script));
-        _moduleInitAttributeSyntax = SyntaxFactory.ParseSyntaxTree(BuildCode.ModuleInitAttribute, regularParseOptions);
-        _moduleInitSyntax = SyntaxFactory.ParseSyntaxTree(BuildCode.ModuleInit, regularParseOptions);
-        _importsSyntax = SyntaxFactory.ParseSyntaxTree(GetGlobalUsings(), regularParseOptions);
-
-        MetadataReferences = [];
-
-        // _runtimeAssemblyLibraryRef = LibraryRef.Reference(Path.Combine(AppContext.BaseDirectory, "runtimes", "net", "RoslynPad.Runtime.dll"));
-        // _runtimeNetFxAssemblyLibraryRef = LibraryRef.Reference(Path.Combine(AppContext.BaseDirectory, "runtimes", "netfx", "RoslynPad.Runtime.dll"));
-        _runtimeAssemblyLibraryRef = LibraryRef.Reference(Path.Combine(AppContext.BaseDirectory, "RoslynPad.Runtime.dll"));
-        _runtimeNetFxAssemblyLibraryRef = LibraryRef.Reference(Path.Combine(AppContext.BaseDirectory, "RoslynPad.Runtime.dll"));
-        _restoreCachePath = FileNames.ScriptsRestorePath;
-    }
 
     public event Action<IList<CompilationErrorResultObject>>? CompilationErrors;
 
@@ -170,11 +178,11 @@ internal partial class ExecutionHost : IExecutionHost, IDisposable
 
     public void Dispose()
     {
-        _executeCts?.Dispose();
-        _restoreCts?.Dispose();
+        executeCts?.Dispose();
+        restoreCts?.Dispose();
     }
 
-    private string GetGlobalUsings() => string.Join(" ", _imports.Select(i => $"global using {i};"));
+    private string GetGlobalUsings() => string.Join(" ", imports.Select(i => $"global using {i};"));
 
     private void InitializeBuildPath(bool stopProcess)
     {
@@ -187,9 +195,9 @@ internal partial class ExecutionHost : IExecutionHost, IDisposable
         {
             StopProcess();
         }
-        else if (_running)
+        else if (running)
         {
-            _initializeBuildPathAfterRun = true;
+            initializeBuildPathAfterRun = true;
             return;
         }
 
@@ -206,7 +214,7 @@ internal partial class ExecutionHost : IExecutionHost, IDisposable
         }
     }
 
-    public void ClearRestoreCache() => Directory.Delete(_restoreCachePath);
+    public void ClearRestoreCache() => Directory.Delete(restoreCachePath);
 
     public async Task ExecuteAsync(string path, bool disassemble, OptimizationLevel? optimizationLevel, CancellationToken cancellationToken)
     {
@@ -222,19 +230,19 @@ internal partial class ExecutionHost : IExecutionHost, IDisposable
 
         await RestoreTask.ConfigureAwait(false);
 
-        using var executeCts = CancelAndCreateNew(ref _executeCts, cancellationToken);
+        using var executeCts = CancelAndCreateNew(ref this.executeCts, cancellationToken);
         cancellationToken = executeCts.Token;
 
-        using var _ = await _lock.DisposableWaitAsync(cancellationToken).ConfigureAwait(false);
+        using var _ = await lockSlim.DisposableWaitAsync(cancellationToken).ConfigureAwait(false);
 
         try
         {
-            _running = true;
+            running = true;
             var binPath = IsScript ? BuildPath : Path.Combine(BuildPath, "bin");
-            _assemblyPath = Path.Combine(binPath, $"{Name}.{ExecutableExtension}");
+            assemblyPath = Path.Combine(binPath, $"{Name}.{ExecutableExtension}");
 
             var success = IsScript
-                ? CompileInProcess(path, optimizationLevel, _assemblyPath, cancellationToken)
+                ? CompileInProcess(path, optimizationLevel, assemblyPath, cancellationToken)
                 : await CompileWithMsbuild(path, optimizationLevel, cancellationToken).ConfigureAwait(false);
 
             if (!success)
@@ -247,17 +255,17 @@ internal partial class ExecutionHost : IExecutionHost, IDisposable
                 Disassemble();
             }
 
-            await ExecuteAssemblyAsync(_assemblyPath, cancellationToken).ConfigureAwait(false);
+            await ExecuteAssemblyAsync(assemblyPath, cancellationToken).ConfigureAwait(false);
         }
         finally
         {
-            _executeCts?.Dispose();
-            _executeCts = null;
-            _running = false;
+            this.executeCts?.Dispose();
+            this.executeCts = null;
+            running = false;
 
-            if (_initializeBuildPathAfterRun)
+            if (initializeBuildPathAfterRun)
             {
-                _initializeBuildPathAfterRun = false;
+                initializeBuildPathAfterRun = false;
                 InitializeBuildPath(stopProcess: false);
             }
         }
@@ -265,14 +273,14 @@ internal partial class ExecutionHost : IExecutionHost, IDisposable
 
     private async Task<bool> CompileWithMsbuild(string path, OptimizationLevel? optimizationLevel, CancellationToken cancellationToken)
     {
-        if (_restorePath is null)
+        if (restorePath is null)
         {
             return false;
         }
 
         var targetPath = Path.Combine(BuildPath, "Program.cs");
         var code = await File.ReadAllTextAsync(path, cancellationToken).ConfigureAwait(false);
-        var syntaxTree = ParseAndTransformCode(code, path, (CSharpParseOptions)_roslynHost.ParseOptions, cancellationToken: cancellationToken);
+        var syntaxTree = ParseAndTransformCode(code, path, (CSharpParseOptions)roslynHost.ParseOptions, cancellationToken: cancellationToken);
         var finalCode = syntaxTree.ToString();
         if (!File.Exists(targetPath) || !string.Equals(await File.ReadAllTextAsync(targetPath, cancellationToken).ConfigureAwait(false), finalCode, StringComparison.Ordinal))
         {
@@ -336,7 +344,7 @@ internal partial class ExecutionHost : IExecutionHost, IDisposable
             }
 
             var code = match.Groups["code"].Value;
-            if (_parameters.DisabledDiagnostics.Contains(code))
+            if (parameters.DisabledDiagnostics.Contains(code))
             {
                 continue;
             }
@@ -365,7 +373,7 @@ internal partial class ExecutionHost : IExecutionHost, IDisposable
 
         var diagnostics = script.CompileAndSaveAssembly(assemblyPath, cancellationToken);
         var hasErrors = diagnostics.Any(d => d.Severity == DiagnosticSeverity.Error);
-        LogRun.Info("Assembly saved at {AssemblyPath}, has errors = {HasErrors}", _assemblyPath, hasErrors);
+        LogRun.Info("Assembly saved at {AssemblyPath}, has errors = {HasErrors}", this.assemblyPath, hasErrors);
 
         SendDiagnostics(diagnostics);
         return !hasErrors;
@@ -382,7 +390,7 @@ internal partial class ExecutionHost : IExecutionHost, IDisposable
 
     private void Disassemble()
     {
-        using var assembly = AssemblyDefinition.ReadAssembly(_assemblyPath);
+        using var assembly = AssemblyDefinition.ReadAssembly(assemblyPath);
         var output = new PlainTextOutput();
         var disassembler = new ReflectionDisassembler(output, false, CancellationToken.None);
         disassembler.WriteModuleContents(assembly.MainModule);
@@ -402,25 +410,25 @@ internal partial class ExecutionHost : IExecutionHost, IDisposable
             "optimization = {Optimization}",
             platform,
             MetadataReferences.Select(t => t.Display),
-            _imports,
-            _parameters.WorkingDirectory,
+            imports,
+            parameters.WorkingDirectory,
             optimizationLevel);
 
-        var parseOptions = ((CSharpParseOptions)_roslynHost.ParseOptions).WithKind(_parameters.SourceCodeKind);
+        var parseOptions = ((CSharpParseOptions)roslynHost.ParseOptions).WithKind(parameters.SourceCodeKind);
 
         var syntaxTrees = ImmutableList.Create(ParseAndTransformCode(code, path: string.Empty, parseOptions, cancellationToken));
-        if (_parameters.SourceCodeKind == SourceCodeKind.Script)
+        if (parameters.SourceCodeKind == SourceCodeKind.Script)
         {
-            syntaxTrees = syntaxTrees.Insert(0, _scriptInitSyntax);
+            syntaxTrees = syntaxTrees.Insert(0, scriptInitSyntax);
         }
         else
         {
             if (Platform.IsDotNetFramework || Platform.FrameworkVersion?.Major < 5)
             {
-                syntaxTrees = syntaxTrees.Add(_moduleInitAttributeSyntax);
+                syntaxTrees = syntaxTrees.Add(moduleInitAttributeSyntax);
             }
 
-            syntaxTrees = syntaxTrees.Add(_moduleInitSyntax).Add(_importsSyntax);
+            syntaxTrees = syntaxTrees.Add(moduleInitSyntax).Add(importsSyntax);
         }
 
         return new Compiler(syntaxTrees,
@@ -428,11 +436,11 @@ internal partial class ExecutionHost : IExecutionHost, IDisposable
             OutputKind.ConsoleApplication,
             platform,
             MetadataReferences,
-            _imports,
-            _parameters.WorkingDirectory,
+            imports,
+            parameters.WorkingDirectory,
             optimizationLevel: optimization,
-            checkOverflow: _parameters.CheckOverflow,
-            allowUnsafe: _parameters.AllowUnsafe);
+            checkOverflow: parameters.CheckOverflow,
+            allowUnsafe: parameters.AllowUnsafe);
     }
 
     private async Task ExecuteAssemblyAsync(string assemblyPath, CancellationToken cancellationToken)
@@ -442,7 +450,7 @@ internal partial class ExecutionHost : IExecutionHost, IDisposable
         {
             try
             {
-                _processInputStream = null;
+                processInputStream = null;
                 process.Kill();
             }
             catch (Exception ex)
@@ -458,7 +466,7 @@ internal partial class ExecutionHost : IExecutionHost, IDisposable
             return;
         }
 
-        _processInputStream = new StreamWriter(process.StandardInput.BaseStream, Encoding.UTF8);
+        processInputStream = new StreamWriter(process.StandardInput.BaseStream, Encoding.UTF8);
 
         await Task.WhenAll(
             Task.Run(() => ReadObjectProcessStreamAsync(process.StandardOutput), cancellationToken),
@@ -468,7 +476,7 @@ internal partial class ExecutionHost : IExecutionHost, IDisposable
         {
             FileName = Platform.IsDotNet ? DotNetExecutable : assemblyPath,
             Arguments = $"\"{assemblyPath}\" --pid {Environment.ProcessId}",
-            WorkingDirectory = _parameters.WorkingDirectory,
+            WorkingDirectory = parameters.WorkingDirectory,
             CreateNoWindow = true,
             UseShellExecute = false,
             RedirectStandardOutput = true,
@@ -481,7 +489,7 @@ internal partial class ExecutionHost : IExecutionHost, IDisposable
 
     public async Task SendInputAsync(string message)
     {
-        var stream = _processInputStream;
+        var stream = processInputStream;
         if (stream != null)
         {
             await stream.WriteLineAsync(message).ConfigureAwait(false);
@@ -617,7 +625,7 @@ internal partial class ExecutionHost : IExecutionHost, IDisposable
     {
         if (diagnostics.Length > 0)
         {
-            CompilationErrors?.Invoke([.. diagnostics.Where(d => !_parameters.DisabledDiagnostics.Contains(d.Id)).Select(GetCompilationErrorResultObject)]);
+            CompilationErrors?.Invoke([.. diagnostics.Where(d => !parameters.DisabledDiagnostics.Contains(d.Id)).Select(GetCompilationErrorResultObject)]);
         }
     }
 
@@ -637,7 +645,7 @@ internal partial class ExecutionHost : IExecutionHost, IDisposable
         return Task.CompletedTask;
     }
 
-    private void StopProcess() => _executeCts?.Cancel();
+    private void StopProcess() => executeCts?.Cancel();
 
     public async Task UpdateReferencesAsync(bool alwaysRestore)
     {
@@ -650,8 +658,8 @@ internal partial class ExecutionHost : IExecutionHost, IDisposable
         IEnumerable<LibraryRef> libraries = ParseReferences(syntaxRoot).
             Append(
             Platform.IsDotNet ?
-            _runtimeAssemblyLibraryRef :
-            _runtimeNetFxAssemblyLibraryRef);
+            runtimeAssemblyLibraryRef :
+            runtimeNetFxAssemblyLibraryRef);
         if (UpdateLibraries(libraries))
         {
             await RestoreAsync().ConfigureAwait(false);
@@ -664,18 +672,18 @@ internal partial class ExecutionHost : IExecutionHost, IDisposable
                 return null;
             }
 
-            var document = _roslynHost.GetDocument(DocumentId);
+            var document = roslynHost.GetDocument(DocumentId);
             return document != null ? await document.GetSyntaxRootAsync().ConfigureAwait(false) : null;
         }
 
         bool UpdateLibraries(IEnumerable<LibraryRef> libraries)
         {
-            lock (_libraries)
+            lock (this.libraries)
             {
-                if (!_libraries.SetEquals(libraries))
+                if (!this.libraries.SetEquals(libraries))
                 {
-                    _libraries.Clear();
-                    _libraries.UnionWith(libraries);
+                    this.libraries.Clear();
+                    this.libraries.UnionWith(libraries);
                     return true;
                 }
                 else if (alwaysRestore)
@@ -752,7 +760,7 @@ internal partial class ExecutionHost : IExecutionHost, IDisposable
         }
     }
 
-    private Task RestoreTask => _restoreTask ?? Task.CompletedTask;
+    private Task RestoreTask => restoreTask ?? Task.CompletedTask;
 
     public DocumentId? DocumentId { get; set; }
 
@@ -763,13 +771,13 @@ internal partial class ExecutionHost : IExecutionHost, IDisposable
             return;
         }
 
-        var restoreCts = CancelAndCreateNew(ref _restoreCts, cancellationToken);
+        var restoreCts = CancelAndCreateNew(ref this.restoreCts, cancellationToken);
         cancellationToken = restoreCts.Token;
 
         RestoreStarted?.Invoke();
 
-        var lockDisposer = await _lock.DisposableWaitAsync(cancellationToken).ConfigureAwait(false);
-        _restoreTask = DoRestoreAsync(RestoreTask, cancellationToken);
+        var lockDisposer = await lockSlim.DisposableWaitAsync(cancellationToken).ConfigureAwait(false);
+        restoreTask = DoRestoreAsync(RestoreTask, cancellationToken);
 
         async Task DoRestoreAsync(Task previousTask, CancellationToken cancellationToken)
         {
@@ -885,12 +893,12 @@ internal partial class ExecutionHost : IExecutionHost, IDisposable
             MetadataReferences = [.. output.Items.ReferencePathWithRefAssemblies
                 .Select(r => r.FullPath)
                 .Where(r => !string.IsNullOrWhiteSpace(r))
-                .Select(_roslynHost.CreateMetadataReference)];
+                .Select(roslynHost.CreateMetadataReference)];
 
             Analyzers = [.. output.Items.Analyzer
                 .Select(r => r.FullPath)
                 .Where(r => !string.IsNullOrWhiteSpace(r))
-                .Select(r => new AnalyzerFileReference(r, _analyzerAssemblyLoader))];
+                .Select(r => new AnalyzerFileReference(r, analyzerAssemblyLoader))];
         }
 
         async Task BuildGlobalJson(string restorePath)
@@ -906,10 +914,12 @@ internal partial class ExecutionHost : IExecutionHost, IDisposable
 
         async Task<CsprojBuildResult> BuildCsproj()
         {
+            var platform = this.Platform;
+
             var csproj = MSBuildHelper.CreateCsproj(
-                Platform.TargetFrameworkMoniker,
-                _libraries,
-                _parameters.Imports);
+                platform.TargetFrameworkMoniker,
+                libraries,
+                parameters.Imports);
 
             string csprojPath;
             string? markerPath;
@@ -917,20 +927,24 @@ internal partial class ExecutionHost : IExecutionHost, IDisposable
 
             if (UseCache)
             {
-                var hash = GetHash(csproj.ToString(SaveOptions.DisableFormatting), Platform.Description, Version);
-                var hashedRestorePath = Path.Combine(_restoreCachePath, hash);
+                string csprojString = csproj.ToString(SaveOptions.DisableFormatting);
+                string description = platform.Description;
+                string version = this.version;
+
+                var hash = GetHash(csprojString, description, version);
+                var hashedRestorePath = Path.Combine(restoreCachePath, hash);
                 Directory.CreateDirectory(hashedRestorePath);
 
                 csprojPath = Path.Combine(hashedRestorePath, "program.csproj");
                 markerPath = Path.Combine(hashedRestorePath, ".restored");
-                _restorePath = hashedRestorePath;
+                restorePath = hashedRestorePath;
                 markerExists = File.Exists(markerPath);
             }
             else
             {
                 csprojPath = Path.Combine(BuildPath, $"{Name}.csproj");
                 markerPath = null;
-                _restorePath = BuildPath;
+                restorePath = BuildPath;
                 markerExists = false;
             }
 
@@ -939,7 +953,7 @@ internal partial class ExecutionHost : IExecutionHost, IDisposable
                 await Task.Run(() => csproj.Save(csprojPath), cancellationToken).ConfigureAwait(false);
             }
 
-            return new(_restorePath, csprojPath, markerPath, markerExists);
+            return new(restorePath, csprojPath, markerPath, markerExists);
         }
 
         static async Task<string[]> GetRestoreErrorsAsync(string errorsPath, ProcessUtil.ProcessResult result, CancellationToken cancellationToken)
@@ -978,7 +992,7 @@ internal partial class ExecutionHost : IExecutionHost, IDisposable
 
     private CancellationTokenSource CancelAndCreateNew(ref CancellationTokenSource? cts, CancellationToken cancellationToken)
     {
-        lock (_ctsLock)
+        lock (ctsLock)
         {
             if (cts != null)
             {

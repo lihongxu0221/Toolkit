@@ -229,7 +229,7 @@ public partial class ScriptMainViewModel : NavigableDialogViewModel
 
         settings.LoadDefault();
         editorConfigPath = Path.Combine(settings.GetDefaultDocumentPath(), ".editorconfig");
-        Settings = settings.Values;
+        this.Settings = settings.Values;
 
         this.telemetryProvider.Initialize(CurrentVersion.ToString(), settings);
         this.telemetryProvider.LastErrorChanged += () =>
@@ -330,9 +330,9 @@ public partial class ScriptMainViewModel : NavigableDialogViewModel
 
     protected ImmutableArray<Assembly> CompositionAssemblies =>
     [
-        typeof(ScriptMainViewModel).Assembly,
-        Assembly.Load(new AssemblyName("RoslynPad.Roslyn.Windows")),
-        Assembly.Load(new AssemblyName("RoslynPad.Editor.Windows"))
+        // typeof(ScriptMainViewModel).Assembly,
+        // Assembly.Load(new AssemblyName("RoslynPad.Roslyn.Windows")),
+        // Assembly.Load(new AssemblyName("RoslynPad.Editor.Windows"))
     ];
 
     protected void ListenToSystemThemeChanges(Action onChange)

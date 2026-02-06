@@ -1,14 +1,33 @@
 using BgCommon.Core;
 using RoslynPad.Themes;
+using System.Text.Json;
+using System.Text.Json.Serialization;
+using System.IO;
+using System.Runtime.InteropServices;
+using CommunityToolkit.Mvvm.ComponentModel;
+using System.ComponentModel;
 
 namespace RoslynPad.UI;
 
 /// <summary>
-/// 程序集设置服务.
+/// 应用程序设置实现类，负责配置的持久化与读取.
 /// </summary>
 internal partial class ApplicationSettings : IApplicationSettings
 {
-    private static readonly JsonSerializerOptions SerializerOptions = new()
+    /// <summary>
+    /// 默认配置文件名称.
+    /// </summary>
+    private const string DefaultConfigFileName = "Script.json";
+
+    /// <summary>
+    /// 设置保存的防抖延迟时间（毫秒）.
+    /// </summary>
+    private const int SaveDelayMilliseconds = 500;
+
+    /// <summary>
+    /// JSON 序列化配置选项.
+    /// </summary>
+    private static readonly JsonSerializerOptions SerializerOptions = new JsonSerializerOptions()
     {
         WriteIndented = true,
         PropertyNameCaseInsensitive = true,
@@ -16,227 +35,454 @@ internal partial class ApplicationSettings : IApplicationSettings
         DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingDefault,
         Encoder = System.Text.Encodings.Web.JavaScriptEncoder.UnsafeRelaxedJsonEscaping,
         ReadCommentHandling = JsonCommentHandling.Skip,
-        Converters =
-        {
-            new JsonStringEnumConverter()
-        }
+        Converters = { new JsonStringEnumConverter() },
     };
 
+    /// <summary>
+    /// 遥测提供程序实例接口.
+    /// </summary>
     private readonly ITelemetryProvider? telemetryProvider;
-    private SerializableValues serializableValues;
-    private string? path;
 
-    public ApplicationSettings([Import(AllowDefault = true)] ITelemetryProvider telemetryProvider)
+    /// <summary>
+    /// 当前可序列化的设置数值实例.
+    /// </summary>
+    private SerializableValues? currentValues;
+
+    /// <summary>
+    /// 当前设置文件的路径.
+    /// </summary>
+    private string? settingsFilePath;
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ApplicationSettings"/> class.
+    /// </summary>
+    /// <param name="telemetryProvider">遥测提供程序参数.</param>
+    public ApplicationSettings(ITelemetryProvider telemetryProvider)
     {
         this.telemetryProvider = telemetryProvider;
-        serializableValues = new SerializableValues();
-        InitializeValues();
+        this.InitializeValues(new SerializableValues());
     }
 
-    private void InitializeValues()
+    /// <summary>
+    /// Gets 设置数值接口.
+    /// </summary>
+    public IApplicationSettingsValues Values => this.currentValues!;
+
+    /// <summary>
+    /// 初始化设置数值对象并挂载变更事件.
+    /// </summary>
+    /// <param name="newValue">新的序列化数值对象.</param>
+    private void InitializeValues(SerializableValues newValue)
     {
-        serializableValues.PropertyChanged += (_, _) => SaveSettings();
-        serializableValues.Settings = this;
+        // 验证新值不为空.
+        ArgumentNullException.ThrowIfNull(newValue, nameof(newValue));
+
+        // 如果旧值存在，则解除事件绑定并清理引用.
+        if (this.currentValues != null)
+        {
+            this.currentValues.PropertyChanged -= this.SerializableValues_PropertyChanged;
+            this.currentValues.Settings = null;
+            this.currentValues = default;
+        }
+
+        // 绑定新值并设置双向引用.
+        this.currentValues = newValue;
+        this.currentValues.PropertyChanged += this.SerializableValues_PropertyChanged;
+        this.currentValues.Settings = this;
     }
 
-    public void LoadDefault() =>
-        LoadFrom(Path.Combine(GetDefaultDocumentPath(), DefaultConfigFileName));
+    /// <summary>
+    /// 当设置属性发生变更时的回调处理.
+    /// </summary>
+    /// <param name="sender">事件源.</param>
+    /// <param name="e">属性变更参数.</param>
+    private void SerializableValues_PropertyChanged(object? sender, PropertyChangedEventArgs e)
+    {
+        // 任何属性改变时自动保存设置.
+        this.SaveSettings();
+    }
 
+    /// <summary>
+    /// 加载默认路径下的设置.
+    /// </summary>
+    public void LoadDefault()
+    {
+        // 获取默认文档路径并拼接配置文件名进行加载.
+        this.LoadFrom(Path.Combine(this.GetDefaultDocumentPath(), DefaultConfigFileName));
+    }
+
+    /// <summary>
+    /// 从指定的文件路径加载设置.
+    /// </summary>
+    /// <param name="path">配置文件路径参数.</param>
     public void LoadFrom(string path)
     {
-        if (string.IsNullOrEmpty(path))
+        // 验证路径参数不为空.
+        ArgumentNullException.ThrowIfNull(path, nameof(path));
+
+        try
         {
-            throw new ArgumentNullException(nameof(path));
+            // 如果文件不存在，则加载默认设置并保存.
+            if (!File.Exists(path))
+            {
+                this.currentValues.LoadDefaultSettings();
+                this.SaveSettings();
+                return;
+            }
+
+            try
+            {
+                // 读取 JSON 文本并反序列化.
+                var jsonContent = File.ReadAllText(path);
+                var deserializedValues = JsonSerializer.Deserialize<SerializableValues>(jsonContent, SerializerOptions) ?? new SerializableValues();
+                this.InitializeValues(deserializedValues);
+            }
+            catch (Exception ex)
+            {
+                // 发生异常时回退到默认设置并上报错误.
+                this.currentValues.LoadDefaultSettings();
+                this.telemetryProvider?.ReportError(ex);
+            }
         }
-
-        LoadSettings(path);
-
-        this.path = path;
+        finally
+        {
+            // 记录当前使用的设置路径.
+            this.settingsFilePath = path;
+        }
     }
 
-    public IApplicationSettingsValues Values => serializableValues;
-
+    /// <summary>
+    /// 获取默认的文档存储路径.
+    /// </summary>
+    /// <returns>返回路径字符串.</returns>
     public string GetDefaultDocumentPath()
     {
-        string? documentsPath;
-
-        // if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-        // {
-        //     documentsPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
-        // }
-        // else
-        // {
-        //     // Unix or Mac
-        //     documentsPath = Environment.GetEnvironmentVariable("HOME");
-        // }
-        documentsPath = FileNames.ScriptsPath;
-        if (string.IsNullOrEmpty(documentsPath))
+        // 从全局配置获取基础路径.
+        string? baseConfigPath = FileNames.ConfigPath;
+        if (string.IsNullOrEmpty(baseConfigPath))
         {
-            documentsPath = "/";
-            telemetryProvider?.ReportError(new InvalidOperationException("Unable to locate the user documents folder; Using root"));
+            // 如果无法定位路径，回退到根目录并记录错误.
+            baseConfigPath = "/";
+            this.telemetryProvider?.ReportError(new InvalidOperationException("无法定位用户文档文件夹，使用根目录替代."));
         }
 
-        return Path.Combine(documentsPath, DefaultConfigFolderName);
+        return Path.Combine(baseConfigPath);
     }
 
-    private void LoadSettings(string path)
-    {
-        if (!File.Exists(path))
-        {
-            serializableValues.LoadDefaultSettings();
-            return;
-        }
-
-        try
-        {
-            var json = File.ReadAllText(path);
-            serializableValues = JsonSerializer.Deserialize<SerializableValues>(json, SerializerOptions) ?? new SerializableValues();
-            InitializeValues();
-        }
-        catch (Exception e)
-        {
-            serializableValues.LoadDefaultSettings();
-            telemetryProvider?.ReportError(e);
-        }
-    }
-
+    /// <summary>
+    /// 将当前设置保存到物理文件中.
+    /// </summary>
     private void SaveSettings()
     {
-        if (path == null)
+        // 如果路径尚未确定，则不执行保存.
+        if (this.settingsFilePath == null)
         {
             return;
         }
 
         try
         {
-            using FileStream stream = File.Create(path);
-            JsonSerializer.Serialize(stream, serializableValues, SerializerOptions);
+            // 创建文件流并序列化对象.
+            using FileStream fileStream = File.Create(this.settingsFilePath);
+            JsonSerializer.Serialize(fileStream, this.currentValues, SerializerOptions);
         }
-        catch (Exception e)
+        catch (Exception ex)
         {
-            telemetryProvider?.ReportError(e);
+            // 保存失败时记录遥测错误.
+            this.telemetryProvider?.ReportError(ex);
         }
     }
 
+    /// <summary>
+    /// 可序列化的设置数值内部类.
+    /// </summary>
     private partial class SerializableValues : ObservableObject, IApplicationSettingsValues
     {
         private const int LiveModeDelayMsDefault = 2000;
         private const int DefaultFontSize = 12;
-        private string? _dockLayout;
-        private string? _effectiveDocumentPath;
 
-        public void LoadDefaultSettings()
-        {
-            SendErrors = true;
-            FormatDocumentOnComment = true;
-            EditorFontSize = DefaultFontSize;
-            OutputFontSize = DefaultFontSize;
-            LiveModeDelayMs = LiveModeDelayMsDefault;
-            EditorFontFamily = GetDefaultPlatformFontFamily();
-        }
-
-        private static string GetDefaultPlatformFontFamily()
-        {
-            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-            {
-                return "Cascadia Code,Consolas";
-            }
-            else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
-            {
-                return "Menlo";
-            }
-            else
-            {
-                return "Monospace";
-            }
-        }
-
-        [ObservableProperty]
-        private bool sendErrors = false;
-
-        [ObservableProperty]
+        private string? dockLayoutValue;
+        private string? cachedEffectivePath;
+        private bool sendErrors;
         private bool enableBraceCompletion = true;
-
-        [ObservableProperty]
         private string? latestVersion = string.Empty;
-
-        [ObservableProperty]
         private string? windowBounds = string.Empty;
+        private string? windowState = string.Empty;
+        private double editorFontSize = DefaultFontSize;
+        private string editorFontFamily = GetDefaultPlatformFontFamily();
+        private double outputFontSize = DefaultFontSize;
+        private string? documentPath = string.Empty;
+        private bool searchFileContents;
+        private bool searchUsingRegex;
+        private bool optimizeCompilation;
+        private int liveModeDelayMs = LiveModeDelayMsDefault;
+        private bool searchWhileTyping;
+        private string defaultPlatformName = string.Empty;
+        private double? windowFontSize;
+        private bool formatDocumentOnComment = true;
+        private string? customThemePath = string.Empty;
+        private ThemeType? customThemeType;
+        private BuiltInTheme builtInTheme;
 
+        /// <summary>
+        /// Gets or sets a value indicating whether 是否发送错误报告.
+        /// </summary>
+        public bool SendErrors
+        {
+            get => this.sendErrors;
+            set => this.SetProperty(ref this.sendErrors, value);
+        }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether 是否启用括号补全.
+        /// </summary>
+        public bool EnableBraceCompletion
+        {
+            get => this.enableBraceCompletion;
+            set => this.SetProperty(ref this.enableBraceCompletion, value);
+        }
+
+        /// <summary>
+        /// Gets or sets 最新版本号.
+        /// </summary>
+        public string? LatestVersion
+        {
+            get => this.latestVersion;
+            set => this.SetProperty(ref this.latestVersion, value);
+        }
+
+        /// <summary>
+        /// Gets or sets 窗口边界信息.
+        /// </summary>
+        public string? WindowBounds
+        {
+            get => this.windowBounds;
+            set => this.SetProperty(ref this.windowBounds, value);
+        }
+
+        /// <summary>
+        /// Gets or sets 停靠布局信息.
+        /// </summary>
         [JsonPropertyName("dockLayoutV2")]
         public string? DockLayout
         {
-            get => _dockLayout;
-            set => SetProperty(ref _dockLayout, value);
+            get => this.dockLayoutValue;
+            set => this.SetProperty(ref this.dockLayoutValue, value);
         }
 
-        [ObservableProperty]
-        private string? windowState = string.Empty;
+        /// <summary>
+        /// Gets or sets 窗口状态.
+        /// </summary>
+        public string? WindowState
+        {
+            get => this.windowState;
+            set => this.SetProperty(ref this.windowState, value);
+        }
 
-        [ObservableProperty]
-        private double editorFontSize = DefaultFontSize;
+        /// <summary>
+        /// Gets or sets 编辑器字体大小.
+        /// </summary>
+        public double EditorFontSize
+        {
+            get => this.editorFontSize;
+            set => this.SetProperty(ref this.editorFontSize, value);
+        }
 
-        [ObservableProperty]
-        private string editorFontFamily = GetDefaultPlatformFontFamily();
+        /// <summary>
+        /// Gets or sets 编辑器字体系列.
+        /// </summary>
+        public string EditorFontFamily
+        {
+            get => this.editorFontFamily;
+            set => this.SetProperty(ref this.editorFontFamily, value);
+        }
 
-        [ObservableProperty]
-        private double outputFontSize = DefaultFontSize;
+        /// <summary>
+        /// Gets or sets 输出字体大小.
+        /// </summary>
+        public double OutputFontSize
+        {
+            get => this.outputFontSize;
+            set => this.SetProperty(ref this.outputFontSize, value);
+        }
 
-        [ObservableProperty]
-        private string? documentPath = string.Empty;
+        /// <summary>
+        /// Gets or sets 文档存储路径.
+        /// </summary>
+        public string? DocumentPath
+        {
+            get => this.documentPath;
+            set
+            {
+                if (this.SetProperty(ref this.documentPath, value))
+                {
+                    // 路径改变时清除有效路径缓存.
+                    this.cachedEffectivePath = null;
+                }
+            }
+        }
 
-        [ObservableProperty]
-        private bool searchFileContents = false;
+        /// <summary>
+        /// Gets or sets a value indicating whether 是否搜索文件内容.
+        /// </summary>
+        public bool SearchFileContents
+        {
+            get => this.searchFileContents;
+            set => this.SetProperty(ref this.searchFileContents, value);
+        }
 
-        [ObservableProperty]
-        private bool searchUsingRegex = false;
+        /// <summary>
+        /// Gets or sets a value indicating whether 是否使用正则搜索.
+        /// </summary>
+        public bool SearchUsingRegex
+        {
+            get => this.searchUsingRegex;
+            set => this.SetProperty(ref this.searchUsingRegex, value);
+        }
 
-        [ObservableProperty]
-        private bool optimizeCompilation = false;
+        /// <summary>
+        /// Gets or sets a value indicating whether 是否优化编译.
+        /// </summary>
+        public bool OptimizeCompilation
+        {
+            get => this.optimizeCompilation;
+            set => this.SetProperty(ref this.optimizeCompilation, value);
+        }
 
-        [ObservableProperty]
-        private int liveModeDelayMs = LiveModeDelayMsDefault;
+        /// <summary>
+        /// Gets or sets 实时模式延迟毫秒数.
+        /// </summary>
+        public int LiveModeDelayMs
+        {
+            get => this.liveModeDelayMs;
+            set => this.SetProperty(ref this.liveModeDelayMs, value);
+        }
 
-        [ObservableProperty]
-        private bool searchWhileTyping = false;
+        /// <summary>
+        /// Gets or sets a value indicating whether 是否在键入时搜索.
+        /// </summary>
+        public bool SearchWhileTyping
+        {
+            get => this.searchWhileTyping;
+            set => this.SetProperty(ref this.searchWhileTyping, value);
+        }
 
-        [ObservableProperty]
-        private string defaultPlatformName = string.Empty;
+        /// <summary>
+        /// Gets or sets 默认平台名称.
+        /// </summary>
+        public string DefaultPlatformName
+        {
+            get => this.defaultPlatformName;
+            set => this.SetProperty(ref this.defaultPlatformName, value);
+        }
 
-        [ObservableProperty]
-        private double? windowFontSize = null;
+        /// <summary>
+        /// Gets or sets 窗口字体大小.
+        /// </summary>
+        public double? WindowFontSize
+        {
+            get => this.windowFontSize;
+            set => this.SetProperty(ref this.windowFontSize, value);
+        }
 
-        [ObservableProperty]
-        private bool formatDocumentOnComment = true;
+        /// <summary>
+        /// Gets or sets a value indicating whether 是否在注释时格式化文档.
+        /// </summary>
+        public bool FormatDocumentOnComment
+        {
+            get => this.formatDocumentOnComment;
+            set => this.SetProperty(ref this.formatDocumentOnComment, value);
+        }
 
-        [ObservableProperty]
-        private string? customThemePath = string.Empty;
+        /// <summary>
+        /// Gets or sets 自定义主题路径.
+        /// </summary>
+        public string? CustomThemePath
+        {
+            get => this.customThemePath;
+            set => this.SetProperty(ref this.customThemePath, value);
+        }
 
-        [ObservableProperty]
-        private ThemeType? customThemeType;
+        /// <summary>
+        /// Gets or sets 自定义主题类型.
+        /// </summary>
+        public ThemeType? CustomThemeType
+        {
+            get => this.customThemeType;
+            set => this.SetProperty(ref this.customThemeType, value);
+        }
 
-        [ObservableProperty]
-        private BuiltInTheme builtInTheme;
+        /// <summary>
+        /// Gets or sets 内置主题.
+        /// </summary>
+        public BuiltInTheme BuiltInTheme
+        {
+            get => this.builtInTheme;
+            set => this.SetProperty(ref this.builtInTheme, value);
+        }
 
+        /// <summary>
+        /// Gets 当前有效的文档路径.
+        /// </summary>
         [JsonIgnore]
         public string EffectiveDocumentPath
         {
             get
             {
-                if (_effectiveDocumentPath == null)
+                // 如果缓存为空，则根据逻辑计算有效路径.
+                if (this.cachedEffectivePath == null)
                 {
-
-                    var userDefinedPath = DocumentPath;
-                    _effectiveDocumentPath = !string.IsNullOrEmpty(userDefinedPath) && Directory.Exists(userDefinedPath)
-                        ? userDefinedPath!
-                        : Settings?.GetDefaultDocumentPath() ?? string.Empty;
+                    var userPath = this.DocumentPath;
+                    this.cachedEffectivePath = !string.IsNullOrEmpty(userPath) && Directory.Exists(userPath)
+                        ? userPath!
+                        : this.Settings?.GetDefaultDocumentPath() ?? string.Empty;
                 }
 
-                return _effectiveDocumentPath;
+                return this.cachedEffectivePath;
             }
         }
 
+        /// <summary>
+        /// Gets or sets 设置服务的父级引用接口.
+        /// </summary>
         [JsonIgnore]
         public ApplicationSettings? Settings { get; set; }
+
+        /// <summary>
+        /// 加载默认设置数值.
+        /// </summary>
+        public void LoadDefaultSettings()
+        {
+            // 恢复各项默认值.
+            this.SendErrors = true;
+            this.FormatDocumentOnComment = true;
+            this.EditorFontSize = DefaultFontSize;
+            this.OutputFontSize = DefaultFontSize;
+            this.LiveModeDelayMs = LiveModeDelayMsDefault;
+            this.EditorFontFamily = GetDefaultPlatformFontFamily();
+        }
+
+        /// <summary>
+        /// 根据不同操作系统获取默认字体系列.
+        /// </summary>
+        /// <returns>返回字体名称字符串.</returns>
+        private static string GetDefaultPlatformFontFamily()
+        {
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            {
+                // Windows 平台默认字体.
+                return "Cascadia Code,Consolas";
+            }
+            else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+            {
+                // macOS 平台默认字体.
+                return "Menlo";
+            }
+            else
+            {
+                // 其他（如 Linux）默认字体.
+                return "Monospace";
+            }
+        }
     }
 }
