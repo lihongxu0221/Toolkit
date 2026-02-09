@@ -67,8 +67,7 @@ internal class ModuleViewService : IModuleViewService
             var moduleInfo = moduleResp.Result;
             if (moduleInfo != null)
             {
-                if (currentUser != null &&
-                    (!isNeedAuth && currentUser.MaxRole?.SystemRole >= moduleInfo.SystemRole))
+                if (!isNeedAuth || (currentUser != null && currentUser.MaxRole?.SystemRole >= moduleInfo.SystemRole))
                 {
                     // 导航模块到区域.
                     this.regionManager.RequestNavigate(
