@@ -1,7 +1,9 @@
 using BgLogger;
 using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp.Scripting;
 using Microsoft.Extensions.FileSystemGlobbing;
 using System.Collections.Specialized;
+using System.Runtime.ConstrainedExecution;
 
 namespace BgCommon.Script;
 
@@ -30,7 +32,7 @@ public sealed class ScriptManager : IDisposable
 
         // 初始化脚本上下文集合.
         // 订阅集合变更事件以管理上下文事件.
-        this.Contexts = new ObservableCollection<ScripteContext>();
+        this.Contexts = new ObservableCollection<ScriptContext>();
         this.Contexts.CollectionChanged += this.Contexts_CollectionChanged;
     }
 
@@ -42,14 +44,14 @@ public sealed class ScriptManager : IDisposable
     /// <summary>
     /// Gets 脚本上下文集合.
     /// </summary>
-    public ObservableCollection<ScripteContext> Contexts { get; private set; }
+    public ObservableCollection<ScriptContext> Contexts { get; private set; }
 
     /// <summary>
     /// 模糊搜索脚本（按名称或摘要）.
     /// </summary>
     /// <param name="keyword">名称或摘要.</param>
     /// <returns>返回满足条件的脚本上下文列表.</returns>
-    public IEnumerable<ScripteContext> Search(string keyword)
+    public IEnumerable<ScriptContext> Search(string keyword)
     {
         if (string.IsNullOrWhiteSpace(keyword))
         {
@@ -66,7 +68,7 @@ public sealed class ScriptManager : IDisposable
     /// </summary>
     /// <param name="scriptName">脚本名称.</param>
     /// <returns>返回找到的脚本上下文，未找到则返回 null.</returns>
-    public ScripteContext? GetContext(string scriptName) =>
+    public ScriptContext? GetContext(string scriptName) =>
         this.Contexts.FirstOrDefault(c => c.ScriptName.Equals(scriptName, StringComparison.OrdinalIgnoreCase));
 
     /// <summary>
@@ -108,7 +110,7 @@ public sealed class ScriptManager : IDisposable
         }
 
         // 需要切回 UI 线程，这里假设使用了合适的同步机制或 ObservableCollection 处理了跨线程
-        var context = new ScripteContext(name, this.config, false);
+        var context = new ScriptContext(name, this.config, false);
         await context.LoadAsync();
 
         RunOnUIThread(() => this.Contexts.Add(context));
@@ -194,7 +196,7 @@ public sealed class ScriptManager : IDisposable
                 continue;
             }
 
-            var context = new ScripteContext(fileName, this.config, false);
+            var context = new ScriptContext(fileName, this.config, false);
             await context.LoadAsync();
             this.Contexts.Add(context);
         }
@@ -218,9 +220,9 @@ public sealed class ScriptManager : IDisposable
     /// </summary>
     /// <param name="templateName">模板名称.</param>
     /// <returns>返回初始化的脚本上下文.</returns>
-    public async Task<ScripteContext?> CreateFromTemplateAsync(string templateName)
+    public async Task<ScriptContext?> CreateFromTemplateAsync(string templateName)
     {
-        var context = new ScripteContext(templateName, this.config, true);
+        var context = new ScriptContext(templateName, this.config, true);
         await context.LoadAsync();
 
         // 模板创建后添加到集合，此时 ScriptName 为空，直到 SaveAsync(newName)
@@ -235,7 +237,7 @@ public sealed class ScriptManager : IDisposable
     /// <returns>返回删除的结果.</returns>
     public async Task<bool> DeleteScriptAsync(string scriptName)
     {
-        var context = this.Contexts.FirstOrDefault(c => c.ScriptName.Equals(scriptName, StringComparison.OrdinalIgnoreCase));
+        var context = this.GetContext(scriptName);
         if (context == null)
         {
             return false;
@@ -258,44 +260,39 @@ public sealed class ScriptManager : IDisposable
     /// </summary>
     /// <param name="scriptName">脚本名称.</param>
     /// <param name="globals">传递给脚本的上下文对象（建议使用 ScriptGlobals 子类）.</param>
+    /// <param name="data">传递给脚本的初始数据.</param>
     /// <param name="ct">取消令牌.</param>
     /// <returns>返回脚本执行的结果.</returns>
-    public async Task<ScriptResult> ExecuteAsync(string scriptName, ScriptGlobals? globals = null, CancellationToken ct = default)
+    public async Task<ScriptResult> ExecuteAsync(string scriptName, ScriptGlobals? globals = null, object? data = null, CancellationToken ct = default)
     {
-        var ctx = this.Contexts.FirstOrDefault(c => c.ScriptName.Equals(scriptName, StringComparison.OrdinalIgnoreCase));
+        var ctx = this.GetContext(scriptName);
         if (ctx == null)
         {
             return new ScriptResult(false, $"找不到名为 '{scriptName}' 的脚本.");
         }
 
-        // 如果没有传 globals，创建一个默认的，并对接日志系统
-        globals ??= new ScriptGlobals
-        {
-            Log = (msg) => LogRun.Info($"[Script:{scriptName}] {msg}"),
-            CancellationToken = ct,
-        };
+        // 如果未提供 globals 实例，则使用约定好的默认实现
+        globals ??= new DefaultScriptGlobals();
+        globals.Data = data;
+        globals.Log = (msg) => LogRun.Info($"[{scriptName}] {msg}");
+        globals.CancellationToken = ct;
 
         try
         {
-            var resultValue = await ctx.RunAsync(globals, ct);
-
-            // 如果运行结果为 null 且 ctx 发生了错误，说明可能是编译失败
-            if (resultValue == null && !string.IsNullOrEmpty(ctx.ScriptName))
-            {
-                // 这里的具体逻辑可以根据 RunAsync 是否抛出异常来细化
-            }
-
-            return new ScriptResult(true, "执行完成", resultValue);
-        }
-        catch (ScriptCompilationException cex)
-        {
-            LogRun.Error($"脚本 {scriptName} 编译失败: {cex.Message}");
-            return new ScriptResult(false, cex.Message, null, cex);
+            // 调用 ScriptContext.RunAsync，它会触发 globals.ExecuteStateAsync
+            var scriptValue = await ctx.RunAsync(globals, ct);
+            return scriptValue;
         }
         catch (Exception ex)
         {
             LogRun.Error($"脚本 {scriptName} 执行异常: {ex.Message}");
-            return new ScriptResult(false, $"执行异常: {ex.Message}", null, ex);
+            return new ScriptResult(
+                    success: false,
+                    message: $"执行异常: {ex.Message}",
+                    result: null,
+                    exception: ex,
+                    inputs: globals.Data,
+                    outputs: globals.Outputs);
         }
     }
 
@@ -361,7 +358,7 @@ public sealed class ScriptManager : IDisposable
         {
             foreach (var newItem in eventArgs.NewItems)
             {
-                if (newItem is ScripteContext addedContext)
+                if (newItem is ScriptContext addedContext)
                 {
                     this.HanlderEvent(addedContext, true);
                 }
@@ -375,7 +372,7 @@ public sealed class ScriptManager : IDisposable
         {
             foreach (var oldItem in eventArgs.OldItems)
             {
-                if (oldItem is ScripteContext removedContext)
+                if (oldItem is ScriptContext removedContext)
                 {
                     this.HanlderEvent(removedContext, false);
                 }
@@ -388,7 +385,7 @@ public sealed class ScriptManager : IDisposable
     /// </summary>
     /// <param name="context">脚本上下文实例.</param>
     /// <param name="isSubscribing">指示是注册 (true) 还是注销 (false) 事件.</param>
-    private void HanlderEvent(ScripteContext context, bool isSubscribing)
+    private void HanlderEvent(ScriptContext context, bool isSubscribing)
     {
         // 验证上下文对象.
         ArgumentNullException.ThrowIfNull(context, nameof(context));
@@ -435,7 +432,7 @@ public sealed class ScriptManager : IDisposable
     /// <param name="eventArgs">事件参数.</param>
     private void Context_OnDispose(object? sender, EventArgs eventArgs)
     {
-        if (sender is ScripteContext ctx)
+        if (sender is ScriptContext ctx)
         {
             // 当上下文释放时，注销其在该管理器中的事件订阅.
             this.Contexts.Remove(ctx);
@@ -522,5 +519,14 @@ public sealed class ScriptManager : IDisposable
         {
             action();
         }
+    }
+
+    /// <summary>
+    /// 由于首次执行时 C# 脚本引擎需要加载和编译相关程序集，可能会有较长的延迟。调用此方法可以提前加载引擎，减少后续执行的响应时间.
+    /// </summary>
+    /// <returns>预热任务.</returns>
+    public static async Task WarmUpAsync()
+    {
+        await Task.Run(() => CSharpScript.EvaluateAsync("1 + 1"));
     }
 }
