@@ -1,397 +1,1 @@
-using BgCommon.Text.Json.Converters;
-
-namespace BgCommon.Text.Json;
-
-/// <summary>
-/// Json操作
-/// </summary>
-public static class JsonConvert
-{
-    /// <summary>
-    /// 将对象转换为Json字符串
-    /// </summary>
-    /// <typeparam name="T">对象类型</typeparam>
-    /// <param name="value">目标对象</param>
-    /// <param name="options">Json配置</param>
-    public static string ToJson<T>(T value, JsonOptions options)
-    {
-        if (value == null)
-        {
-            return "{}";
-        }
-
-        if (options == null)
-        {
-            return ToJson(value);
-        }
-
-        JsonSerializerOptions jsonSerializerOptions = ToJsonSerializerOptions(options);
-        return ToJson(value, jsonSerializerOptions, options.RemoveQuotationMarks, options.ToSingleQuotes, options.IgnoreInterface);
-    }
-
-    /// <summary>
-    /// 转换序列化配置
-    /// </summary>
-    private static JsonSerializerOptions ToJsonSerializerOptions(JsonOptions options)
-    {
-        var jsonSerializerOptions = new JsonSerializerOptions();
-        if (options.IgnoreEmptyString)
-        {
-            jsonSerializerOptions.TypeInfoResolver = new DefaultJsonTypeInfoResolver
-            {
-                Modifiers = { IgnoreEmptyString }
-            };
-        }
-
-        if (options.IgnoreNullValues)
-        {
-            jsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
-        }
-
-        if (options.IgnoreCase)
-        {
-            jsonSerializerOptions.PropertyNameCaseInsensitive = true;
-        }
-
-        if (options.ToCamelCase)
-        {
-            jsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
-        }
-
-        jsonSerializerOptions.Encoder = JavaScriptEncoder.Create(UnicodeRanges.All);
-        jsonSerializerOptions.Converters.Add(new DateTimeJsonConverter());
-        jsonSerializerOptions.Converters.Add(new NullableDateTimeJsonConverter());
-        jsonSerializerOptions.Converters.Add(new DoubleJsonConverter());
-        jsonSerializerOptions.Converters.Add(new LongJsonConverter());
-        jsonSerializerOptions.Converters.Add(new NullableLongJsonConverter());
-        return jsonSerializerOptions;
-    }
-
-    /// <summary>
-    /// 忽略空字符串
-    /// </summary>
-    private static void IgnoreEmptyString(JsonTypeInfo jsonTypeInfo)
-    {
-        if (jsonTypeInfo.Kind != JsonTypeInfoKind.Object)
-        {
-            return;
-        }
-
-        foreach (JsonPropertyInfo jsonPropertyInfo in jsonTypeInfo.Properties)
-        {
-            if (jsonPropertyInfo.PropertyType == typeof(string))
-            {
-                jsonPropertyInfo.ShouldSerialize = static (_, value) => value?.SafeString().IsEmpty() == false;
-            }
-        }
-    }
-
-    /// <summary>
-    /// 将对象转换为Json字符串
-    /// </summary>
-    /// <typeparam name="T">对象类型</typeparam>
-    /// <param name="value">目标对象</param>
-    /// <param name="options">序列化配置</param>
-    /// <param name="removeQuotationMarks">是否移除双引号</param>
-    /// <param name="toSingleQuotes">是否将双引号转成单引号</param>
-    public static string ToJson<T>(T value, JsonSerializerOptions? options = null, bool removeQuotationMarks = false, bool toSingleQuotes = false)
-    {
-        return ToJson(value, options, removeQuotationMarks, toSingleQuotes, true);
-    }
-
-    /// <summary>
-    /// 将对象转换为Json字符串
-    /// </summary>
-    /// <typeparam name="T">对象类型</typeparam>
-    private static string ToJson<T>(T value, JsonSerializerOptions? options, bool removeQuotationMarks, bool toSingleQuotes, bool ignoreInterface)
-    {
-        if (value == null)
-        {
-            return string.Empty;
-        }
-
-        options = GetToJsonOptions(options);
-        var result = Serialize(value, options, ignoreInterface);
-        if (removeQuotationMarks)
-        {
-            result = result.Replace("\"", string.Empty);
-        }
-
-        if (toSingleQuotes)
-        {
-            result = result.Replace("\"", "'");
-        }
-
-        return result;
-    }
-
-    /// <summary>
-    /// 获取对象转换为Json字符串的序列化配置
-    /// </summary>
-    private static JsonSerializerOptions GetToJsonOptions(JsonSerializerOptions? options)
-    {
-        if (options != null)
-        {
-            return options;
-        }
-
-        return new JsonSerializerOptions
-        {
-            DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
-            Encoder = JavaScriptEncoder.Create(UnicodeRanges.All),
-            Converters = {
-                new DateTimeJsonConverter(),
-                new NullableDateTimeJsonConverter(),
-                new LongJsonConverter(),
-                new NullableLongJsonConverter(),
-                new DoubleJsonConverter(),
-            }
-        };
-    }
-
-    /// <summary>
-    /// Json序列化
-    /// </summary>
-    /// <typeparam name="T">对象类型</typeparam>
-    private static string Serialize<T>(T value, JsonSerializerOptions options, bool ignoreInterface)
-    {
-        if (ignoreInterface)
-        {
-            object? instance = value;
-            if (instance != null)
-            {
-                return JsonSerializer.Serialize(instance, options);
-            }
-        }
-
-        return JsonSerializer.Serialize(value, options);
-    }
-
-    /// <summary>
-    /// 将对象转换为Json字符串
-    /// </summary>
-    /// <typeparam name="T">对象类型</typeparam>
-    /// <param name="value">目标对象</param>
-    /// <param name="options">序列化配置</param>
-    /// <param name="cancellationToken">取消令牌</param>
-    public static async Task<string> ToJsonAsync<T>(T value, JsonSerializerOptions? options = null, CancellationToken cancellationToken = default)
-    {
-        if (value == null)
-        {
-            return string.Empty;
-        }
-
-        options = GetToJsonOptions(options);
-        await using var stream = new MemoryStream();
-        await JsonSerializer.SerializeAsync(stream, value, typeof(T), options, cancellationToken);
-        stream.Position = 0;
-        using var reader = new StreamReader(stream);
-        return await reader.ReadToEndAsync(cancellationToken);
-    }
-
-    /// <summary>
-    /// 将Json字符串转换为对象
-    /// </summary>
-    /// <typeparam name="T">对象类型</typeparam>
-    /// <param name="json">Json字符串</param>
-    /// <param name="options">序列化配置</param>
-    public static T? ToObject<T>(string json, JsonOptions options)
-    {
-        if (string.IsNullOrWhiteSpace(json))
-        {
-            return default;
-        }
-
-        if (options == null)
-        {
-            return ToObject<T>(json);
-        }
-
-        return ToObject<T>(json, ToJsonSerializerOptions(options));
-    }
-
-    /// <summary>
-    /// 将Json字符串转换为对象
-    /// </summary>
-    /// <typeparam name="T">对象类型</typeparam>
-    /// <param name="json">Json字符串</param>
-    /// <param name="options">序列化配置</param>
-    public static T? ToObject<T>(string json, JsonSerializerOptions? options = null)
-    {
-        if (string.IsNullOrWhiteSpace(json))
-        {
-            return default;
-        }
-
-        options = GetToObjectOptions(options);
-        return JsonSerializer.Deserialize<T>(json, options);
-    }
-
-    /// <summary>
-    /// 将Json字符串转换为对象
-    /// </summary>
-    /// <param name="json">Json字符串</param>
-    /// <param name="returnType">返回类型</param>
-    /// <param name="options">序列化配置</param>
-    public static object? ToObject(string json, Type returnType, JsonSerializerOptions? options = null)
-    {
-        if (string.IsNullOrWhiteSpace(json))
-        {
-            return default;
-        }
-
-        options = GetToObjectOptions(options);
-        return JsonSerializer.Deserialize(json, returnType, options);
-    }
-
-    /// <summary>
-    /// 获取Json字符串转换为对象的序列化配置
-    /// </summary>
-    private static JsonSerializerOptions GetToObjectOptions(JsonSerializerOptions? options)
-    {
-        if (options != null)
-        {
-            return options;
-        }
-
-        return new JsonSerializerOptions
-        {
-            PropertyNameCaseInsensitive = true,
-            NumberHandling = JsonNumberHandling.AllowReadingFromString,
-            Encoder = JavaScriptEncoder.Create(UnicodeRanges.All),
-            Converters = {
-                new DateTimeJsonConverter(),
-                new NullableDateTimeJsonConverter(),
-                new LongJsonConverter(),
-                new NullableLongJsonConverter(),
-                new DoubleJsonConverter(),
-            }
-        };
-    }
-
-    /// <summary>
-    /// 将Json字节数组转换为对象
-    /// </summary>
-    /// <typeparam name="T">对象类型</typeparam>
-    /// <param name="json">Json字节数组</param>
-    /// <param name="options">序列化配置</param>
-    public static T? ToObject<T>(byte[] json, JsonSerializerOptions? options = null)
-    {
-        if (json == null)
-        {
-            return default;
-        }
-
-        options = GetToObjectOptions(options);
-        return JsonSerializer.Deserialize<T>(json, options);
-    }
-
-    /// <summary>
-    /// 将Json字节流转换为对象
-    /// </summary>
-    /// <typeparam name="T">对象类型</typeparam>
-    /// <param name="json">Json字节流</param>
-    /// <param name="options">序列化配置</param>
-    public static T? ToObject<T>(Stream json, JsonSerializerOptions? options = null)
-    {
-        if (json == null)
-        {
-            return default;
-        }
-
-        options = GetToObjectOptions(options);
-        return JsonSerializer.Deserialize<T>(json, options);
-    }
-
-    /// <summary>
-    /// 将Json字符串转换为对象
-    /// </summary>
-    /// <typeparam name="T">对象类型</typeparam>
-    /// <param name="json">Json字符串</param>
-    /// <param name="options">序列化配置</param>
-    /// <param name="encoding">Json字符编码,默认UTF8</param>
-    /// <param name="cancellationToken">取消令牌</param>
-    public static async Task<T?> ToObjectAsync<T>(string json, JsonSerializerOptions? options = null, Encoding? encoding = null, CancellationToken cancellationToken = default)
-    {
-        if (string.IsNullOrWhiteSpace(json))
-        {
-            return default;
-        }
-
-        encoding ??= Encoding.UTF8;
-        byte[] bytes = encoding.GetBytes(json);
-        await using var stream = new MemoryStream(bytes);
-        return await ToObjectAsync<T>(stream, options, cancellationToken);
-    }
-
-    /// <summary>
-    /// 将Json流转换为对象
-    /// </summary>
-    /// <typeparam name="T">对象类型</typeparam>
-    /// <param name="json">Json流</param>
-    /// <param name="options">序列化配置</param>
-    /// <param name="cancellationToken">取消令牌</param>
-    public static async Task<T?> ToObjectAsync<T>(Stream json, JsonSerializerOptions? options = null, CancellationToken cancellationToken = default)
-    {
-        if (json == null)
-        {
-            return default;
-        }
-
-        options = GetToObjectOptions(options);
-        return await JsonSerializer.DeserializeAsync<T>(json, options, cancellationToken);
-    }
-
-    /// <summary>
-    /// 将Json流转换为对象
-    /// </summary>
-    /// <typeparam name="T">对象类型</typeparam>
-    /// <param name="json">Json流</param>
-    /// <param name="options">序列化配置</param>
-    /// <param name="cancellationToken">取消令牌</param>
-    public static async Task<T?> ToObjectAsync<T>(byte[] json, JsonSerializerOptions? options = null, CancellationToken cancellationToken = default)
-    {
-        if (json == null)
-        {
-            return default;
-        }
-
-        await using var stream = new MemoryStream(json);
-        return await ToObjectAsync<T>(stream, options, cancellationToken);
-    }
-
-    /// <summary>
-    /// 将对象转换为字节数组
-    /// </summary>
-    /// <typeparam name="T">对象类型</typeparam>
-    /// <param name="value">目标对象</param>
-    /// <param name="options">Json配置</param>
-    public static byte[] ToBytes<T>(T value, JsonSerializerOptions? options = null)
-    {
-        options = GetToBytesOptions(options);
-        return JsonSerializer.SerializeToUtf8Bytes(value, options);
-    }
-
-    /// <summary>
-    /// 获取转换为字节数组的序列化配置
-    /// </summary>
-    private static JsonSerializerOptions GetToBytesOptions(JsonSerializerOptions? options)
-    {
-        if (options != null)
-        {
-            return options;
-        }
-
-        return new JsonSerializerOptions
-        {
-            Encoder = JavaScriptEncoder.Create(UnicodeRanges.All),
-            Converters = {
-                new DateTimeJsonConverter(),
-                new NullableDateTimeJsonConverter(),
-                new LongJsonConverter(),
-                new NullableLongJsonConverter(),
-                new DoubleJsonConverter(),
-            }
-        };
-    }
-}
+using System.Text;using System.Text.Encodings.Web;using System.Text.Json;using System.Text.Json.Serialization;using System.Text.Json.Serialization.Metadata;using System.Text.Unicode;using BgCommon.Text.Json.Converters;namespace BgCommon.Text.Json;/// <summary>/// 提供 Json 序列化与反序列化的相关操作类./// </summary>public static class JsonConvert{    /// <summary>    /// 将对象转换为 Json 字符串.    /// </summary>    /// <typeparam name="T">对象类型.</typeparam>    /// <param name="value">目标对象.</param>    /// <param name="options">Json 配置.</param>    /// <returns>Json 字符串.</returns>    public static string ToJson<T>(T value, JsonOptions options)    {        if (value == null)        {            return "{}";        }        if (options == null)        {            return ToJson(value);        }        // 转换自定义配置为原生的序列化选项        JsonSerializerOptions serializerOptions = ToJsonSerializerOptions(options);        return ToJson(value, serializerOptions, options.RemoveQuotationMarks, options.ToSingleQuotes, options.IgnoreInterface);    }    /// <summary>    /// 将对象转换为 Json 字符串.    /// </summary>    /// <typeparam name="T">对象类型.</typeparam>    /// <param name="value">目标对象.</param>    /// <param name="options">序列化配置.</param>    /// <param name="removeQuotationMarks">是否移除双引号.</param>    /// <param name="toSingleQuotes">是否将双引号转成单引号.</param>    /// <returns>Json 字符串.</returns>    public static string ToJson<T>(T value, JsonSerializerOptions? options = null, bool removeQuotationMarks = false, bool toSingleQuotes = false)    {        return ToJson(value, options, removeQuotationMarks, toSingleQuotes, true);    }    /// <summary>    /// 将对象转换为 Json 字符串.    /// </summary>    /// <typeparam name="T">对象类型.</typeparam>    /// <param name="value">目标对象.</param>    /// <param name="options">序列化配置.</param>    /// <param name="cancellationToken">取消令牌.</param>    /// <returns>表示异步操作的任务，其结果为 Json 字符串.</returns>    public static async Task<string> ToJsonAsync<T>(T value, JsonSerializerOptions? options = null, CancellationToken cancellationToken = default)    {        if (value == null)        {            return string.Empty;        }        options = GetToJsonOptions(options);        await using var memoryStream = new MemoryStream();        // 异步序列化到内存流        await JsonSerializer.SerializeAsync(memoryStream, value, typeof(T), options, cancellationToken);        memoryStream.Position = 0;        using var streamReader = new StreamReader(memoryStream);        return await streamReader.ReadToEndAsync(cancellationToken);    }    /// <summary>    /// 将 Json 字符串转换为对象.    /// </summary>    /// <typeparam name="T">对象类型.</typeparam>    /// <param name="json">Json 字符串.</param>    /// <param name="options">Json 配置.</param>    /// <returns>反序列化后的对象.</returns>    public static T? ToObject<T>(string json, JsonOptions options)    {        if (string.IsNullOrWhiteSpace(json))        {            return default;        }        if (options == null)        {            return ToObject<T>(json);        }        return ToObject<T>(json, ToJsonSerializerOptions(options));    }    /// <summary>    /// 将 Json 字符串转换为对象.    /// </summary>    /// <typeparam name="T">对象类型.</typeparam>    /// <param name="json">Json 字符串.</param>    /// <param name="options">序列化配置.</param>    /// <returns>反序列化后的对象.</returns>    public static T? ToObject<T>(string json, JsonSerializerOptions? options = null)    {        if (string.IsNullOrWhiteSpace(json))        {            return default;        }        options = GetToObjectOptions(options);        return JsonSerializer.Deserialize<T>(json, options);    }    /// <summary>    /// 将 Json 字符串转换为对象.    /// </summary>    /// <param name="json">Json 字符串.</param>    /// <param name="returnType">返回类型.</param>    /// <param name="options">序列化配置.</param>    /// <returns>反序列化后的对象.</returns>    public static object? ToObject(string json, Type returnType, JsonSerializerOptions? options = null)    {        if (string.IsNullOrWhiteSpace(json))        {            return default;        }        options = GetToObjectOptions(options);        return JsonSerializer.Deserialize(json, returnType, options);    }    /// <summary>    /// 将 Json 字节数组转换为对象.    /// </summary>    /// <typeparam name="T">对象类型.</typeparam>    /// <param name="json">Json 字节数组.</param>    /// <param name="options">序列化配置.</param>    /// <returns>反序列化后的对象.</returns>    public static T? ToObject<T>(byte[] json, JsonSerializerOptions? options = null)    {        if (json == null)        {            return default;        }        options = GetToObjectOptions(options);        return JsonSerializer.Deserialize<T>(json, options);    }    /// <summary>    /// 将 Json 字节流转换为对象.    /// </summary>    /// <typeparam name="T">对象类型.</typeparam>    /// <param name="json">Json 字节流.</param>    /// <param name="options">序列化配置.</param>    /// <returns>反序列化后的对象.</returns>    public static T? ToObject<T>(Stream json, JsonSerializerOptions? options = null)    {        if (json == null)        {            return default;        }        options = GetToObjectOptions(options);        return JsonSerializer.Deserialize<T>(json, options);    }    /// <summary>    /// 将 Json 字符串转换为对象.    /// </summary>    /// <typeparam name="T">对象类型.</typeparam>    /// <param name="json">Json 字符串.</param>    /// <param name="options">序列化配置.</param>    /// <param name="encoding">Json 字符编码, 默认 UTF8.</param>    /// <param name="cancellationToken">取消令牌.</param>    /// <returns>反序列化后的对象.</returns>    public static async Task<T?> ToObjectAsync<T>(string json, JsonSerializerOptions? options = null, Encoding? encoding = null, CancellationToken cancellationToken = default)    {        if (string.IsNullOrWhiteSpace(json))        {            return default;        }        encoding ??= Encoding.UTF8;        byte[] jsonBytes = encoding.GetBytes(json);        await using var memoryStream = new MemoryStream(jsonBytes);        return await ToObjectAsync<T>(memoryStream, options, cancellationToken);    }    /// <summary>    /// 将 Json 流转换为对象.    /// </summary>    /// <typeparam name="T">对象类型.</typeparam>    /// <param name="json">Json 流.</param>    /// <param name="options">序列化配置.</param>    /// <param name="cancellationToken">取消令牌.</param>    /// <returns>反序列化后的对象.</returns>    public static async Task<T?> ToObjectAsync<T>(Stream json, JsonSerializerOptions? options = null, CancellationToken cancellationToken = default)    {        if (json == null)        {            return default;        }        options = GetToObjectOptions(options);        return await JsonSerializer.DeserializeAsync<T>(json, options, cancellationToken);    }    /// <summary>    /// 将 Json 字节数组转换为对象.    /// </summary>    /// <typeparam name="T">对象类型.</typeparam>    /// <param name="json">Json 字节数组.</param>    /// <param name="options">序列化配置.</param>    /// <param name="cancellationToken">取消令牌.</param>    /// <returns>反序列化后的对象.</returns>    public static async Task<T?> ToObjectAsync<T>(byte[] json, JsonSerializerOptions? options = null, CancellationToken cancellationToken = default)    {        if (json == null)        {            return default;        }        await using var memoryStream = new MemoryStream(json);        return await ToObjectAsync<T>(memoryStream, options, cancellationToken);    }    /// <summary>    /// 将对象转换为字节数组.    /// </summary>    /// <typeparam name="T">对象类型.</typeparam>    /// <param name="value">目标对象.</param>    /// <param name="options">Json 配置.</param>    /// <returns>UTF-8 编码的字节数组.</returns>    public static byte[] ToBytes<T>(T value, JsonSerializerOptions? options = null)    {        options = GetToBytesOptions(options);        return JsonSerializer.SerializeToUtf8Bytes(value, options);    }    /// <summary>    /// 转换序列化配置.    /// </summary>    /// <param name="options">自定义 Json 配置.</param>    /// <returns>原生的序列化选项.</returns>    private static JsonSerializerOptions ToJsonSerializerOptions(JsonOptions options)    {        var serializerOptions = new JsonSerializerOptions();        // 处理空字符串忽略逻辑        if (options.IgnoreEmptyString)        {            serializerOptions.TypeInfoResolver = new DefaultJsonTypeInfoResolver            {                Modifiers = { IgnoreEmptyString },            };        }        // 处理 Null 值忽略逻辑        if (options.IgnoreNullValues)        {            serializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;        }        // 处理大小写敏感配置        if (options.IgnoreCase)        {            serializerOptions.PropertyNameCaseInsensitive = true;        }        // 处理驼峰命名配置        if (options.ToCamelCase)        {            serializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;        }        // 默认编码全覆盖，防止转义非 ASCII 字符        serializerOptions.Encoder = JavaScriptEncoder.Create(UnicodeRanges.All);        // 注入全局转换器        serializerOptions.Converters.Add(new DateTimeJsonConverter());        serializerOptions.Converters.Add(new NullableDateTimeJsonConverter());        serializerOptions.Converters.Add(new DoubleJsonConverter());        serializerOptions.Converters.Add(new LongJsonConverter());        serializerOptions.Converters.Add(new NullableLongJsonConverter());        return serializerOptions;    }    /// <summary>    /// 忽略空字符串的属性转换修饰器.    /// </summary>    /// <param name="typeInfo">Json 类型元数据信息.</param>    private static void IgnoreEmptyString(JsonTypeInfo typeInfo)    {        if (typeInfo.Kind != JsonTypeInfoKind.Object)        {            return;        }        foreach (JsonPropertyInfo propertyInfo in typeInfo.Properties)        {            if (propertyInfo.PropertyType == typeof(string))            {                // 当值为字符串且为空时，不进行序列化                propertyInfo.ShouldSerialize = static (_, value) => value?.SafeString().IsEmpty() == false;            }        }    }    /// <summary>    /// 将对象转换为 Json 字符串的内部实现.    /// </summary>    /// <typeparam name="T">对象类型.</typeparam>    /// <param name="value">目标对象.</param>    /// <param name="options">序列化配置.</param>    /// <param name="removeQuotationMarks">是否移除双引号.</param>    /// <param name="toSingleQuotes">是否将双引号转成单引号.</param>    /// <param name="ignoreInterface">是否忽略接口层级的序列化.</param>    /// <returns>处理后的 Json 字符串.</returns>    private static string ToJson<T>(T value, JsonSerializerOptions? options, bool removeQuotationMarks, bool toSingleQuotes, bool ignoreInterface)    {        if (value == null)        {            return string.Empty;        }        options = GetToJsonOptions(options);        var jsonResult = Serialize(value, options, ignoreInterface);        // 处理特殊字符替换逻辑        if (removeQuotationMarks)        {            jsonResult = jsonResult.Replace("\"", string.Empty);        }        if (toSingleQuotes)        {            jsonResult = jsonResult.Replace("\"", "'");        }        return jsonResult;    }    /// <summary>    /// 获取对象转换为 Json 字符串的默认序列化配置.    /// </summary>    /// <param name="options">传入的序列化配置.</param>    /// <returns>序列化选项.</returns>    private static JsonSerializerOptions GetToJsonOptions(JsonSerializerOptions? options)    {        if (options != null)        {            return options;        }        return new JsonSerializerOptions        {            DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,            Encoder = JavaScriptEncoder.Create(UnicodeRanges.All),            Converters =            {                new DateTimeJsonConverter(),                new NullableDateTimeJsonConverter(),                new LongJsonConverter(),                new NullableLongJsonConverter(),                new DoubleJsonConverter(),            },        };    }    /// <summary>    /// 执行底层的 Json 序列化.    /// </summary>    /// <typeparam name="T">对象类型.</typeparam>    /// <param name="value">值.</param>    /// <param name="options">配置.</param>    /// <param name="ignoreInterface">是否忽略接口转换.</param>    /// <returns>字符串.</returns>    private static string Serialize<T>(T value, JsonSerializerOptions options, bool ignoreInterface)    {        if (ignoreInterface)        {            object? valueInstance = value;            if (valueInstance != null)            {                // 使用 object 类型序列化以忽略特定接口实现                return JsonSerializer.Serialize(valueInstance, options);            }        }        return JsonSerializer.Serialize(value, options);    }    /// <summary>    /// 获取 Json 字符串转换为对象的默认序列化配置.    /// </summary>    /// <param name="options">传入的序列化配置.</param>    /// <returns>序列化选项.</returns>    private static JsonSerializerOptions GetToObjectOptions(JsonSerializerOptions? options)    {        if (options != null)        {            return options;        }        return new JsonSerializerOptions        {            PropertyNameCaseInsensitive = true,            NumberHandling = JsonNumberHandling.AllowReadingFromString,            Encoder = JavaScriptEncoder.Create(UnicodeRanges.All),            Converters =            {                new DateTimeJsonConverter(),                new NullableDateTimeJsonConverter(),                new LongJsonConverter(),                new NullableLongJsonConverter(),                new DoubleJsonConverter(),            },        };    }    /// <summary>    /// 获取转换为字节数组的默认序列化配置.    /// </summary>    /// <param name="options">传入的序列化配置.</param>    /// <returns>序列化选项.</returns>    private static JsonSerializerOptions GetToBytesOptions(JsonSerializerOptions? options)    {        if (options != null)        {            return options;        }        return new JsonSerializerOptions        {            Encoder = JavaScriptEncoder.Create(UnicodeRanges.All),            Converters =            {                new DateTimeJsonConverter(),                new NullableDateTimeJsonConverter(),                new LongJsonConverter(),                new NullableLongJsonConverter(),                new DoubleJsonConverter(),            },        };    }}

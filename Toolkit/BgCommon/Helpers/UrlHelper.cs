@@ -1,14 +1,15 @@
 namespace BgCommon;
 
 /// <summary>
-/// Url操作
+/// Url操作.
 /// </summary>
 public static class UrlHelper
 {
     /// <summary>
-    /// 连接路径
+    /// 连接路径.
     /// </summary>
-    /// <param name="paths">路径列表</param>
+    /// <param name="paths">路径列表.</param>
+    /// <returns>连接后的路径.</returns>
     public static string JoinPath(params string[] paths)
     {
         if (paths == null)
@@ -37,7 +38,7 @@ public static class UrlHelper
 
         paths = paths.Select(t => t.Trim('/')).ToArray();
         var result = Path.Combine(paths).Replace(@"\", "/");
-        if (paths.Any(path => path.StartsWith(".")))
+        if (paths.Any(path => path.StartsWith('.')))
         {
             result = Path.GetFullPath(Path.Combine(paths));
             result = result.RemoveStart(AppContext.BaseDirectory).Replace(@"\", "/");

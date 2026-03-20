@@ -1,7 +1,11 @@
 namespace BgCommon.Text.Json.Converters;
 
+/// <summary>
+/// Double数组的JsonConverter，支持NaN、Infinity和-Infinity的序列化和反序列化.
+/// </summary>
 public class DoubleJsonConverter : JsonConverter<double>
 {
+    /// <inheritdoc/>
     public override double Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
     {
         if (reader.TokenType == JsonTokenType.String)
@@ -19,6 +23,7 @@ public class DoubleJsonConverter : JsonConverter<double>
         return reader.GetDouble();
     }
 
+    /// <inheritdoc/>
     public override void Write(Utf8JsonWriter writer, double value, JsonSerializerOptions options)
     {
         if (double.IsNaN(value))

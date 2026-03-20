@@ -3,6 +3,7 @@ namespace BgCommon.Collections;
 /// <summary>
 /// 支持批量操作并可抑制通知的可观察集合.
 /// </summary>
+/// <typeparam name="T">集合内数据类型.</typeparam>
 public class ObservableRangeCollection<T> : ObservableCollection<T>
 {
     /// <summary>
@@ -11,7 +12,7 @@ public class ObservableRangeCollection<T> : ObservableCollection<T>
     private bool suppressNotification;
 
     /// <summary>
-    /// 初始化 ObservableRangeCollection 类的新实例.
+    /// Initializes a new instance of the <see cref="ObservableRangeCollection{T}"/> class.
     /// </summary>
     public ObservableRangeCollection()
         : base()
@@ -19,7 +20,7 @@ public class ObservableRangeCollection<T> : ObservableCollection<T>
     }
 
     /// <summary>
-    /// 初始化 ObservableRangeCollection 类的新实例，该实例包含从指定集合复制的元素.
+    /// Initializes a new instance of the <see cref="ObservableRangeCollection{T}"/> class.
     /// </summary>
     /// <param name="collection">要复制元素的集合.</param>
     public ObservableRangeCollection(IEnumerable<T> collection)
@@ -65,7 +66,7 @@ public class ObservableRangeCollection<T> : ObservableCollection<T>
         }
 
         // 将集合转为列表以避免多次枚举
-        var itemList = items as ICollection<T> ?? items.ToList();
+        var itemList = (items as ICollection<T>) ?? items.ToList();
         if (itemList.Count == 0)
         {
             return;
@@ -215,15 +216,15 @@ public class ObservableRangeCollection<T> : ObservableCollection<T>
         /// <summary>
         /// 关联的集合.
         /// </summary>
-        private readonly ObservableRangeCollection<T> _collection;
+        private readonly ObservableRangeCollection<T> collection;
 
         /// <summary>
-        /// 初始化 SuppressNotificationsDisposable 类的新实例.
+        /// Initializes a new instance of the <see cref="SuppressNotificationsDisposable"/> class.
         /// </summary>
         /// <param name="collection">目标集合.</param>
         public SuppressNotificationsDisposable(ObservableRangeCollection<T> collection)
         {
-            _collection = collection;
+            this.collection = collection;
         }
 
         /// <summary>
@@ -231,8 +232,8 @@ public class ObservableRangeCollection<T> : ObservableCollection<T>
         /// </summary>
         public void Dispose()
         {
-            _collection.suppressNotification = false;
-            _collection.OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
+            collection.suppressNotification = false;
+            collection.OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
         }
     }
 }

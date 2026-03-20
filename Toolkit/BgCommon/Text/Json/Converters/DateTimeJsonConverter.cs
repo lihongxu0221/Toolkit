@@ -1,17 +1,17 @@
 namespace BgCommon.Text.Json.Converters;
 
 /// <summary>
-/// 日期格式Json转换器
+/// 日期格式Json转换器.
 /// </summary>
 public class DateTimeJsonConverter : JsonConverter<DateTime>
 {
     /// <summary>
-    /// 日期格式
+    /// 日期格式.
     /// </summary>
-    private readonly string _format;
+    private readonly string format;
 
     /// <summary>
-    /// 初始化日期格式Json转换器
+    /// Initializes a new instance of the <see cref="DateTimeJsonConverter"/> class.
     /// </summary>
     public DateTimeJsonConverter()
         : this("yyyy-MM-dd HH:mm:ss")
@@ -19,17 +19,15 @@ public class DateTimeJsonConverter : JsonConverter<DateTime>
     }
 
     /// <summary>
-    /// 初始化日期格式Json转换器
+    /// Initializes a new instance of the <see cref="DateTimeJsonConverter"/> class.
     /// </summary>
-    /// <param name="format">日期格式,默认值: yyyy-MM-dd HH:mm:ss</param>
+    /// <param name="format">日期格式,默认值: yyyy-MM-dd HH:mm:ss.</param>
     public DateTimeJsonConverter(string format)
     {
-        _format = format;
+        this.format = format;
     }
 
-    /// <summary>
-    /// 读取数据
-    /// </summary>
+    /// <inheritdoc/>
     public override DateTime Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
     {
         if (reader.TokenType == JsonTokenType.String)
@@ -45,12 +43,10 @@ public class DateTimeJsonConverter : JsonConverter<DateTime>
         return DateTime.MinValue;
     }
 
-    /// <summary>
-    /// 写入数据
-    /// </summary>
+    /// <inheritdoc/>
     public override void Write(Utf8JsonWriter writer, DateTime value, JsonSerializerOptions options)
     {
-        string date = Extensions.ToLocalTime(value).ToString(_format);
+        string date = Extensions.ToLocalTime(value).ToString(format);
         writer.WriteStringValue(date);
     }
 }
